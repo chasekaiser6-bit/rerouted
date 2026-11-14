@@ -1,0 +1,1930 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Rerouted</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Rerouted tells United travelers what they're owed when a flight slips, the best flight to move to, and what to say to get it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --page:#E9EDF2; --surface:#FFFFFF; --field:#F4F6F9; --ink:#121A26; --muted:#566275; --line:#DCE1E8;
+  --tarmac:#1A2230; --tarmac-2:#243045; --tarmac-ink:#EEF2F7; --tarmac-muted:#9AA9C0;
+  --edge:#3564F0; --edge-soft:#E7EDFE; --center:#12A26B; --center-soft:#E2F4EC; --hold:#F2A900; --hold-soft:#FFF4D6;
+  --stop:#D7352B; --stop-soft:#FBE7E5; --on-accent:#FFFFFF; --feed:#7A4DD8; --feed-soft:#F0EAFD;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --page:#0B1018; --surface:#141B27; --field:#101722; --ink:#E8EDF4; --muted:#9AA7BA; --line:#263043;
+    --tarmac:#1B2434; --tarmac-2:#25314A;
+    --edge:#7C9BFF; --edge-soft:#1C2647; --center:#3FD195; --center-soft:#123227; --hold:#FFC23D; --hold-soft:#3A2F12;
+    --stop:#FF6F63; --stop-soft:#3B1C1A; --on-accent:#0B1018; --feed:#B79BFF; --feed-soft:#271D45;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#0B1018; --surface:#141B27; --field:#101722; --ink:#E8EDF4; --muted:#9AA7BA; --line:#263043;
+  --tarmac:#1B2434; --tarmac-2:#25314A;
+  --edge:#7C9BFF; --edge-soft:#1C2647; --center:#3FD195; --center-soft:#123227; --hold:#FFC23D; --hold-soft:#3A2F12;
+  --stop:#FF6F63; --stop-soft:#3B1C1A; --on-accent:#0B1018; --feed:#B79BFF; --feed-soft:#271D45;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none !important}
+html,body{height:100%}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--page);color:var(--ink);font:16px/1.5 'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--edge);outline-offset:2px}
+
+/* Stage: brand panel + phone on desktop, full-screen app on phones */
+.stage{height:100%;display:flex;align-items:center;justify-content:center;gap:64px;padding:24px}
+.brandside{max-width:420px}
+.device{position:relative;width:410px;height:min(860px,calc(100vh - 48px));background:var(--surface);border:10px solid var(--tarmac);border-radius:44px;overflow:hidden;box-shadow:0 30px 60px -30px rgba(18,26,38,.55);display:flex;flex-direction:column}
+@media (max-width:900px){
+  .stage{padding:0;gap:0;display:block}
+  .brandside{display:none}
+  .device{width:100%;height:100%;border:0;border-radius:0;box-shadow:none}
+}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative}
+.screen.dark{background:var(--tarmac);color:var(--tarmac-ink)}
+
+/* Brand */
+.mark{display:inline-flex;align-items:center;gap:12px;color:inherit;text-decoration:none}
+.mark svg{width:46px;height:30px;flex:none}
+.mark .path{fill:none;stroke:var(--edge);stroke-width:3;stroke-linecap:round}
+.mark .ghost{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:2 4;stroke-linecap:round;opacity:.7}
+.mark .dot{fill:currentColor}
+.word{font-weight:800;font-stretch:125%;font-size:24px;letter-spacing:-.01em;line-height:1}
+.brandside h1{font-weight:800;font-stretch:87.5%;font-size:44px;line-height:1.02;letter-spacing:-.015em;margin:28px 0 16px}
+.brandside p{color:var(--muted);font-size:17px;margin:0 0 14px;max-width:40ch}
+.brandside .proto{font-size:14px;border-left:3px solid var(--hold);padding:6px 0 6px 12px;margin-top:26px}
+@media (prefers-reduced-motion:no-preference){
+  .mark .path{stroke-dasharray:90;stroke-dashoffset:90;animation:draw 1.1s .2s cubic-bezier(.6,0,.2,1) forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+}
+
+/* Tabs */
+.tabs{display:flex;border-top:1px solid var(--line);background:var(--surface);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabs button{flex:1;background:none;border:0;padding:6px 0;font-size:12px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border-radius:10px}
+.tabs button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-current="page"]{color:var(--edge)}
+
+/* Common blocks */
+.pad{padding:18px 18px 28px}
+.topbar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding:12px 14px 10px;display:flex;align-items:center;gap:10px}
+.topbar .back{background:none;border:0;font-size:15px;font-weight:600;color:var(--edge);padding:6px 4px;cursor:pointer}
+.topbar .ttl{font-weight:800;font-stretch:112.5%;font-size:17px;line-height:1.1}
+.topbar .sub{font-size:13px;color:var(--muted)}
+h2{font-weight:700;font-stretch:87.5%;font-size:21px;margin:26px 0 10px;line-height:1.2}
+h2:first-child{margin-top:0}
+.hint{color:var(--muted);font-size:15px;margin:-4px 0 14px}
+.note{color:var(--muted);font-size:14px;margin:8px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.btn{font-weight:600;font-size:15px;border-radius:12px;padding:11px 16px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.btn.primary{background:var(--edge);border-color:var(--edge);color:var(--on-accent)}
+.btn.block{width:100%}
+.btn.small{font-size:13px;padding:6px 11px;border-radius:9px}
+.btn:disabled{opacity:.55}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{display:inline-block;font-weight:700;font-size:12px;border-radius:12px;padding:2px 9px;white-space:nowrap}
+.pill.ok{background:var(--center-soft);color:var(--center)}
+.pill.warn{background:var(--hold-soft);color:var(--ink)}
+.pill.bad{background:var(--stop-soft);color:var(--stop)}
+.feed{display:inline-block;font-size:11px;font-weight:700;color:var(--feed);background:var(--feed-soft);border-radius:8px;padding:1px 7px;margin:4px 4px 0 0;letter-spacing:.01em}
+label{display:block;font-size:14px;font-weight:500;color:var(--muted);margin-bottom:12px}
+select,input[type=text],input[type=time],input[type=date],input[type=number],textarea{display:block;width:100%;margin-top:4px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);font:inherit;font-size:16px}
+textarea{min-height:120px;resize:vertical;font-size:14px;line-height:1.45}
+.chk{display:flex;align-items:flex-start;gap:10px;color:var(--ink);font-size:15px}
+.chk input{width:20px;height:20px;margin-top:1px;accent-color:var(--edge);flex:none}
+.chk small{display:block;color:var(--muted);font-size:13px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+
+/* Home */
+.hello{font-weight:800;font-stretch:87.5%;font-size:30px;line-height:1.05;margin:4px 0 6px;letter-spacing:-.01em}
+.intro{background:var(--hold-soft);border-radius:14px;padding:12px 14px;font-size:14px;margin:14px 0 4px}
+.intro b{display:block;font-size:15px;margin-bottom:2px}
+.scncard{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:0;margin:0 0 12px;cursor:pointer;overflow:hidden}
+.scncard .strip{background:var(--tarmac);color:var(--tarmac-ink);padding:12px 14px;display:flex;justify-content:space-between;align-items:baseline;font-weight:800;font-stretch:112.5%;font-size:18px}
+.scncard .strip span{font-weight:500;font-stretch:100%;font-size:13px;color:var(--tarmac-muted)}
+.scncard .body{padding:12px 14px 14px}
+.scncard b{display:block;font-size:17px}
+.scncard p{margin:3px 0 8px;color:var(--muted);font-size:14px}
+.scncard .meta{font-size:13px;color:var(--muted)}
+.scncard.done .strip::after{content:"Played";font-size:12px;font-weight:700;color:var(--center);background:var(--center-soft);border-radius:10px;padding:1px 8px;font-stretch:100%}
+
+/* Lock screen */
+.lock{min-height:100%;padding:56px 18px 24px;background:radial-gradient(120% 70% at 50% 0%,var(--tarmac-2),var(--tarmac));color:var(--tarmac-ink);display:flex;flex-direction:column;align-items:center}
+.lock .date{font-size:16px;font-weight:600;color:var(--tarmac-muted)}
+.lock .time{font-size:84px;font-weight:300;font-stretch:87.5%;line-height:1;letter-spacing:-.02em;margin:4px 0 6px}
+.lock .where{font-size:14px;color:var(--tarmac-muted);margin-bottom:34px}
+.notif{width:100%;text-align:left;background:rgba(255,255,255,.13);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:12px 14px;color:var(--tarmac-ink);cursor:pointer}
+.notif .app{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;color:var(--tarmac-muted);margin-bottom:4px;letter-spacing:.02em}
+.notif .app span:first-child{display:flex;align-items:center;gap:6px}
+.notif .app svg{width:20px;height:13px}
+.notif b{display:block;font-size:15px}
+.notif p{margin:2px 0 0;font-size:14px;line-height:1.4}
+.lock .open{margin-top:auto;font-size:14px;color:var(--tarmac-muted)}
+.lock .persona{width:100%;margin-top:22px;font-size:13px;color:var(--tarmac-muted);background:rgba(0,0,0,.18);border-radius:14px;padding:10px 12px}
+@media (prefers-reduced-motion:no-preference){
+  .lock .notif{animation:drop .6s .5s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes drop{from{opacity:0;transform:translateY(-18px) scale(.97)}to{opacity:1;transform:none}}
+}
+
+/* Toast (in-app notification) */
+#toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
+#toast .notif{background:rgba(26,34,48,.94);box-shadow:0 16px 30px -18px rgba(0,0,0,.7)}
+@media (prefers-reduced-motion:no-preference){#toast .notif{animation:drop .45s cubic-bezier(.2,.8,.2,1) both}}
+
+/* Trip step */
+.clock{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:3px 9px;color:var(--ink)}
+.clock i{width:7px;height:7px;border-radius:50%;background:var(--hold)}
+.board{background:var(--tarmac);color:var(--tarmac-ink);border-radius:18px;padding:16px 16px 10px;position:relative;overflow:hidden;margin-bottom:16px}
+.board::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:repeating-linear-gradient(90deg,var(--hold) 0 22px,transparent 22px 38px);opacity:.85}
+.board .hl{font-size:27px;font-weight:800;font-stretch:75%;line-height:1.05;margin:0 0 12px;letter-spacing:-.005em}
+.board .cause{font-size:13px;color:var(--tarmac-muted);margin:-6px 0 10px}
+.frow{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.1);font-stretch:75%}
+.frow .fn{font-weight:700;font-size:17px}
+.frow .rt{font-size:17px;font-weight:600}
+.frow .tm{font-size:15px;text-align:right}
+.frow .tm s{color:var(--tarmac-muted);margin-right:6px}
+.frow .st{grid-column:1/-1;font-size:13px;font-weight:700;letter-spacing:.06em}
+.st.ok{color:#6FE3B0}.st.late{color:#FFC23D}.st.bad{color:#FF8A7E}.st.new{color:#9FB7FF}
+.event{background:var(--field);border-radius:14px;padding:12px 14px;font-size:15px;margin:0 0 16px;border-left:4px solid var(--edge)}
+.move{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--center);border-radius:18px;padding:16px;margin-bottom:8px}
+.move.warn{border-top-color:var(--hold)}
+.move.neutral{border-top-color:var(--line)}
+.move .label{font-size:13px;font-weight:700;color:var(--center);margin-bottom:2px}
+.move.warn .label{color:var(--ink)}
+.move.neutral .label{color:var(--muted)}
+.move h3{font-weight:800;font-stretch:87.5%;font-size:23px;line-height:1.1;margin:0 0 6px;letter-spacing:-.005em}
+.move .sub{color:var(--muted);margin:0 0 10px;font-size:15px}
+.move ol{margin:10px 0 14px;padding-left:20px}
+.move li{margin-bottom:7px;font-size:15px}
+.routeviz svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin:-2px 0 4px}
+.legend span::before{content:"";display:inline-block;width:16px;border-top:3px solid var(--center);vertical-align:middle;margin-right:6px}
+.legend span.old::before{border-top:3px dashed var(--hold)}
+.script{background:var(--field);border-radius:14px;padding:12px 14px;margin:0 0 10px}
+.script .who{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.script p{margin:0 0 10px;font-size:15px;line-height:1.55}
+.thumbs{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:8px}
+.thumbs button{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:4px 10px;cursor:pointer;font-size:13px}
+.thumbs button[aria-pressed="true"]{background:var(--edge-soft);border-color:var(--edge);color:var(--edge);font-weight:700}
+.rights{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.rights li{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:10px;padding:10px 12px}
+.rights li.yes{border-left-color:var(--center)}
+.rights li.no{border-left-color:var(--stop)}
+.rights li.warn{border-left-color:var(--hold)}
+.rights b{display:block;font-size:15px}
+.rights span{color:var(--muted);font-size:14px}
+.payers{display:grid;gap:8px;margin-bottom:12px}
+.payer{display:grid;grid-template-columns:1fr auto;gap:2px 10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--field)}
+.payer.on{border-color:var(--center);background:var(--center-soft)}
+.payer b{font-size:15px}
+.payer .amt{font-weight:800;font-stretch:75%;font-size:20px;text-align:right}
+.payer p{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted)}
+.explist{list-style:none;margin:0 0 10px;padding:0;font-size:15px}
+.explist li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+.explist li small{color:var(--muted)}
+.explist button{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
+.meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin:8px 0 4px}
+.meter i{display:block;height:100%;background:var(--center)}
+.exp{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
+.docs{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:8px}
+details.earlier{margin-top:22px;border-top:1px solid var(--line);padding-top:12px}
+details.earlier summary{cursor:pointer;font-weight:700;font-size:15px}
+.tl{list-style:none;margin:10px 0 0;padding:0}
+.tl li{position:relative;padding:0 0 14px 18px;font-size:14px}
+.tl li::before{content:"";position:absolute;left:3px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.tl li::after{content:"";position:absolute;left:6.5px;top:16px;bottom:0;width:1px;background:var(--line)}
+.tl li:last-child::after{display:none}
+.tl b{display:block}
+.tl small{color:var(--muted)}
+.choices{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -10px 20px -14px rgba(18,26,38,.35);padding:10px 14px 12px;display:grid;gap:8px;z-index:4}
+.choices .ask{font-size:13px;font-weight:700;color:var(--muted);text-align:center}
+.choices.two{grid-template-columns:1fr 1fr}
+.choices.two .ask{grid-column:1/-1}
+.choices .btn{padding:10px 10px;font-size:14px;line-height:1.25}
+.choices .btn{flex-direction:column;align-items:stretch;text-align:center}
+.choices .btn small{font-weight:500;font-size:12px;opacity:.85}
+
+/* Outcome */
+.outcome{background:var(--tarmac);color:var(--tarmac-ink);border-radius:18px;padding:18px;margin-bottom:16px}
+.outcome .big{font-size:32px;font-weight:800;font-stretch:75%;line-height:1.05;margin:2px 0 12px}
+.outcome dl{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:0;font-size:15px}
+.outcome dt{color:var(--tarmac-muted)}
+.outcome dd{margin:0;font-weight:700;text-align:right}
+.lesson{background:var(--edge-soft);border-radius:14px;padding:12px 14px;font-size:15px;margin-bottom:18px}
+.lesson b{display:block;margin-bottom:2px}
+.q{margin:0 0 18px}
+.q > b{display:block;font-size:15px;margin-bottom:8px}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opts button{background:var(--field);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:14px;cursor:pointer}
+.opts button[aria-pressed="true"]{background:var(--edge);border-color:var(--edge);color:var(--on-accent);font-weight:700}
+
+/* Show-the-agent view */
+.agent{min-height:100%;background:#000;color:#fff;padding:22px 20px 30px;display:flex;flex-direction:column}
+.agent .who{font-size:14px;color:#aab4c4;margin-bottom:12px}
+.agent p{font-size:26px;line-height:1.35;font-weight:600;margin:0 0 24px}
+.agent .btn{margin-top:auto;background:#fff;color:#000;border-color:#fff}
+
+/* Wallet & you */
+.cardrow{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px;background:var(--surface)}
+.cardrow .thumb{width:72px;flex:none;margin-top:2px}
+.cardrow:not(.on) .thumb{opacity:.55;filter:saturate(.4)}
+.cardface{display:block;width:100%;height:auto}
+.cardrail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:18px;margin:0 -18px 10px;padding:4px 18px 12px;-webkit-overflow-scrolling:touch}
+.railitem{flex:0 0 80%;scroll-snap-align:start}
+.railitem .cardface{filter:drop-shadow(0 12px 14px rgba(18,26,38,.35))}
+.railitem b{display:block;font-size:15px;margin-top:10px}
+.railitem small{display:block;color:var(--muted);font-size:13px}
+.emptywallet{border:2px dashed var(--line);border-radius:16px;padding:22px 16px;text-align:center;color:var(--muted);font-size:14px;margin-bottom:10px}
+.cardrow b{display:block;font-size:15px}
+.cardrow small{display:block;color:var(--muted);font-size:13px}
+.feedlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.feedlist li{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.feedlist b{font-size:15px}
+.feedlist small{display:block;color:var(--muted);font-size:13px}
+.stage-tag{float:right;font-size:11px;font-weight:700;border-radius:8px;padding:1px 7px}
+.stage-tag.Launch{background:var(--edge-soft);color:var(--edge)}
+.stage-tag.Recommended{background:var(--center-soft);color:var(--center)}
+.stage-tag.Later{background:var(--field);color:var(--muted);border:1px solid var(--line)}
+.stage-tag.Gap{background:var(--stop-soft);color:var(--stop)}
+.switch{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.switch span{font-size:15px}
+.switch small{display:block;color:var(--muted);font-size:13px}
+.switch input{width:22px;height:22px;accent-color:var(--edge)}
+.status{font-size:14px;margin:10px 0 0;min-height:1.3em}
+.status.err{color:var(--stop)}
+.seg{border:1px solid var(--line);border-radius:12px;padding:10px 12px 0;margin:0 0 10px}
+.seg legend{font-weight:700;font-size:14px;padding:0 4px;color:var(--ink)}
+
+
+
+/* ---------- Website layer ----------
+   Layout: sticky nav, hero with the live app in a phone, then alternating bands
+   (story, how it works, features, claims, scenarios, under the hood), tarmac CTA. */
+html,body{height:auto}
+body{background:var(--page)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--surface)}
+.site{min-width:0}
+.s-wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.s-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--surface);border-bottom:1px solid var(--line)}
+.s-nav .s-wrap{display:flex;align-items:center;gap:22px;padding-block:10px}
+.s-nav .word{font-size:21px}
+.s-links{display:flex;gap:22px;margin-left:auto}
+.s-links a{color:var(--muted);text-decoration:none;font-weight:600;font-size:15px}
+.s-links a:hover{color:var(--ink)}
+@media (max-width:820px){.s-links{display:none}.s-nav .s-btn{margin-left:auto}}
+.s-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 18px;border-radius:12px;font:inherit;font-weight:700;font-size:15px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none}
+.s-btn.pri{background:var(--edge);border-color:var(--edge);color:var(--on-accent)}
+.s-btn.ghost{background:transparent}
+.s-btn:hover{filter:brightness(1.06)}
+
+.s-eyebrow{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--edge);margin:0}
+.s-h1{font-weight:800;font-stretch:87.5%;font-size:clamp(40px,6.2vw,70px);line-height:.98;letter-spacing:-.02em;margin:14px 0 20px;text-wrap:balance}
+.s-h2{font-weight:800;font-stretch:87.5%;font-size:clamp(30px,4.2vw,46px);line-height:1.03;letter-spacing:-.015em;margin:10px 0 14px;text-wrap:balance}
+.s-h3{font-weight:700;font-stretch:100%;font-size:19px;line-height:1.25;margin:0 0 8px}
+.s-lede{font-size:clamp(17px,2vw,20px);line-height:1.5;color:var(--muted);max-width:33em;margin:0 0 28px}
+.s-sub{font-size:18px;line-height:1.55;color:var(--muted);max-width:40em;margin:0 0 40px}
+.s-p{font-size:16px;line-height:1.6;color:var(--muted);margin:0}
+.s-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* Hero */
+.s-hero .s-wrap{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:64px;align-items:center;padding-block:56px 80px}
+@media (max-width:980px){.s-hero .s-wrap{grid-template-columns:minmax(0,1fr);gap:40px;padding-block:40px 56px}}
+.s-small{font-size:14px;color:var(--muted);margin:16px 0 0}
+.s-proof{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px}
+.s-proof span{font-size:13px;font-weight:600;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:5px 12px}
+.s-demo{display:flex;flex-direction:column;align-items:center;gap:10px}
+.site .device{width:min(390px,100%);height:780px;border:10px solid var(--tarmac);border-radius:46px;box-shadow:0 40px 70px -36px rgba(18,26,38,.6)}
+@media (max-width:900px){.site .device{width:min(390px,100%);height:720px;border:10px solid var(--tarmac);border-radius:42px;box-shadow:0 30px 50px -30px rgba(18,26,38,.6)}}
+.s-demo-cap{font-size:13px;color:var(--muted);text-align:center}
+
+/* Bands */
+.s-sec{padding-block:88px}
+.s-sec.alt{background:var(--surface);border-block:1px solid var(--line)}
+@media (max-width:700px){.s-sec{padding-block:60px}}
+.s-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:center}
+@media (max-width:900px){.s-two{grid-template-columns:minmax(0,1fr);gap:32px}}
+
+/* Story */
+.s-quote{font-size:clamp(19px,2.2vw,23px);line-height:1.5;color:var(--ink);margin:0 0 18px;max-width:30em}
+.s-diagram{background:var(--page);border:1px solid var(--line);border-radius:20px;padding:22px 22px 14px}
+.s-diagram .routeviz{margin:0}
+.s-diagram figcaption{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin-top:8px}
+.s-diagram figcaption b{color:var(--ink)}
+
+/* Steps */
+.s-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;counter-reset:s}
+@media (max-width:980px){.s-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.s-steps{grid-template-columns:minmax(0,1fr)}}
+.s-steps li{counter-increment:s;border-top:3px solid var(--ink);padding-top:16px}
+.s-steps li::before{content:counter(s);display:block;font-weight:800;font-stretch:75%;font-size:44px;line-height:1;color:var(--edge);margin-bottom:12px}
+
+/* Features */
+.s-feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+@media (max-width:980px){.s-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.s-feats{grid-template-columns:minmax(0,1fr)}}
+.s-feat{background:var(--page);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.s-tag{align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.s-ex{font-size:14px;line-height:1.5;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0}
+.s-feat .s-link{margin-top:auto;align-self:flex-start;background:none;border:0;padding:6px 0;font:inherit;font-weight:700;font-size:15px;color:var(--edge);cursor:pointer;min-height:44px}
+.s-feat .s-link:hover{text-decoration:underline}
+
+/* Claims */
+.s-cards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;max-width:460px}
+.s-cards > div:first-child{grid-column:1/-1}
+.s-cards .cardface{filter:drop-shadow(0 16px 18px rgba(18,26,38,.28))}
+.s-checks{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:12px}
+.s-checks li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px;font-size:16px;line-height:1.5}
+.s-checks svg{width:22px;height:22px;stroke:var(--center);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;margin-top:1px}
+.s-checks b{display:block;color:var(--ink)}
+.s-checks span{color:var(--muted)}
+
+/* Scenarios */
+.s-scns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:980px){.s-scns{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.s-scns{grid-template-columns:minmax(0,1fr)}}
+.s-scns .scncard{margin:0;height:100%}
+.s-scns .scncard .go{display:inline-block;margin-top:10px;font-weight:700;color:var(--edge);font-size:14px}
+
+/* Under the hood */
+.s-hood{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+@media (max-width:900px){.s-hood{grid-template-columns:minmax(0,1fr)}}
+.s-hood ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px}
+.s-hood li{font-size:15px;line-height:1.45;border-bottom:1px solid var(--line);padding-bottom:10px}
+.s-hood li b{display:block;color:var(--ink)}
+.s-hood li span{color:var(--muted);font-size:14px}
+
+/* CTA band */
+.s-cta{background:var(--tarmac);color:var(--tarmac-ink);position:relative;overflow:hidden}
+.s-cta::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:repeating-linear-gradient(90deg,var(--hold) 0 30px,transparent 30px 52px)}
+.s-cta .s-wrap{padding-block:80px;display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:space-between}
+.s-cta .s-h2{color:var(--tarmac-ink);margin:0;max-width:16em}
+.s-cta p{color:var(--tarmac-muted);margin:10px 0 0;font-size:17px}
+.s-foot{padding-block:32px 48px;font-size:14px;color:var(--muted)}
+.s-foot .s-wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+.s-foot p{margin:0;max-width:52em}
+.site a:focus-visible,.site button:focus-visible{outline:2px solid var(--edge);outline-offset:3px}
+
+</style>
+<div class="site">
+<header class="s-nav">
+  <div class="s-wrap">
+    <a class="mark" href="#top" aria-label="Rerouted home"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word">Rerouted</span></a>
+    <nav class="s-links" aria-label="Sections">
+      <a href="#how">How it works</a><a href="#features">Features</a><a href="#claims">Claims</a><a href="#scenarios">Try a scenario</a><a href="#hood">Under the hood</a>
+    </nav>
+    <button class="s-btn pri" type="button" data-play="denver">Try the demo</button>
+  </div>
+</header>
+
+<main id="top">
+<section class="s-hero" aria-labelledby="heroTitle">
+  <div class="s-wrap">
+    <div>
+      <p class="s-eyebrow">For United travelers · Early prototype</p>
+      <h1 class="s-h1" id="heroTitle">Your plan B, ready before the gate agent is.</h1>
+      <p class="s-lede">When your flight slips, Rerouted tells you what you’re owed, the best flight to move to, and exactly what to say to get it. Then it works out what your credit card will pay back.</p>
+      <div class="s-row">
+        <button class="s-btn pri" type="button" data-play="denver">Play a bad travel day</button>
+        <a class="s-btn ghost" href="#how">How it works</a>
+      </div>
+      <p class="s-small">The phone is the real prototype. Tap the alert and make the calls you’d make. Nothing touches a real booking.</p>
+      <div class="s-proof" aria-label="What it covers">
+        <span>Free same-day changes</span><span>Standby strategy</span><span>Agent scripts</span><span>Card delay coverage</span><span>Delayed bags</span>
+      </div>
+    </div>
+    <div class="s-demo" id="demo">
+      <div class="device">
+        <div id="toast" aria-live="polite"></div>
+        <div class="screen" id="screen" role="region" aria-label="Rerouted app demo"></div>
+        <nav class="tabs" id="tabs" aria-label="App">
+          <button type="button" data-tab="home" aria-current="page"><span data-ic="trips"></span>Trips</button>
+          <button type="button" data-tab="wallet"><span data-ic="wallet"></span>Wallet</button>
+          <button type="button" data-tab="you"><span data-ic="you"></span>You</button>
+        </nav>
+      </div>
+      <p class="s-demo-cap">Live demo. Works best on your phone, too.</p>
+    </div>
+  </div>
+</section>
+
+<section class="s-sec alt" aria-labelledby="storyTitle">
+  <div class="s-wrap s-two">
+    <div>
+      <p class="s-eyebrow">Why we built it</p>
+      <h2 class="s-h2" id="storyTitle">The rules exist. Most travelers never use them.</h2>
+      <p class="s-quote">Boston to Los Angeles, connecting in Denver. The Denver flight slipped. Because the delay was United’s, and with status, the traveler could move to the Boston nonstop instead.</p>
+      <p class="s-p">That option depends on fare, status, the cause of the delay, and which seats are open that morning. Rerouted puts all of it together the moment something changes, and tells you the move in plain words.</p>
+    </div>
+    <figure class="s-diagram" style="margin:0">
+      <div id="storyRoute"></div>
+      <figcaption><span><b>Booked:</b> through Denver, landing 3:10 PM</span><span><b>Better:</b> the nonstop, landing 11:40 AM</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="s-sec" id="how" aria-labelledby="howTitle">
+  <div class="s-wrap">
+    <p class="s-eyebrow">How it works</p>
+    <h2 class="s-h2" id="howTitle">From confirmation email to a better flight</h2>
+    <p class="s-sub">Four steps, and only the first one is yours.</p>
+    <ol class="s-steps">
+      <li><h3 class="s-h3">Forward your confirmation</h3><p class="s-p">Paste or forward the email from United or the site you booked on. Rerouted reads your flights, fare, status and who sold the ticket, and flags risks like separate tickets.</p></li>
+      <li><h3 class="s-h3">Rerouted watches</h3><p class="s-p">Live flight status, the plane coming in, and weather at your connection. You hear about trouble the night before, while it’s still easy to fix.</p></li>
+      <li><h3 class="s-h3">You get the move</h3><p class="s-p">The flight to switch to, why you’re owed it, the fastest line to use, and a script to read or show the agent.</p></li>
+      <li><h3 class="s-h3">You get your money back</h3><p class="s-p">When your card’s coverage kicks in, Rerouted builds the claim: deadlines on real dates, a documents checklist, and details ready to paste.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="s-sec alt" id="features" aria-labelledby="featTitle">
+  <div class="s-wrap">
+    <p class="s-eyebrow">Features</p>
+    <h2 class="s-h2" id="featTitle">Built for the worst hour of your trip</h2>
+    <p class="s-sub">Each one opens in the live demo, so you can see it for yourself.</p>
+    <div class="s-feats">
+      <article class="s-feat"><span class="s-tag">Rebooking</span><h3 class="s-h3">A specific flight, and the words to ask for it</h3>
+        <p class="s-ex">“Could you move me to UA 1288, the 8:15 nonstop from Boston? It shows four open seats.”</p>
+        <p class="s-p">Copy the script, or hold it up to the agent in large type.</p>
+        <button class="s-link" type="button" data-play="denver">See it in the demo →</button></article>
+      <article class="s-feat"><span class="s-tag">The night before</span><h3 class="s-h3">A risk check while seats are still open</h3>
+        <p class="s-ex">Snow at O’Hare during a 50-minute connection: switch to the nonstop tonight, free with your status.</p>
+        <p class="s-p">Weather, connection time, the inbound plane and your ticket, scored before you pack.</p>
+        <button class="s-link" type="button" data-play="eve">See it in the demo →</button></article>
+      <article class="s-feat"><span class="s-tag">Getting help</span><h3 class="s-h3">The fastest line, ranked</h3>
+        <p class="s-ex">Expedia phone: about 40 min hold. United desk near C11: about 15 people. Do both at once.</p>
+        <p class="s-p">App, phone, desk or gate, with a clear pick for right now.</p>
+        <button class="s-link" type="button" data-play="ohare">See it in the demo →</button></article>
+      <article class="s-feat"><span class="s-tag">Early warning</span><h3 class="s-h3">Know before United posts the delay</h3>
+        <p class="s-ex">Your 6:30 AM plane is stuck in Chicago. On separate tickets, move your Miami flight now.</p>
+        <p class="s-p">Rerouted watches the aircraft’s previous flight, the earliest signal there is.</p>
+        <button class="s-link" type="button" data-play="newark">See it in the demo →</button></article>
+      <article class="s-feat"><span class="s-tag">Third-party tickets</span><h3 class="s-h3">Booked on Expedia? It knows who to call</h3>
+        <p class="s-ex">Scripts for both the booking site and the United desk, with your itinerary number filled in.</p>
+        <p class="s-p">Separate tickets and booking sites change your rights. Rerouted says how, up front.</p>
+        <button class="s-link" type="button" data-play="ohare">See it in the demo →</button></article>
+      <article class="s-feat"><span class="s-tag">Bags</span><h3 class="s-h3">Your suitcase is late. You’re still covered.</h3>
+        <p class="s-ex">File the report before you leave the airport. Your bag fee comes back after 12 hours.</p>
+        <p class="s-p">Essentials tracked against your card’s baggage coverage, with the claim built for you.</p>
+        <button class="s-link" type="button" data-play="bag">See it in the demo →</button></article>
+    </div>
+  </div>
+</section>
+
+<section class="s-sec" id="claims" aria-labelledby="claimTitle">
+  <div class="s-wrap s-two">
+    <div class="s-cards" id="siteCards" aria-label="Example card coverage"></div>
+    <div>
+      <p class="s-eyebrow">Delay money</p>
+      <h2 class="s-h2" id="claimTitle">Your card may owe you more than the airline does</h2>
+      <p class="s-sub" style="margin-bottom:26px">United owes nothing for a snowstorm. A Sapphire Reserve can still cover your hotel and dinner. Rerouted knows the difference and builds the claim.</p>
+      <ul class="s-checks">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Eligibility in plain words</b><span>Which card covers this trip, from what hour, and up to how much.</span></div></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Deadlines on real dates</b><span>When to start the claim and when documents are due, for your card’s issuer.</span></div></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Receipts against the limit</b><span>Log expenses as you go and see how much of your coverage is left.</span></div></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>A claim ready to paste</b><span>Flights, what happened, itemized expenses and the amount to request.</span></div></li>
+      </ul>
+      <button class="s-btn pri" type="button" data-play="ohare">Walk through a claim</button>
+    </div>
+  </div>
+</section>
+
+<section class="s-sec alt" id="scenarios" aria-labelledby="scnTitle">
+  <div class="s-wrap">
+    <p class="s-eyebrow">Try a scenario</p>
+    <h2 class="s-h2" id="scnTitle">Practice a bad travel day</h2>
+    <p class="s-sub">Each one opens in the phone above and takes about three minutes. Your choices change how the day ends.</p>
+    <div class="s-scns" id="siteScns"></div>
+  </div>
+</section>
+
+<section class="s-sec" id="hood" aria-labelledby="hoodTitle">
+  <div class="s-wrap">
+    <p class="s-eyebrow">Under the hood</p>
+    <h2 class="s-h2" id="hoodTitle">Built on the actual rules, and live data</h2>
+    <p class="s-sub">Every recommendation traces back to a published rule or a live feed. Where no feed exists, Rerouted says so and asks you.</p>
+    <div class="s-hood">
+      <div><h3 class="s-h3">The rules it knows</h3><ul>
+        <li><b>United same-day changes and standby</b><span>By fare and Premier status</span></li>
+        <li><b>United’s Customer Commitment</b><span>Rebooking, meals and hotels for delays United causes</span></li>
+        <li><b>DOT refund rules</b><span>Cancellations and 3+ hour domestic delays</span></li>
+        <li><b>DOT delay-cause categories</b><span>The Section 511(b) rule in effect since October 19, 2026</span></li>
+        <li><b>DOT bag fee refunds</b><span>Bags more than 12 hours late on domestic flights</span></li>
+        <li><b>Card trip and baggage delay terms</b><span>Thresholds, limits, deadlines and where to file</span></li>
+      </ul></div>
+      <div><h3 class="s-h3">The data it watches</h3><ul>
+        <li><b>Live flight status and alerts</b><span>Delays, cancellations, diversions and gate changes</span></li>
+        <li><b>The inbound aircraft</b><span>Where your plane is coming from, and how late</span></li>
+        <li><b>United’s schedule</b><span>Every alternative flight to your destination</span></li>
+        <li><b>Open seats</b><span>Confirmed or standby, before you ask</span></li>
+        <li><b>Airport disruptions and weather</b><span>Ground stops, delay programs and forecasts at your hubs</span></li>
+        <li><b>United travel waivers</b><span>Free changes issued before storms</span></li>
+      </ul></div>
+      <div><h3 class="s-h3">What you tell it</h3><ul>
+        <li><b>Why the flight is late</b><span>No public feed has the cause. You confirm what United said, and the advice adjusts.</span></li>
+        <li><b>Your bag report number</b><span>Bag tracking isn’t public. The report number links your claim.</span></li>
+        <li><b>Which cards you carry</b><span>Rerouted checks each card’s coverage. No bank login needed.</span></li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="s-cta" aria-labelledby="ctaTitle">
+  <div class="s-wrap">
+    <div><h2 class="s-h2" id="ctaTitle">Your next delay is coming. Be ready for it.</h2>
+      <p>Play a scenario, then tell us what you thought. Five taps at the end of each one.</p></div>
+    <button class="s-btn pri" type="button" data-play="denver">Play a bad travel day</button>
+  </div>
+</section>
+</main>
+
+<footer class="s-foot">
+  <div class="s-wrap">
+    <a class="mark" href="#top" aria-label="Back to top"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word" style="font-size:18px">Rerouted</span></a>
+    <p>Rerouted is an early prototype for testing. It is not affiliated with United Airlines or any card issuer. Rules and card terms were checked November 11, 2026; always confirm against official sources.</p>
+  </div>
+</footer>
+</div>
+
+<script>
+
+/* ---------- Reference data, parsing, and rules engine (from the tested prototype) ---------- */
+const AP = {
+  BOS:['Boston',42.36,-71.01,-5], JFK:['New York JFK',40.64,-73.78,-5], LGA:['New York LaGuardia',40.78,-73.87,-5],
+  EWR:['Newark',40.69,-74.17,-5], PVD:['Providence',41.72,-71.43,-5], MHT:['Manchester',42.93,-71.44,-5],
+  MIA:['Miami',25.79,-80.29,-5], FLL:['Fort Lauderdale',26.07,-80.15,-5], ATL:['Atlanta',33.64,-84.43,-5],
+  CLT:['Charlotte',35.21,-80.94,-5], DTW:['Detroit',42.21,-83.35,-5], ORD:['Chicago O’Hare',41.97,-87.9,-6],
+  MDW:['Chicago Midway',41.79,-87.75,-6], DFW:['Dallas/Fort Worth',32.9,-97.04,-6], DAL:['Dallas Love Field',32.85,-96.85,-6],
+  IAH:['Houston Intercontinental',29.99,-95.34,-6], HOU:['Houston Hobby',29.65,-95.28,-6], MSP:['Minneapolis',44.88,-93.22,-6],
+  DEN:['Denver',39.86,-104.67,-7], SLC:['Salt Lake City',40.79,-111.98,-7], PHX:['Phoenix',33.43,-112.01,-7],
+  LAX:['Los Angeles',33.94,-118.41,-8], BUR:['Burbank',34.2,-118.36,-8], LGB:['Long Beach',33.82,-118.15,-8],
+  SNA:['Orange County',33.68,-117.87,-8], ONT:['Ontario',34.06,-117.6,-8], SFO:['San Francisco',37.62,-122.38,-8],
+  OAK:['Oakland',37.72,-122.22,-8], SJC:['San Jose',37.36,-121.93,-8], SEA:['Seattle',47.45,-122.31,-8]
+};
+const ALT = {LAX:['BUR','LGB','SNA','ONT'],SFO:['OAK','SJC'],OAK:['SFO','SJC'],SJC:['SFO','OAK'],BOS:['PVD','MHT'],
+  JFK:['LGA','EWR'],LGA:['JFK','EWR'],EWR:['JFK','LGA'],ORD:['MDW'],MDW:['ORD'],DFW:['DAL'],DAL:['DFW'],IAH:['HOU'],HOU:['IAH'],MIA:['FLL'],FLL:['MIA']};
+const FARES = ['Basic Economy','Economy','Premium Economy','Business / First'];
+const VIA = {airline:'united.com or the United app', points:'United, paid with miles', ota:'Online travel site', agency:'Travel or corporate agency'};
+const AL = {
+  UA:{name:'United', app:'United app', path:'My Trips, select the trip, then Change flight', alliance:'star',
+      hubs:['DEN','ORD','SFO','EWR','IAH'], extra:['BOS-LAX','BOS-SFO','BOS-SEA'],
+      tiers:['MileagePlus member','Premier Silver','Premier Gold','Premier Platinum','Premier 1K'],
+      policy:{disruptDelay:60, mct:40, confirmedFee:[75,0,0,0,0], standbyFee:[0,0,0,0,0], basicSameDay:false, mealAt:180}}
+};
+const ALLIANCES = {none:['None',null], star:['Star Alliance Gold through another airline','star']};
+
+/* ---------- Sourced rules (checked Nov 11, 2026) ---------- */
+const CHECKED='Nov 11, 2026';
+const UA_CHANGE='https://www.united.com/en/us/fly/travel/trip-planning/flight-change.html';
+const RULES={
+  sdc:{name:'Same-day confirmed change',text:'Free for Premier members when the same fare class is open on the new flight; up to $75 for other travelers; not available on Basic Economy. Same origin and destination, within 24 hours of the original flight, United-operated.',src:UA_CHANGE,conf:'check',note:'United’s page renders with JavaScript and couldn’t be read directly. Secondary sources disagree on whether Premier Silver is included.'},
+  standby:{name:'Same-day standby',text:'Free for every fare except Basic Economy. Officially limited to the same routing; agents sometimes allow more.',src:UA_CHANGE,conf:'check',note:'Same page as above.'},
+  commit:{name:'Customer Commitment',text:'For delays and cancellations within United’s control: rebooking at no extra cost, including on partner airlines; a meal voucher once the wait reaches 3 hours; hotel and transportation for an overnight delay.',src:'https://www.united.com/en/us/fly/customer-commitment.html',conf:'ok'},
+  dashboard:{name:'DOT customer service dashboard',text:'DOT lists and enforces each airline’s commitments for controllable delays and cancellations.',src:'https://www.transportation.gov/airconsumer/airline-customer-service-dashboard',conf:'ok'},
+  r511:{name:'DOT Section 511(b) rule',text:'Since Oct 19, 2026, ten event types, such as unscheduled maintenance that can’t be deferred, are no longer reported as airline-caused. Meal and hotel commitments may not apply to them.',src:'https://www.federalregister.gov/documents/2026/09/03/2026-18040/cause-of-airline-delay-and-cancellation-categories-under-section-511b-of-the-faa-reauthorization-act',conf:'ok'},
+  refund:{name:'DOT refund rule',text:'If a flight is canceled or significantly changed (3+ hours domestic, 6+ international) and you decline the rebooking, you’re owed a refund regardless of cause.',src:'https://www.transportation.gov/airconsumer/airline-customer-service-dashboard',conf:'ok'}
+};
+const src=(k,label)=>`<a class="src" href="${RULES[k].src}" target="_blank" rel="noopener">${label||'Source'}</a>`;
+
+/* Card trip delay benefits. per: 'ticket' = cap per covered traveler; 'trip' = one cap per trip */
+const CARDS={
+  csr:{name:'Chase Sapphire Reserve',hrs:6,overnight:true,cap:500,per:'ticket',src:'https://www.cnbc.com/select/best-credit-cards-trip-delay-insurance/',conf:'check'},
+  csp:{name:'Chase Sapphire Preferred',hrs:12,overnight:true,cap:500,per:'ticket',src:'https://10xtravel.com/cards-with-trip-delay-insurance/',conf:'check'},
+  uacard:{name:'United Explorer, Quest, Club Infinite, or Business',hrs:12,overnight:true,cap:500,per:'ticket',src:'https://www.chase.com/personal/credit-cards/united/united-explorer-card/travel-protection',conf:'ok'},
+  vx:{name:'Capital One Venture X',hrs:6,overnight:true,cap:500,per:'ticket',src:'https://yourmileagemayvary.com/2026/08/09/credit-cards-trip-delay-insurance/',conf:'check'},
+  amexp:{name:'American Express Platinum',hrs:6,overnight:false,cap:500,per:'trip',claims:2,rt:true,src:'https://www.cardsandpoints.com/trip-delay-insurance/',conf:'check'},
+  amexg:{name:'American Express Gold',hrs:12,overnight:false,cap:300,per:'trip',claims:2,rt:true,src:'https://www.cardsandpoints.com/trip-delay-insurance/',conf:'check'},
+  citisp:{name:'Citi Strata Premier',hrs:6,overnight:false,cap:500,per:'trip',src:'https://yourmileagemayvary.com/2026/08/09/credit-cards-trip-delay-insurance/',conf:'check'},
+  bofapr:{name:'Bank of America Premium Rewards',hrs:12,overnight:false,cap:500,per:'ticket',src:'https://yourmileagemayvary.com/?p=148770',conf:'check'}
+};
+function cardTerms(c){return `${c.overnight?`More than ${c.hrs} hours or an overnight stay`:`More than ${c.hrs} hours`}; up to $${c.cap} per ${c.per==='ticket'?'traveler':'trip'}${c.claims?`, ${c.claims} claims a year`:''}${c.rt?', round trip must be on the card':''}`}
+
+/* ---------- Sample emails ---------- */
+const SAMPLES = {
+direct:`From: United Airlines <notifications@united.com>
+Subject: Your trip confirmation: BOS to LAX, Wed, Nov 18, 2026
+
+Confirmation number: K7XQ2M
+Traveler: Alex Rivera   MileagePlus Premier Gold
+
+Flight 1 of 2   UA 1543
+Wed, Nov 18, 2026
+Depart 7:05 AM   Boston, MA (BOS)
+Arrive 9:30 AM   Denver, CO (DEN)
+United Economy (K)
+
+Flight 2 of 2   UA 2216
+Depart 11:20 AM   Denver, CO (DEN)
+Arrive 12:40 PM   Los Angeles, CA (LAX)
+United Economy (K)
+
+1 adult. Carry-on bag included. No checked bags.`,
+expedia:`From: Expedia <travel@expediamail.com>
+Subject: Expedia travel confirmation, Boston to Seattle
+
+Expedia itinerary # 7294018833651
+United Airlines confirmation code: HJ4R9T
+
+Traveler(s): Jordan Lee, Sam Lee
+
+Tue, Nov 17, 2026
+United 1287   Economy (Class T)
+Boston (BOS) 6:00 AM  ->  Chicago (ORD) 7:55 AM
+
+United 2054   Economy (Class T)
+Chicago (ORD) 9:05 AM  ->  Seattle (SEA) 11:40 AM
+
+Bags: 1 checked bag per traveler
+Changes to this booking must be made through Expedia.`,
+split:`From: United Airlines <notifications@united.com>
+Subject: Your trip confirmation
+
+Confirmation number: PLM3QA
+UA 1872
+Thu, Nov 19, 2026
+Depart 6:30 AM   Boston, MA (BOS)
+Arrive 8:05 AM   Newark, NJ (EWR)
+United Economy (L)
+
+-----
+
+From: United Airlines <notifications@united.com>
+Subject: Your trip confirmation
+
+Confirmation number: ZR82KD
+UA 2291
+Thu, Nov 19, 2026
+Depart 9:00 AM   Newark, NJ (EWR)
+Arrive 12:10 PM   Miami, FL (MIA)
+United Economy (L)`
+};
+
+/* ---------- Simulated schedule (swap for a live flight-status API) ---------- */
+function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function rng(seed){let a=hash(seed);return()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function miles(a,b){const R=3959,r=x=>x*Math.PI/180,[,la1,lo1]=AP[a],[,la2,lo2]=AP[b];
+  const d=Math.sin(r(la2-la1)/2)**2+Math.cos(r(la1))*Math.cos(r(la2))*Math.sin(r(lo2-lo1)/2)**2;return 2*R*Math.asin(Math.sqrt(d))}
+const blockTime=(a,b)=>Math.round((miles(a,b)/7.6+38)/5)*5;
+const isExtra=(A,a,b)=>A.extra.includes(a+'-'+b)||A.extra.includes(b+'-'+a);
+const hasNonstop=(al,a,b)=>{const A=AL[al];return a!==b&&(A.hubs.includes(a)||A.hubs.includes(b)||isExtra(A,a,b))};
+const FC={};
+function flights(al,a,b){
+  const k=al+a+b; if(FC[k]) return FC[k];
+  const out=[];
+  if(hasNonstop(al,a,b)){
+    const A=AL[al], R=rng(k), both=A.hubs.includes(a)&&A.hubs.includes(b);
+    const n=both?7:isExtra(A,a,b)&&!A.hubs.includes(a)&&!A.hubs.includes(b)?3:4;
+    const bt=blockTime(a,b), tz=AP[a][3];
+    for(let i=0;i<n;i++){
+      const local=Math.round((360+i*(870/n)+R()*40)/5)*5;
+      const dep=local-tz*60, r=R();
+      const delay=r<.7?0:r<.9?Math.round((10+R()*35)/5)*5:Math.round((60+R()*90)/5)*5;
+      const s=R();
+      out.push({id:k+i,al,num:String(100+Math.floor(R()*2800)),from:a,to:b,dep,arr:dep+bt,delay,
+        seats:s<.25?0:1+Math.floor(R()*9),list:2+Math.floor(R()*12)});
+    }
+  }
+  return FC[k]=out;
+}
+function itineraries(al,a,b){
+  const A=AL[al], mct=A.policy.mct, res=flights(al,a,b).map(f=>[f]);
+  for(const h of A.hubs){
+    if(h===a||h===b) continue;
+    const f2s=flights(al,h,b);
+    for(const f1 of flights(al,a,h)){
+      const f2=f2s.find(f=>f.dep-f1.arr>=mct&&f.dep-f1.arr<=200);
+      if(f2) res.push([f1,f2]);
+    }
+  }
+  return res;
+}
+
+/* ---------- Helpers ---------- */
+const $=id=>document.getElementById(id);
+function fmt(utc,ap){let m=utc+AP[ap][3]*60,plus=m>=1440?' +1':'';m=((m%1440)+1440)%1440;
+  let h=Math.floor(m/60),mm=String(m%60).padStart(2,'0'),ampm=h>=12?'PM':'AM';h=h%12||12;return `${h}:${mm} ${ampm}${plus}`}
+function rel(g){return g>0?`${dur(g)} before your original arrival`:g<0?`${dur(-g)} after your original arrival`:'right at your original arrival time'}
+function dur(m){m=Math.round(m);const h=Math.floor(m/60),r=m%60;return h?(r?`${h} hr ${r} min`:`${h} hr`):`${r} min`}
+const fl=f=>`${f.al} ${f.num}`;
+const fls=it=>it.map(x=>fl(x.f||x)).join(' + ');
+const via=it=>it.length>1?`via ${(it[0].f||it[0]).to}`:'nonstop';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const toMin=h=>{const [a,b]=String(h).split(':').map(Number);return a*60+b};
+function to24(h,m,ap){h=+h;m=+m;ap=(ap||'').toUpperCase();if(ap==='P'&&h<12)h+=12;if(ap==='A'&&h===12)h=0;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`}
+function niceDate(d){if(!d)return '';const t=new Date(d+'T12:00:00Z');return isNaN(t)?d:t.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',timeZone:'UTC'})}
+function store(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function load(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}}
+
+/* ---------- State ---------- */
+const PROFILE0={status:{UA:0},alliance:'none',cards:[],alt:true,alertMin:30};
+const S={draft:null,trip:null,profile:Object.assign({},PROFILE0,load('rr4-profile')||{}),booked:null,segDelay:[],segCancel:[],now:360,cause:'ctrl'};
+S.profile.status=Object.assign({UA:0},S.profile.status||{});S.profile.cards=S.profile.cards||[];
+
+/* ---------- Reading a booking ---------- */
+const sampleP = (window.claude&&window.claude.use) ? window.claude.use('sample').catch(()=>null) : Promise.resolve(null);
+
+const PROMPT=`You extract airline booking details from a confirmation email or screenshot. Respond with only a JSON object, no other text, in exactly this shape:
+{"airline":"UA|DL|AA|OTHER","bookedVia":"airline|points|ota|agency","bookedViaName":"name of the travel site or agency, or empty","viaReference":"travel site itinerary number, or empty","fare":"basic|economy|premium|first","bookingClass":"single letter or empty","travelers":1,"checkedBags":false,"date":"YYYY-MM-DD","segments":[{"airline":"UA","flight":"1543","from":"BOS","to":"DEN","depart":"07:05","arrive":"09:30","date":"YYYY-MM-DD","confirmation":"K7XQ2M","operatedBy":""}]}
+Rules: airport codes are 3-letter IATA codes. Times are 24-hour local times as printed. airline uses UA for United, DL for Delta, AA for American, OTHER for anything else. bookedVia is "ota" for sites like Expedia, Priceline, Orbitz, Kayak, Hopper, Booking.com; "agency" for travel agents and corporate tools like Navan, Concur, Amex GBT; "points" for award tickets bought with miles from the airline; otherwise "airline". Put each flight's own confirmation code on its segment; separate bookings have different codes. Include every flight in the order flown, including return flights.
+
+Booking:
+`;
+
+function regexParse(txt){
+  const t=txt.replace(/\r/g,''), lines=t.split('\n');
+  const alMap={ua:'UA',united:'UA',dl:'DL',delta:'DL',aa:'AA',american:'AA'};
+  const fre=/\b(UA|DL|AA|United|Delta|American)(?:\s+Air\s*Lines|\s+Airlines)?\s*(?:flight\s*)?#?\s*(\d{1,4})\b/i;
+  const confRe=/(?:confirmation(?:\s+(?:number|code|#))?|record locator|booking (?:reference|code)|PNR)\s*[:#]?\s*([A-Z0-9]{6})\b/gi;
+  const confs=[];let m;while((m=confRe.exec(t))){if(m[1]===m[1].toUpperCase()&&/[A-Z]/.test(m[1]))confs.push({c:m[1],i:m.index})}
+  const lineStart=[];let p=0;for(const l of lines){lineStart.push(p);p+=l.length+1}
+  const hits=[];lines.forEach((l,i)=>{const mm=l.match(fre);if(mm)hits.push({i,al:alMap[mm[1].toLowerCase()],num:mm[2]})});
+  const segs=hits.map((h,k)=>{
+    const endLine=k+1<hits.length?hits[k+1].i:Math.min(lines.length,h.i+7);
+    const win=lines.slice(h.i,Math.max(endLine,h.i+1)).join('\n');
+    let codes=[...win.matchAll(/\(([A-Z]{3})\)/g)].map(x=>x[1]).filter(c=>AP[c]);
+    if(codes.length<2) codes=[...win.matchAll(/\b([A-Z]{3})\b/g)].map(x=>x[1]).filter(c=>AP[c]);
+    const times=[...win.matchAll(/(\d{1,2}):(\d{2})\s*([AP])\.?\s?M\.?/gi)].map(x=>to24(x[1],x[2],x[3]));
+    const before=confs.filter(c=>c.i<lineStart[h.i]);
+    return {airline:h.al,flight:h.num,from:codes[0]||'',to:codes[1]||'',depart:times[0]||'',arrive:times[1]||'',
+      confirmation:(before.length?before[before.length-1]:confs[0]||{}).c||''};
+  });
+  let viaType='airline',viaName='';
+  const ota=t.match(/\b(Expedia|Priceline|Orbitz|Travelocity|Kayak|Booking\.com|Hopper|CheapOair|Trip\.com)\b/i);
+  const ag=t.match(/\b(Navan|Concur|Amex GBT|Egencia|travel agency|travel agent|corporate travel)\b/i);
+  if(ota){viaType='ota';viaName=ota[1]}else if(ag){viaType='agency';viaName=ag[1]}
+  else if(/\b(award ticket|paid with miles|miles redeemed)\b/i.test(t))viaType='points';
+  let fare='economy';
+  if(/basic economy/i.test(t))fare='basic';
+  else if(/\b(first class|business class|polaris|delta one|flagship first|flagship business|domestic first)\b/i.test(t))fare='first';
+  else if(/\b(premium economy|premium plus|premium select|comfort\+|comfort plus|economy plus|main cabin extra)\b/i.test(t))fare='premium';
+  const cls=(t.match(/\((?:class\s*)?([A-Z])\)/)||t.match(/\bclass[:\s]+([A-Z])\b/i)||[])[1]||'';
+  let trav=+((t.match(/(\d)\s+(?:adults?|travell?ers?|passengers?)/i)||[])[1]||0);
+  if(!trav){const tl=t.match(/Travell?er\(?s?\)?:\s*([^\n]+)/i);trav=tl?tl[1].split(/,| and /).filter(x=>x.trim()).length:1}
+  const bags=/\b[1-9]\s+checked bags?\b/i.test(t)&&!/no checked bags/i.test(t);
+  const months='jan feb mar apr may jun jul aug sep oct nov dec'.split(' ');
+  const dm=t.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+(\d{1,2}),\s*(\d{4})/i);
+  const date=dm?`${dm[3]}-${String(months.indexOf(dm[1].slice(0,3).toLowerCase())+1).padStart(2,'0')}-${dm[2].padStart(2,'0')}`:'';
+  const vref=(t.match(/itinerary\s*(?:#|number)?\s*:?\s*(\d{8,})/i)||[])[1]||'';
+  return {airline:segs[0]?.airline||'UA',bookedVia:viaType,bookedViaName:viaName,viaReference:vref,fare,bookingClass:cls,
+    travelers:trav||1,checkedBags:bags,date,segments:segs};
+}
+
+function normalize(j){
+  const fareIdx={basic:0,economy:1,premium:2,first:3}[j.fare]??1;
+  const all=(j.segments||[]).map(s=>({al:(s.airline||j.airline||'').toUpperCase(),num:String(s.flight||'').replace(/\D/g,''),
+    from:(s.from||'').toUpperCase(),to:(s.to||'').toUpperCase(),dep:s.depart||'',arr:s.arrive||'',conf:(s.confirmation||'').toUpperCase(),
+    date:s.date||j.date||'',op:s.operatedBy||''}));
+  // Keep the first leg: a connected chain of up to 2 flights on the first travel date
+  const segs=[];const notes=[];
+  for(const s of all){
+    if(!segs.length){segs.push(s);continue}
+    const prev=segs[segs.length-1];
+    if(s.from===prev.to&&(!s.date||!prev.date||s.date===prev.date)&&s.to!==segs[0].from&&segs.length<2)segs.push(s);
+    else break;
+  }
+  if(all.length>segs.length)notes.push(`Found ${all.length} flights. Rerouted tracks the first leg (${segs.length===1?'1 flight':segs.length+' flights'}) for now.`);
+  const otherAirline=segs.some(s=>s.al&&s.al!=='UA')||(j.airline&&!['UA',''].includes(String(j.airline).toUpperCase()));
+  return {airline:'UA',otherAirline,paidWith:'',roundTrip:/round\s*trip|return flight/i.test(JSON.stringify(j))||all.some(s=>s.to===segs[0]?.from),
+    via:VIA[j.bookedVia]?j.bookedVia:'airline',viaName:j.bookedViaName||'',viaRef:j.viaReference||'',
+    fare:fareIdx,cls:(j.bookingClass||'').slice(0,1).toUpperCase(),travelers:Math.max(1,+j.travelers||1),bags:!!j.checkedBags,
+    date:j.date||segs[0]?.date||'',deadline:'',segments:segs.length?segs:[{al:'UA',num:'',from:'',to:'',dep:'',arr:'',conf:''}],notes};
+}
+
+function buildBooked(){
+  const T=S.trip;let prevArr=-Infinity;
+  S.booked=T.segments.map((s,i)=>{
+    let dep=toMin(s.dep)-AP[s.from][3]*60;while(dep<prevArr-30)dep+=1440;
+    let arr=toMin(s.arr)-AP[s.to][3]*60;while(arr<=dep)arr+=1440;prevArr=arr;
+    return {id:'booked'+i,al:T.airline,num:s.num,from:s.from,to:s.to,dep,arr,conf:s.conf};
+  });
+  S.segDelay=S.booked.map(()=>0);S.segCancel=S.booked.map(()=>false);
+  S.now=Math.max(0,Math.floor((S.booked[0].dep+AP[S.booked[0].from][3]*60-60)/5)*5);
+}
+
+/* ---------- Rules engine ---------- */
+function ctx(){
+  const T=S.trip,al=T.airline,A=AL[al],pr=S.profile;
+  return {T,al,A,P:A.policy,pr,tier:pr.status[al]||0,tierName:A.tiers[pr.status[al]||0],
+    direct:T.via==='airline'||T.via==='points',viaName:T.viaName||'your booking site',
+    separate:new Set(T.segments.map(s=>s.conf).filter(Boolean)).size>1,
+    alliBoost:ALLIANCES[pr.alliance]?.[1]===A.alliance,from:S.booked[0].from,to:S.booked[S.booked.length-1].to};
+}
+function analyze(){
+  const c=ctx(),{P}=c,mct=P.mct,segs=S.booked;
+  const nowU=S.now-AP[c.from][3]*60;
+  const eff=segs.map((f,i)=>({f,dep:f.dep+S.segDelay[i],arr:f.arr+S.segDelay[i],delay:S.segDelay[i],cancel:S.segCancel[i]}));
+  let status='ontime',margin=null;
+  if(eff.length>1)margin=eff[1].dep-eff[0].arr;
+  if(eff.some(e=>e.cancel))status='canceled';
+  else if(margin!==null&&margin<mct)status='misconnect';
+  else if(eff.some(e=>e.delay>=P.disruptDelay))status='major';
+  else if(eff.some(e=>e.delay>0))status='minor';
+  const tight=!['misconnect','canceled'].includes(status)&&margin!==null&&margin<mct+20;
+  const disrupted=['canceled','misconnect','major'].includes(status);
+  const schedArr=segs[segs.length-1].arr;
+  const projArr=(status==='canceled'||status==='misconnect')?null:eff[eff.length-1].arr;
+  const maxDelay=Math.max(0,...eff.map(e=>e.delay));
+  const dIdx=eff.findIndex(e=>e.cancel||e.delay>=P.disruptDelay);
+
+  let loc=c.from,earliest=nowU+30,where='origin',remaining=eff;
+  if(nowU>=eff[0].dep&&!eff[0].cancel){
+    if(eff.length>1&&nowU<eff[0].arr){loc=segs[0].to;earliest=eff[0].arr+mct;where='air';remaining=eff.slice(1)}
+    else if(eff.length>1&&(nowU<eff[1].dep||eff[1].cancel||status==='misconnect')){loc=segs[0].to;earliest=Math.max(nowU+30,eff[0].arr+mct);where='hub';remaining=eff.slice(1)}
+    else where='final';
+  }
+  const protectedTrip=!c.separate||(status!=='misconnect'&&(segs.length===1||(dIdx===segs.length-1&&loc===segs[dIdx].from)));
+  const covered=disrupted&&protectedTrip;
+
+  let deadlineU=null;
+  if(c.T.deadline){deadlineU=toMin(c.T.deadline)-AP[c.to][3]*60;while(deadlineU<segs[0].dep)deadlineU+=1440}
+
+  const bookedIds=segs.map(s=>s.id),remIds=remaining.map(e=>e.f.id).join();
+  let opts=[];
+  if(where!=='final'){
+    const baseline=projArr??Infinity;
+    const dests=[c.to,...(covered&&c.pr.alt?(ALT[c.to]||[]):[])];
+    for(const dest of dests){
+      itineraries(c.al,loc,dest).forEach(it0=>{
+        const it=it0.map(f=>{const bi=bookedIds.indexOf(f.id),d=bi>=0?S.segDelay[bi]:f.delay;return {f,dep:f.dep+d,arr:f.arr+d,delay:d,cancel:bi>=0&&S.segCancel[bi]}});
+        // A generated flight that duplicates a booked flight number is the booked flight; skip it
+        if(it.some(x=>segs.some(s=>s.num===x.f.num&&s.from===x.f.from)))return;
+        if(it[0].dep<earliest||it.some(x=>x.cancel))return;
+        if(it.length>1&&it[1].dep-it[0].arr<mct)return;
+        const arr=it[it.length-1].arr;
+        if(arr>=baseline-10)return;
+        opts.push({it,arr,alt:dest!==c.to,seats:Math.min(...it.map(x=>x.f.seats)),list:Math.max(...it.map(x=>x.f.list))});
+      });
+    }
+    opts.sort((a,b)=>a.arr-b.arr);
+    opts=opts.slice(0,9);
+    opts.forEach(o=>o.method=classify(o,{...c,disrupted,covered}));
+  }
+  return {...c,eff,status,margin,tight,disrupted,covered,protectedTrip,schedArr,projArr,maxDelay,loc,where,opts,nowU,deadlineU,remIds};
+}
+function classify(o,c){
+  const P=c.P,need=c.T.travelers||1,seatsOK=o.seats>=need;
+  const prio=c.tier+(c.alliBoost?1:0)+(c.disrupted?2:0)+(c.T.fare>=2?1:0);
+  const odds=prio*2>=o.list?'fair odds':prio>=2?'long shot':'unlikely';
+  const seatTxt=o.seats===0?'Flight is full':`Only ${o.seats} open, you need ${need}`;
+  if(c.disrupted&&!c.covered)return {kind:'ask',label:'Not guaranteed',why:c.separate?'Separate tickets: the airline doesn’t have to rebook this for free':'Ask the airline'};
+  if(c.disrupted){
+    const m=seatsOK?{kind:'free',label:'Confirmed, free'}:{kind:'standby',label:'Standby, free'};
+    m.why=o.alt?`Lands at ${o.it[o.it.length-1].f.to}, not ${c.to}. An agent has to approve it`
+      :seatsOK?'Disruption waiver covers change fee and fare difference':`${seatTxt}; ${odds} with disruption priority`;
+    if(!c.direct)m.why+=`. Request it through ${c.viaName}`;
+    return m;
+  }
+  if(c.T.fare===0&&!P.basicSameDay)return {kind:'no',label:'Not eligible',why:'Basic Economy can’t make same-day changes'};
+  if(!c.direct)return {kind:'ota',label:`Through ${c.viaName}`,why:'Voluntary changes on third-party tickets go through them, often with a fee and fare difference'};
+  const cf=P.confirmedFee[c.tier],sf=P.standbyFee[c.tier],base=P.confirmedFee[0];
+  if(seatsOK)return cf===0
+    ?{kind:'free',label:'Confirmed, free',why:`Free with ${c.tierName}${base>0?` (others pay $${base})`:''}`}
+    :{kind:'paid',label:`Confirmed, $${cf}${need>1?' each':''}`,fee:cf*need,why:'Same-day confirmed change fee'};
+  return {kind:'standby',label:sf===0?'Standby, free':`Standby, $${sf}`,why:`${seatTxt}; ${odds} at ${c.tierName}${c.alliBoost?' plus partner status':''}`};
+}
+function recommend(r){
+  const o=r.opts,ref=r.projArr??r.schedArr,gain=x=>ref-x.arr;
+  const free=o.filter(x=>x.method.kind==='free');
+  if(free.length){const f=free[0];if(f.alt){const n=free.find(x=>!x.alt);if(n&&n.arr-f.arr<=90)return n}return f}
+  return o.find(x=>x.method.kind==='paid'&&gain(x)>=60)
+    ||o.find(x=>x.method.kind==='ota'&&gain(x)>=90&&x.seats>=(r.T.travelers||1))
+    ||o.find(x=>x.method.kind==='standby'&&!/unlikely/.test(x.method.why))
+    ||o.find(x=>x.method.kind==='ask'&&x.seats>=(r.T.travelers||1))||o.find(x=>x.method.kind==='ask')||null;
+}
+
+/* ---------- Plan: steps + script ---------- */
+function plan(r,best){
+  const {A,T,to}=r,o=best.it,k=best.method.kind,first=r.eff[0].f;
+  const flight=`${fls(o)}, the ${fmt(o[0].dep,o[0].f.from)} ${via(o)}${best.alt?` to ${o[o.length-1].f.to}`:''}`;
+  const need=T.travelers===2?' for both of us':T.travelers>1?` for all ${T.travelers} of us`:'';
+  const confs=[...new Set(T.segments.map(s=>s.conf).filter(Boolean))].join(' and ');
+  const dmax=Math.max(...r.eff.map(e=>e.delay));
+  const what={major:`a ${dur(dmax)} delay`,misconnect:'a missed connection',canceled:'a cancellation'}[r.status];
+  const reason={major:()=>`${fl(r.eff.find(e=>e.delay>=r.P.disruptDelay).f)} is delayed ${dur(dmax)}`,
+    misconnect:()=>`the delay on ${fl(first)} means we’ll miss the connection in ${first.to}`.replace('we’ll',T.travelers>1?'we’ll':'I’ll'),
+    canceled:()=>`${fl(r.eff.find(e=>e.cancel).f)} was canceled`,
+    minor:()=>`I’d like to get in earlier if there’s space`,ontime:()=>`I’d like to get in earlier if there’s space`}[r.status]();
+  const R=reason.charAt(0).toUpperCase()+reason.slice(1);
+  const standby=k==='standby';
+  const ask=standby?`Could you add me to the standby list for ${flight}${need}, and keep my current booking as a backup?`
+    :`Could you move me to ${flight}${need}? It shows ${best.seats} open seat${best.seats>1?'s':''}.`;
+  let steps=[],script='',who='an agent';
+  const bagStep=T.bags?['You checked a bag. Ask the agent to reroute it to your new flight, and expect it may arrive separately.']:[];
+  if(k==='ask'){
+    who=`a ${A.name} agent`;
+    steps=[`Go to the ${A.name} service desk or call ${A.name}. Because your flights are on separate tickets, they don’t have to rebook you, but they sometimes will as a courtesy.`,
+      `If they won’t, compare the price of a new one-way ticket for ${flight} against waiting for the next flight on your second ticket.`,...bagStep];
+    script=`Hi, I’m booked on ${fls(r.eff)} to ${AP[to][0]} today on confirmations ${confs}. ${R}. I know these are separate tickets, but ${best.seats>0?`could you move me to ${flight}${need} as a courtesy? It shows ${best.seats} open seat${best.seats===1?'':'s'}.`:`could you add me to standby for ${flight}${need} as a courtesy?`}`;
+  } else if(!r.direct){
+    who=r.viaName;
+    const ref=T.viaRef?`, itinerary number ${T.viaRef}`:'';
+    if(r.disrupted){
+      steps=[`Call ${r.viaName} now. Third-party tickets usually have to be changed by the company that sold them.`,
+        `While you wait on hold, get in line at the ${A.name} desk too. During a ${A.name}-caused disruption the airline can sometimes rebook you directly, but often sends you back to ${r.viaName}.`,
+        `Whoever confirms first, make sure you get the new flight number and seat before you hang up or leave the desk.`,...bagStep];
+    } else {
+      steps=[`Call ${r.viaName}. ${A.name} usually can’t make voluntary changes to tickets bought through them.`,
+        `Ask what the change will cost in total, including their fee and any fare difference, before you agree.`,...bagStep];
+    }
+    script=`Hi, I’m calling about my ${r.viaName} booking${ref}, ${A.name} confirmation ${confs}. ${R}. ${standby?`Could you ask ${A.name} to add me to the standby list for ${flight}${need}?`:`Could you move me to ${flight}${need}? ${A.name} shows ${best.seats} open seat${best.seats===1?'':'s'}.`} ${r.disrupted?`Since this is ${what} caused by ${A.name}, the change fee and fare difference should be waived.`:'What would the total cost be?'}`;
+  } else {
+    who=`a ${A.name} agent`;
+    if(standby)steps=[`Open the ${A.app}, go to your trip, and request standby for ${fls(o)}. Your current booking stays as a backup.`,
+      `If the app doesn’t offer it, ask the gate agent or call ${A.name}. Use the script below.`,...bagStep];
+    else if(r.disrupted)steps=[`Open the ${A.app} and go to your trip. Disrupted trips usually show a rebooking option at the top.`,
+      `Look for ${fls(o)}. If the app only offers the airline’s own suggestion, don’t accept it yet.`,
+      `Ask an agent at the service desk or by phone with the script below. Confirm your seat before leaving the line.`,...bagStep];
+    else steps=[`Open the ${A.app}: ${A.path}.`,
+      `Choose the same-day change for ${fls(o)} and check that the price shows ${k==='paid'?'$'+best.method.fee:'$0'}.`,
+      `If the app won’t show it, an agent can do it. Use the script below.`,...bagStep];
+    const close=r.disrupted?`Since this is ${what} on ${A.name}’s side, I understand the change fee and fare difference are waived.`
+      :k==='free'?'I believe same-day confirmed changes are complimentary at my status.':k==='paid'?'I’m happy to pay the same-day change fee.':'';
+    script=`Hi, I’m booked on ${fls(r.eff)} to ${AP[to][0]} today, confirmation ${confs}${r.tier?`, and I’m ${A.name} ${r.tierName}`:''}. ${R}. ${ask} ${close}`.trim();
+  }
+  if(best.alt)steps.unshift(`This flight lands at ${AP[o[o.length-1].f.to][0]} instead of ${AP[to][0]}. Airlines usually allow this during disruptions, but only an agent can approve it.`);
+  return {steps,script,who};
+}
+
+/* ---------- Money: card coverage and airline amenities ---------- */
+function cardEval(r){
+  const T=S.trip,pr=S.profile,b=recommend(r);
+  const arr=r.projArr??(b?b.arr:null);
+  const tz=AP[r.to][3]*60, schedDay=Math.floor((r.schedArr+tz)/1440);
+  const overnight=arr===null||Math.floor((arr+tz)/1440)>schedDay;
+  const delayMin=arr===null?Infinity:Math.max(0,arr-r.schedArr);
+  const card=CARDS[T.paidWith];
+  if(!card)return {card:null,delayMin,overnight,reason:T.paidWith==='other'?'other':pr.cards.length?'nopay':'nocards'};
+  let eligible=true,why='';
+  if(card.rt&&!T.roundTrip){eligible=false;why='This card only covers round trips paid on the card, and this booking is one way.'}
+  const triggered=eligible&&r.status!=='ontime'&&(delayMin>card.hrs*60||(card.overnight&&overnight&&r.disrupted));
+  const cap=card.per==='ticket'?card.cap*T.travelers:card.cap;
+  return {card,eligible,why,triggered,cap,delayMin,overnight};
+}
+function airlineEval(r,ce){
+  const ctrl=S.cause==='ctrl'||S.cause==='unknown',bad=r.status!=='ontime'&&r.status!=='minor';
+  return {ctrl,meal:ctrl&&bad&&ce.delayMin>=AL.UA.policy.mealAt,hotel:ctrl&&bad&&ce.overnight};
+}
+const CAUSE={unknown:'Not known yet',ctrl:'Within United’s control',['511b']:'Excluded under DOT 511(b)',wx:'Weather or air traffic control'};
+
+
+/* ---------- Practice scenarios ----------
+   Each step is one moment in the traveler's day. Every element carries the feed that would
+   supply it in the real product (shown in Founder view). Times are local to where the traveler is. */
+const SCN = {
+denver:{
+  title:'The Denver squeeze', blurb:'Your connection slips before you even leave home.',
+  route:'BOS → LAX', date:'Wednesday, November 18',
+  persona:'You’re Alex: United Premier Gold, booked on united.com, carry-on only, paid with a Chase Sapphire Reserve.',
+  confirmation:'K7XQ2M', start:'d1',
+  steps:{
+    d1:{clock:'5:40 AM',where:'At home in Boston',
+      notif:{t:'Your Denver connection is 2.5 hours late',b:'You’d land in LA at 3:10 PM. United owes you a free change, and an 8:15 AM nonstop still has seats.'},
+      board:{hl:'Landing LA at 3:10 PM, 2 hr 30 min late',cause:'United app: late-arriving crew',rows:[
+        ['UA 1543','BOS → DEN','7:05 AM','7:05 AM','ON TIME','ok'],
+        ['UA 2216','DEN → LAX','11:20 AM','1:50 PM','DELAYED 2 HR 30 MIN','late']]},
+      move:{tone:'go',label:'Your best move',title:'Switch to UA 1288, the 8:15 AM nonstop',
+        sub:'You’d land at 11:40 AM, 3 hr 30 min earlier, at no cost. 4 seats open in economy.',
+        route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','LAX']},
+        steps:['Open the United app, go to My Trips, and tap Change flight. Disrupted trips show a rebooking option at the top.',
+          'If UA 1288 isn’t offered, don’t accept the app’s suggestion. It usually keeps you on the Denver route.',
+          'Call United or ask at the Logan check-in desk, and use the script. Confirm the new seat before you hang up.'],
+        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M, and I’m a Premier Gold member. UA 2216 is delayed two and a half hours for a late crew, which gets me into LA at 3:10. Could you move me to UA 1288, the 8:15 nonstop from Boston? It shows four open seats. Since the delay is on United’s side, I understand there’s no change fee or fare difference.'}],
+        feeds:['sched','seats','rules']},
+      rights:[
+        ['yes','Free change to any United flight to LA today','The delay is over an hour and United caused it, so the change fee and fare difference are waived, including onto a nonstop.','rules'],
+        ['','Meal voucher once your wait reaches 3 hours','United commits to one for delays it causes. You’re at 2 hr 30 min.','rules'],
+        ['','Refund if you decide not to go','Owed once you’re 3 or more hours late. You’re not there yet.','dot'],
+        ['','Sapphire Reserve covers expenses after 6 hours','Not likely needed today.','cards']],
+      feeds:['alerts','status','push','cause'],
+      choices:[{label:'Change it in the United app',next:'d2'},{label:'Wait and see',sub:'Delays sometimes shrink',next:'d3'}]},
+    d2:{clock:'5:46 AM',where:'At home in Boston',
+      event:'The United app offers one option: a later Denver connection that lands at 3:55 PM. The nonstop isn’t listed.',
+      board:{hl:'Landing LA at 3:10 PM, 2 hr 30 min late',cause:'United app: late-arriving crew',rows:[
+        ['UA 1543','BOS → DEN','7:05 AM','7:05 AM','ON TIME','ok'],
+        ['UA 2216','DEN → LAX','11:20 AM','1:50 PM','DELAYED 2 HR 30 MIN','late']]},
+      move:{tone:'warn',label:'Don’t tap Accept',title:'Skip the app’s offer and call instead',
+        sub:'Apps usually show the airline’s automatic rebooking first. An agent can see and book the nonstop.',
+        route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','LAX']},
+        steps:['Tap Back, not Accept. Accepting locks you into the 3:55 PM arrival.',
+          'Call United. Premier members get a shorter phone line.',
+          'Read the script. If they say the nonstop is full, ask for standby on it plus a confirmed seat on the best backup.'],
+        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M, and I’m a Premier Gold member. UA 2216 is delayed two and a half hours for a late crew. The app is only offering a later Denver connection, but UA 1288, the 8:15 nonstop from Boston, shows four open seats. Could you move me to that flight? Since the delay is on United’s side, I understand there’s no change fee or fare difference.'}],
+        feeds:['sched','seats']},
+      lines:{rows:[['United app','Instant','Only shows the automatic offer.',''],['Phone, Premier line','About 8 min','Can see and book the nonstop.','best'],['Logan check-in desk','About 25 people','Slower, and you’re not at the airport yet.','']],tip:'Call while you finish getting ready.'},
+      rights:[['yes','Free change to any United flight to LA today','You don’t have to take the first option offered. Any United flight with seats qualifies.','rules']],
+      choices:[{label:'Call and use the script',next:'d4'},{label:'Accept the app’s offer',next:'d5'}]},
+    d4:{clock:'6:02 AM',where:'On the phone with United',
+      notif:{t:'You’re confirmed on UA 1288',b:'Seat 23C, leaving Boston 8:15 AM, landing LA 11:40 AM. No charge.'},
+      event:'The agent found the nonstop in under five minutes and waived the fee. Total time on the phone: 16 minutes.',
+      board:{hl:'Landing LA at 11:40 AM',rows:[['UA 1288','BOS → LAX','8:15 AM','8:15 AM','CONFIRMED, SEAT 23C','new']]},
+      end:{big:'You landed in LA at 11:40 AM',rows:[['Your arrival','11:40 AM'],['The app’s automatic offer','3:55 PM'],['Time saved','4 hr 15 min'],['Cost','$0']],saved:255,back:0,
+        lesson:'Airline apps show the automatic rebooking first. Asking for a specific flight by number, with the reason you’re owed it, gets better results.'}},
+    d5:{clock:'5:48 AM',where:'At home in Boston',
+      notif:{t:'Rebooked through Denver',b:'You now land in LA at 3:55 PM.'},
+      board:{hl:'Landing LA at 3:55 PM',rows:[
+        ['UA 1543','BOS → DEN','7:05 AM','7:05 AM','ON TIME','ok'],
+        ['UA 1971','DEN → LAX','2:35 PM','2:35 PM','CONFIRMED','new']]},
+      end:{big:'You landed in LA at 3:55 PM',rows:[['Your arrival','3:55 PM'],['The nonstop you could have had','11:40 AM'],['Time lost','4 hr 15 min'],['Cost','$0']],saved:0,back:0,
+        lesson:'Accepting the app’s first offer usually ends your options. The free change covered any United flight with seats, including the nonstop.'}},
+    d3:{clock:'6:35 AM',where:'At Logan, Terminal B',
+      notif:{t:'Your connection slipped again, and the nonstop is full',b:'UA 2216 now lands at 4:25 PM. A 9:10 AM route through San Francisco still has 3 seats.'},
+      board:{hl:'Landing LA at 4:25 PM, 3 hr 45 min late',cause:'United app: late-arriving crew',rows:[
+        ['UA 1543','BOS → DEN','7:05 AM','7:05 AM','BOARDING','ok'],
+        ['UA 2216','DEN → LAX','11:20 AM','3:05 PM','DELAYED 3 HR 45 MIN','late']]},
+      move:{tone:'go',label:'Your best move',title:'Take UA 532 + UA 1971 via San Francisco, and stand by for the nonstop',
+        sub:'Confirmed to land at 2:05 PM, 2 hr 20 min earlier. As Premier Gold you’re near the top of the nonstop’s standby list.',
+        route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','SFO','LAX']},
+        steps:['Don’t board UA 1543 to Denver yet. Once you fly the first leg, most of your options disappear.',
+          'Go to the United desk in Terminal B, or call, and use the script.',
+          'Ask for standby on UA 1288 at the same time. You keep the confirmed San Francisco seat as a backup.'],
+        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles, confirmation K7XQ2M. UA 2216 is now delayed almost four hours for a late crew. Could you move me to UA 532 and UA 1971 through San Francisco, leaving at 9:10? It shows three open seats. Please also add me to the standby list for UA 1288, the 8:15 nonstop. Since United caused the delay, the change should be free.'}],
+        feeds:['sched','seats','rules']},
+      lines:{rows:[['United desk, Terminal B','About 12 people','Can book the San Francisco route and add you to standby.','best'],['Phone, Premier line','About 20 min','A good backup while you wait in line.','best'],['Gate B9','Short line','Gate agents focus on their own flight.','']],tip:'Get in line and call at the same time. Hang up or step out of line when one works.'},
+      rights:[
+        ['yes','Free change to any United flight to LA today','Including a different connection city.','rules'],
+        ['yes','Meal voucher: your wait is now over 3 hours','United commits to one for delays it causes. Check the app or ask the agent.','rules'],
+        ['yes','Refund available if you’d rather not go','You’re past the 3-hour domestic threshold.','dot']],
+      money:{payers:[['United','Meal voucher',true,'Owed because United caused a 3+ hour delay.'],['Sapphire Reserve','$500 cap',false,'Starts after 6 hours or an overnight stay. You’re at 3 hr 45 min.']]},
+      feeds:['alerts','status','push'],
+      choices:[{label:'Take San Francisco, and stand by for the nonstop',next:'d6'},{label:'Only stand by for the nonstop',sub:'Keep the Denver flights as backup',next:'d7'}]},
+    d6:{clock:'8:02 AM',where:'Gate B9, Logan',
+      notif:{t:'You cleared standby on UA 1288',b:'Seat 31D on the 8:15 AM nonstop. Your San Francisco seats were released.'},
+      event:'Two Premier 1K members were ahead of you; one seat was left. Because you held a confirmed backup, you never risked getting stuck.',
+      board:{hl:'Landing LA at 11:40 AM',rows:[['UA 1288','BOS → LAX','8:15 AM','8:15 AM','CLEARED, SEAT 31D','new']]},
+      end:{big:'You landed in LA at 11:40 AM',rows:[['Your arrival','11:40 AM'],['If you’d stayed on Denver','4:25 PM'],['Time saved','4 hr 45 min'],['Cost','$0'],['Also owed','Meal voucher']],saved:285,back:0,
+        lesson:'Confirm a backup first, then stand by for the better flight. You only give up the backup if standby clears.'}},
+    d7:{clock:'8:10 AM',where:'Gate B9, Logan',
+      notif:{t:'You didn’t clear standby on UA 1288',b:'The San Francisco seats are gone too. You’re on the Denver route, landing 4:25 PM.'},
+      board:{hl:'Landing LA at 4:25 PM',rows:[['UA 1543','BOS → DEN','7:05 AM','DEPARTED','MISSED, REBOOKED','bad'],['UA 2216','DEN → LAX','11:20 AM','3:05 PM','DELAYED 3 HR 45 MIN','late']]},
+      end:{big:'You landed in LA at 4:25 PM',rows:[['Your arrival','4:25 PM'],['With a confirmed backup','2:05 PM or better'],['Time lost','2 hr 20 min'],['Cost','$0'],['Also owed','Meal voucher']],saved:0,back:0,
+        lesson:'Standby alone is a gamble. Lock in a confirmed backup first; standby on top of it is free.'}}
+  }},
+
+ohare:{
+  title:'Storm at O’Hare', blurb:'Weather cancels your Seattle flight while you’re connecting.',
+  route:'BOS → SEA', date:'Tuesday, November 17',
+  persona:'You’re Jordan, traveling with Sam: MileagePlus members, booked on Expedia, two checked bags, paid with a Chase Sapphire Reserve.',
+  confirmation:'HJ4R9T', start:'o1',
+  steps:{
+    o1:{clock:'7:10 AM',where:'In the air over Ohio, on Wi-Fi',
+      notif:{t:'Storms are slowing Chicago arrivals',b:'You’ll land about 45 minutes late. Your Seattle flight is late too, so the connection still works for now.'},
+      board:{hl:'Connection still works, with 40 minutes to spare',cause:'FAA: ground delay program at O’Hare, thunderstorms',rows:[
+        ['UA 1287','BOS → ORD','6:00 AM','8:40 AM ARR','IN THE AIR, 45 MIN LATE','late'],
+        ['UA 2054','ORD → SEA','9:05 AM','9:50 AM','DELAYED 45 MIN','late']]},
+      move:{tone:'neutral',label:'Nothing to do yet',title:'Save Expedia’s number now',
+        sub:'Rerouted is watching your Seattle flight. If weather cancels it, you’ll need Expedia and the United desk at the same time.',
+        steps:['Find your Expedia itinerary number (7294018833651) and their phone number while you have Wi-Fi.','Note that United’s customer service desk in Terminal C is near gate C11.'],
+        feeds:['faa','status']},
+      rights:[
+        ['warn','Thunderstorms count as weather','United still rebooks you for free, but doesn’t owe meals or a hotel for weather. Your card can.','rules'],
+        ['','You booked through Expedia','Voluntary changes go through Expedia. In a cancellation, United agents can often help too.','intake']],
+      feeds:['faa','alerts','push'],
+      choices:[{label:'Continue',next:'o2'}]},
+    o2:{clock:'9:20 AM',where:'O’Hare, gate C18',
+      notif:{t:'UA 2054 to Seattle is canceled',b:'United moved you both to tomorrow at 7:00 AM. Two better options today are open. Call Expedia and get in line at the desk at the same time.'},
+      board:{hl:'Canceled. United’s automatic rebooking: tomorrow, 7:00 AM',cause:'United app: weather',rows:[
+        ['UA 1287','BOS → ORD','6:00 AM','8:40 AM','ARRIVED','ok'],
+        ['UA 2054','ORD → SEA','9:05 AM','—','CANCELED','bad']]},
+      move:{tone:'go',label:'Your best move',title:'Ask for UA 1940 + UA 2290 via Denver, leaving 12:30 PM',
+        sub:'Lands Seattle 5:58 PM today instead of tomorrow morning. Exactly 2 seats open. Free, because United canceled.',
+        route:{old:[['BOS','ORD','ok'],['ORD','SEA','bad']],neu:['ORD','DEN','SEA'],fromHub:true},
+        steps:['Call Expedia now. Tickets they sold are usually changed by them.',
+          'While you’re on hold, get in line at the United desk near gate C11. In a cancellation, United agents can often rebook you directly.',
+          'Whoever answers first, ask for the Denver flights by number. Make sure both of you are moved and both checked bags are rerouted.',
+          'Get the new confirmation and seat numbers before you hang up or leave the desk.'],
+        scripts:[
+          {who:'Expedia',text:'Hi, I’m calling about Expedia itinerary 7294018833651, United confirmation HJ4R9T, for Jordan and Sam Lee. United canceled our Chicago to Seattle flight, UA 2054, and moved us to tomorrow. Could you put both of us on UA 1940 to Denver at 12:30 and UA 2290 to Seattle? United shows two open seats. Since United canceled the flight, there shouldn’t be any change fee or fare difference. We also have two checked bags that need to be rerouted.'},
+          {who:'a United agent',text:'Hi, we were on UA 2054 to Seattle, confirmation HJ4R9T, and it was canceled. We booked through Expedia and they’re on hold. Could you move both of us to UA 1940 and UA 2290 through Denver this afternoon? It shows two seats. And could you reroute our two checked bags?'}],
+        feeds:['sched','seats','rules']},
+      lines:{rows:[['Expedia phone','About 40 min hold','They sold the ticket, so they can always change it.','best'],['United desk near C11','About 15 people','In a cancellation, United often rebooks you directly.','best'],['United app','Instant','Only offers tomorrow’s flight right now.',''],['United phone','About 55 min','May send you back to Expedia.','']],tip:'Do the top two at once.'},
+      rights:[
+        ['yes','Free rebooking on any United flight to Seattle','You don’t have to accept tomorrow’s flight.','rules'],
+        ['no','No hotel or meals from United','Weather cancellations aren’t covered by United’s commitments.','rules'],
+        ['yes','Refund if you don’t travel','A canceled flight means a refund if you decline the rebooking.','dot'],
+        ['','Sapphire Reserve covers expenses after 6 hours or overnight','Up to $500 each, $1,000 for both of you.','cards']],
+      feeds:['alerts','push','cause'],
+      choices:[{label:'Call Expedia and get in line',next:'o3'},{label:'Keep tomorrow’s flight',sub:'Stay overnight in Chicago',next:'o4'}]},
+    o3:{clock:'9:55 AM',where:'United desk, Terminal C',
+      notif:{t:'You’re both confirmed via Denver',b:'UA 1940 at 12:30 PM, then UA 2290, landing Seattle 5:58 PM. Bags rerouted.'},
+      event:'Expedia was still on hold after 30 minutes. The United agent at the desk made the change, so you hung up with Expedia.',
+      board:{hl:'Landing Seattle at 5:58 PM, 6 hr 18 min late',rows:[
+        ['UA 1940','ORD → DEN','12:30 PM','12:30 PM','CONFIRMED','new'],
+        ['UA 2290','DEN → SEA','3:20 PM','3:20 PM','CONFIRMED','new']]},
+      money:{payers:[['United','Not owed',false,'Weather delays aren’t covered by United’s commitments.'],['Sapphire Reserve','Up to $1,000',true,'You’ll arrive more than 6 hours late, so coverage applies for both of you.']],
+        kit:{cap:1000,items:[['Lunch at O’Hare for two','Meals',46.80],['Phone charger','Essentials',24.99]]},
+        claim:{card:'csr',date:'2026-11-17',dateText:'Tuesday, November 17, 2026',travelers:2,conf:'HJ4R9T',flights:'UA 1287 Boston to Chicago, then UA 2054 Chicago to Seattle',airline:'Nothing (weather cancellation)',why:'you’ll land more than 6 hours late',happened:'UA 2054 was canceled for weather. United rebooked us through Denver and we arrived 6 hours 18 minutes late.'}},
+      end:{big:'You landed in Seattle at 5:58 PM',rows:[['Your arrival','5:58 PM today'],['United’s automatic rebooking','10:05 AM tomorrow'],['Hotel night avoided','Yes'],['Reimbursable by your card','$71.79 so far']],saved:967,back:71.79,
+        lesson:'In a cancellation, work both lines at once. Third-party bookings don’t stop a United agent from helping when United cancels.'}},
+    o4:{clock:'9:40 PM',where:'Hotel near O’Hare',
+      notif:{t:'Your card’s trip delay coverage kicked in',b:'You’re staying overnight, so Sapphire Reserve can reimburse up to $1,000 for the two of you. Keep every receipt.'},
+      board:{hl:'Flying tomorrow at 7:00 AM',rows:[['UA 2054','ORD → SEA','9:05 AM','—','CANCELED','bad'],['UA 2054','ORD → SEA','7:00 AM tmrw','7:00 AM','CONFIRMED','new']]},
+      money:{payers:[['United','Not owed',false,'No hotel for weather. You booked one yourself.'],['Sapphire Reserve','Up to $1,000',true,'Overnight stay triggered coverage for both travelers.']],
+        kit:{cap:1000,items:[['Hotel, 1 night','Hotel',219.00],['Dinner for two','Meals',78.40],['Toiletries','Essentials',23.15],['Rideshare to hotel','Transportation',41.60]]},
+        claim:{card:'csr',date:'2026-11-17',dateText:'Tuesday, November 17, 2026',travelers:2,conf:'HJ4R9T',flights:'UA 1287 Boston to Chicago, then UA 2054 Chicago to Seattle',airline:'Nothing (weather cancellation)',why:'the cancellation forced an overnight stay',happened:'UA 2054 was canceled for weather. United rebooked us on the next morning’s flight, so we stayed overnight in Chicago.'}},
+      end:{big:'You land in Seattle tomorrow at 10:05 AM',rows:[['Your arrival','10:05 AM tomorrow'],['The Denver option today','5:58 PM today'],['Out of pocket tonight','$362.15'],['Reimbursable by your card','$362.15']],saved:0,back:362.15,
+        lesson:'Even when the airline owes you nothing for weather, your card might. Rerouted tracks the threshold and your receipts so the claim is easy.'}}
+  }},
+
+newark:{
+  title:'Two tickets, one tight connection', blurb:'An early warning before the airline posts a delay.',
+  route:'BOS → MIA', date:'Thursday, November 19',
+  persona:'You’re Priya: United Premier Silver, two separate United bookings, carry-on only, United Explorer card.',
+  confirmation:'PLM3QA + ZR82KD', start:'n1',
+  steps:{
+    n1:{clock:'4:50 AM',where:'At home in Boston',
+      notif:{t:'Early warning: your 6:30 AM plane is running late',b:'It’s stuck in Chicago. United hasn’t posted a delay yet, but you’ll likely be 35+ minutes late. On separate tickets, that puts your Miami flight at risk.'},
+      board:{hl:'Your Newark connection could shrink to 20 minutes',cause:'Inbound aircraft delayed in Chicago (not yet posted by United)',rows:[
+        ['UA 1872','BOS → EWR','6:30 AM','~7:05 AM','LIKELY 35 MIN LATE','late'],
+        ['UA 2291','EWR → MIA','9:00 AM','9:00 AM','ON TIME','ok']]},
+      move:{tone:'go',label:'Act before United posts the delay',title:'Move your Miami flight to UA 1610 at 11:15 AM, now',
+        sub:'Lands Miami 2:25 PM. Free with Premier Silver while the same fare class is open (5 seats left).',
+        route:{old:[['BOS','EWR','late'],['EWR','MIA','late']],neu:['BOS','EWR','MIA']},
+        steps:['In the United app, open booking ZR82KD (the Miami flight), tap Change flight, and choose a same-day change.',
+          'Pick UA 1610 at 11:15 AM. The price should show $0 for Premier Silver.',
+          'If it shows a charge, call United with the script. Do it soon: once United posts the delay, other travelers will want those seats.'],
+        scripts:[{who:'a United agent',text:'Hi, I’m a Premier Silver member on confirmation ZR82KD, UA 2291 from Newark to Miami at 9:00 this morning. My earlier flight on a separate booking, UA 1872 from Boston, is likely to be late because its plane is delayed in Chicago, so I may miss the connection. Could you do a same-day change to UA 1610 at 11:15? It shows five seats in my fare class, and I believe same-day changes are free at my status.'}],
+        feeds:['inbound','sched','seats','rules']},
+      rights:[
+        ['no','Your connection isn’t protected','Separate bookings mean United doesn’t have to rebook your Miami flight if a late Boston flight makes you miss it.','intake'],
+        ['yes','Same-day change: free with Premier Silver','When the same fare class is open on the new flight. Published sources disagree on Silver, so Rerouted shows the check.','rules'],
+        ['','No delay posted yet','Free rebooking for a delay only applies once United posts it. Acting now uses your status instead.','status']],
+      feeds:['inbound','push'],
+      choices:[{label:'Move the Miami flight now',next:'n2'},{label:'Risk the tight connection',next:'n3'}]},
+    n2:{clock:'5:02 AM',where:'At home in Boston',
+      notif:{t:'You’re on UA 1610 to Miami',b:'Leaves Newark 11:15 AM, lands Miami 2:25 PM. No charge.'},
+      event:'At 6:20 AM United posted a 40-minute delay on UA 1872. By 8:30 AM, UA 1610 had no open seats left.',
+      board:{hl:'Landing Miami at 2:25 PM',rows:[
+        ['UA 1872','BOS → EWR','6:30 AM','7:10 AM','DELAYED 40 MIN','late'],
+        ['UA 1610','EWR → MIA','11:15 AM','11:15 AM','CONFIRMED','new']]},
+      end:{big:'You landed in Miami at 2:25 PM',rows:[['Your arrival','2:25 PM'],['If you’d missed the 9:00 AM','A new one-way: about $286'],['Cost','$0']],saved:195,back:286,
+        lesson:'The aircraft’s previous flight is the earliest warning there is. Acting before the delay is posted gets you the seats everyone else will want.'}},
+    n3:{clock:'8:41 AM',where:'Newark, gate C71',
+      notif:{t:'UA 2291’s door closes at 8:45 AM',b:'You just landed, 12 minutes from gate C120. You likely won’t make it.'},
+      board:{hl:'You’ll miss your Miami flight',rows:[
+        ['UA 1872','BOS → EWR','6:30 AM','8:41 AM ARR','ARRIVED 36 MIN LATE','late'],
+        ['UA 2291','EWR → MIA','9:00 AM','9:00 AM','DOOR CLOSES 8:45 AM','bad']]},
+      move:{tone:'warn',label:'Not guaranteed on separate tickets',title:'Go straight to a United desk and ask for a courtesy rebooking',
+        sub:'United doesn’t have to help, but the late flight was theirs. Ask for UA 1610 at 11:15, or standby on it.',
+        route:{old:[['BOS','EWR','late'],['EWR','MIA','bad']],neu:['EWR','MIA'],fromHub:true},
+        steps:['Skip the gate. A customer service desk can change your ticket; the gate agent for a departed flight usually can’t.',
+          'Be specific and polite. Mention that United’s own delay caused the miss.',
+          'If they offer standby only, ask to be listed on every remaining Miami flight today.'],
+        scripts:[{who:'a United agent',text:'Hi, my flight from Boston, UA 1872, landed 36 minutes late and I missed UA 2291 to Miami on confirmation ZR82KD. I know they’re separate bookings, but the delay was United’s. Could you put me on UA 1610 at 11:15, or list me on standby, as a courtesy?'}],
+        feeds:['status','sched','seats']},
+      lines:{rows:[['United customer service desk','About 8 people','Can change your second booking.','best'],['Phone','About 35 min','Backup while you walk to the desk.',''],['Gate C120','Door closed','Can’t help once the flight has left.','']],tip:'Walk to the desk and call on the way.'},
+      rights:[['no','Not protected: separate tickets','Missing a connection between two bookings isn’t covered. Any help is a courtesy.','intake'],['','United Explorer covers expenses after 12 hours or overnight','Up to $500 if you end up stuck tonight.','cards']],
+      feeds:['alerts','status','push'],
+      choices:[{label:'Ask for the courtesy rebooking',next:'n4'}]},
+    n4:{clock:'2:05 PM',where:'Newark, gate C112',
+      notif:{t:'You cleared standby to Miami',b:'UA 1798 at 2:25 PM, landing 5:40 PM. The 11:15 AM flight was full.'},
+      event:'The agent listed you on standby as a courtesy, at no charge. You missed the 11:15 AM and cleared on the 2:25 PM. Another agent might have charged about $286 for a new ticket.',
+      board:{hl:'Landing Miami at 5:40 PM',rows:[['UA 1798','EWR → MIA','2:25 PM','2:25 PM','CLEARED STANDBY','new']]},
+      end:{big:'You landed in Miami at 5:40 PM',rows:[['Your arrival','5:40 PM'],['If you’d moved early','2:25 PM'],['Time lost','3 hr 15 min'],['Cost','$0, but not guaranteed']],saved:0,back:0,
+        lesson:'On separate tickets, the time to act is before the delay, not after the miss.'}}
+  }},
+eve:{
+  title:'The night before', blurb:'Rerouted spots trouble before you’ve packed.',
+  route:'BOS → SFO', date:'Monday, November 23',
+  persona:'You’re Sam: United Premier Platinum, booked on united.com, carry-on only, paid with a Chase Sapphire Preferred. You fly tomorrow at 7:00 AM.',
+  confirmation:'T4WN8C', start:'e1',
+  steps:{
+    e1:{clock:'8:00 PM',where:'At home in Boston, the night before',
+      notif:{t:'Tomorrow’s Chicago connection looks risky',b:'Snow is forecast at O’Hare during your connection, and you have 50 minutes to make it. A nonstop to San Francisco has seats, and switching tonight is free with your status.'},
+      board:{hl:'Tomorrow: 2 risks, and a fix is open',rows:[
+        ['UA 1802','BOS → ORD','7:00 AM','7:00 AM','TOMORROW, SNOW FORECAST AT ORD','late'],
+        ['UA 655','ORD → SFO','9:42 AM','9:42 AM','TOMORROW, 50 MIN CONNECTION','late']]},
+      risk:{title:'Tomorrow’s risk check',items:[
+        ['Snow in Chicago','high','2 to 4 inches forecast between 6 and 11 AM, right when you connect. Arrivals usually slow down in snow.','weather'],
+        ['Your connection','high','50 minutes in Chicago. A 20-minute delay on your first flight would break it.','status'],
+        ['Your first plane','low','The aircraft for UA 1802 is already parked in Boston tonight, so the first flight should leave on time.','inbound'],
+        ['Your ticket','low','One booking, so United protects the whole trip if something goes wrong.','intake'],
+        ['Travel waiver','med','United hasn’t issued a snow waiver for Chicago yet. If it does, changes become free for everyone and seats go fast.','waivers']]},
+      move:{tone:'go',label:'Fix it tonight',title:'Switch to UA 1555, the 8:30 AM nonstop to San Francisco',
+        sub:'Lands 11:58 AM, earlier than your current plan and with no connection. Free with Premier Platinum while the same fare class is open (3 seats).',
+        route:{old:[['BOS','ORD','late'],['ORD','SFO','late']],neu:['BOS','SFO']},
+        steps:['Open the United app, go to My Trips, and tap Change flight. Same-day changes open 24 hours before departure, so it’s available now.',
+          'Pick UA 1555. The price should show $0 for Premier Platinum.',
+          'If it shows a charge, call United and use the script.'],
+        scripts:[{who:'a United agent',text:'Hi, I’m a Premier Platinum member on confirmation T4WN8C, flying UA 1802 and UA 655 from Boston to San Francisco through Chicago tomorrow morning. Snow is forecast at O’Hare during my 50-minute connection. Could you do a same-day change to UA 1555, the 8:30 nonstop to San Francisco? It shows three seats in my fare class, and I believe same-day changes are free at my status.'}],
+        feeds:['weather','sched','seats','rules']},
+      rights:[
+        ['yes','Same-day change: free with Premier Platinum','When the same fare class is open. Available from 24 hours before departure.','rules'],
+        ['','No free change for weather yet','Without a waiver, your status is what makes this free. Members without status would pay up to $75.','waivers']],
+      feeds:['weather','inbound','push'],
+      choices:[{label:'Switch tonight',next:'e2'},{label:'Keep my plan',sub:'Forecasts can be wrong',next:'e3'}]},
+    e2:{clock:'8:06 PM',where:'At home in Boston',
+      notif:{t:'You’re on the 8:30 AM nonstop',b:'UA 1555 to San Francisco, seat 19A. No charge. Your Chicago flights were released.'},
+      event:'At 5:40 AM United issued a snow waiver for Chicago. By 6:15 AM the nonstop was full, and O’Hare arrivals were running 90 minutes late.',
+      board:{hl:'Landing San Francisco at 11:58 AM',rows:[['UA 1555','BOS → SFO','8:30 AM','8:30 AM','CONFIRMED, SEAT 19A','new']]},
+      end:{big:'You landed in San Francisco at 11:58 AM',rows:[['Your arrival','11:58 AM'],['If you’d kept the Chicago plan','4:55 PM'],['Time saved','4 hr 57 min'],['Cost','$0']],saved:297,back:0,
+        lesson:'The best time to fix a bad day is the night before, while seats are open and before a waiver sends everyone else looking.'}},
+    e3:{clock:'9:38 AM',where:'O’Hare, gate B6',
+      notif:{t:'You missed your San Francisco connection',b:'Snow slowed arrivals and you landed at 9:35 AM. United rebooked you on UA 2177 at 1:50 PM, landing 4:55 PM.'},
+      board:{hl:'Landing San Francisco at 4:55 PM',cause:'FAA: snow, arrivals slowed at O’Hare',rows:[
+        ['UA 1802','BOS → ORD','8:52 AM','9:35 AM ARR','LANDED 43 MIN LATE','late'],
+        ['UA 655','ORD → SFO','9:42 AM','9:42 AM','LEFT WITHOUT YOU','bad'],
+        ['UA 2177','ORD → SFO','1:50 PM','1:50 PM','CONFIRMED','new']]},
+      move:{tone:'warn',label:'Still worth a try',title:'Stand by for UA 1290 at 11:15 AM',
+        sub:'Lands 1:55 PM. It’s full, but Premier Platinum puts you near the top of the standby list, and your 1:50 PM seat stays as your backup.',
+        route:{old:[['BOS','ORD','late'],['ORD','SFO','bad']],neu:['ORD','SFO']},
+        steps:['Request standby for UA 1290 in the United app. Your confirmed 1:50 PM seat stays put.','If the app won’t list you, ask the agent at gate B6 with the script.','Stay near the gate. Standby names are called about 15 minutes before departure.'],
+        scripts:[{who:'the gate agent',text:'Hi, I missed UA 655 to San Francisco because of the snow delay, and I’m confirmed on UA 2177 at 1:50. I’m a Premier Platinum member. Could you add me to the standby list for UA 1290 at 11:15, and keep my 1:50 seat as a backup?'}],
+        feeds:['sched','seats','rules']},
+      lines:{rows:[['United app','Instant','Lets you join the standby list for many flights.','best'],['Agent at gate B6','About 10 people','Can add you to standby for nearby flights too.','best'],['Phone, Premier line','About 25 min','Busy during snow. Use only if the others fail.','']],tip:'Try the app first, then get in the gate line while it loads.'},
+      rights:[['yes','Free rebooking on any United flight to San Francisco today','The missed connection is protected because both flights are on one booking.','rules'],['no','No meals or hotel from United for snow','Weather delays aren’t covered by United’s commitments.','rules']],
+      feeds:['alerts','faa','push'],
+      choices:[{label:'Ask for standby',next:'e4'}]},
+    e4:{clock:'11:02 AM',where:'O’Hare, gate B12',
+      notif:{t:'You cleared standby on UA 1290',b:'Seat 34E, landing San Francisco 1:55 PM.'},
+      board:{hl:'Landing San Francisco at 1:55 PM',rows:[['UA 1290','ORD → SFO','11:15 AM','11:15 AM','CLEARED, SEAT 34E','new']]},
+      end:{big:'You landed in San Francisco at 1:55 PM',rows:[['Your arrival','1:55 PM'],['United’s rebooking','4:55 PM'],['The nonstop the night before','11:58 AM'],['Cost','$0']],saved:180,back:0,
+        lesson:'Standby helped, but fixing it the night before was better: no connection, no snow, no line.'}}
+  }},
+
+bag:{
+  title:'Where’s my bag?', blurb:'You land. Your suitcase doesn’t.',
+  route:'BOS → SFO', date:'Friday, November 20',
+  persona:'You’re Morgan: MileagePlus member, booked on united.com, one checked bag, paid with a Chase Sapphire Preferred.',
+  confirmation:'Q9RB2L', start:'b1',
+  steps:{
+    b1:{clock:'11:55 AM',where:'SFO, baggage claim',
+      notif:{t:'Your bag didn’t make your flight',b:'United’s bag tracking shows it still in Boston. File a delayed-bag report before you leave the airport. It protects your refund and your card claim.'},
+      board:{hl:'Your bag is still in Boston',rows:[
+        ['UA 1100','BOS → SFO','11:20 AM','11:20 AM','ARRIVED','ok'],
+        ['Checked bag','BOS → SFO','11:20 AM','~10:15 PM','ON A LATER FLIGHT','late']]},
+      move:{tone:'go',label:'Do this before you leave',title:'File a delayed-bag report at the United baggage office',
+        sub:'Takes about 10 minutes. You need the report to get your bag fee back and to claim on your card.',
+        steps:['Go to the United baggage service office near the carousel. Bring your bag tag receipt (usually stuck to your boarding pass).',
+          'Ask for a delayed-bag report and write down the file reference number.',
+          'Give the address where you’ll be tonight so United can deliver the bag.',
+          'Ask what United covers for essentials while you wait, and keep every receipt.'],
+        scripts:[{who:'the baggage agent',text:'Hi, my checked bag from UA 1100 from Boston didn’t arrive. Could you file a delayed-bag report and give me the file reference number? I’m staying at a hotel in Union Square tonight, so please deliver it there. Do you know which flight it’s on, and what United covers for essentials while I wait?'}],
+        feeds:['bags','rules']},
+      lines:{rows:[['Baggage office at the carousel','About 6 people','Files the report and takes your delivery address. Do this first.','best'],['United app','Instant','Good for tracking the bag afterward.',''],['Phone','About 30 min','Only if the office is closed.','']],tip:'Don’t leave the airport until you have a file reference number.'},
+      rights:[
+        ['yes','Your bag fee back if it’s 12+ hours late','For domestic flights, the airline refunds the checked bag fee once the bag is 12 hours late, as long as you filed a report.','dot'],
+        ['yes','Sapphire Preferred covers essentials after 6 hours','Up to $100 a day for up to 5 days for clothes, toiletries, and chargers.','cards'],
+        ['','Ask United about interim expenses','United may reimburse reasonable purchases while you wait. Keep receipts either way.','rules']],
+      feeds:['bags','push'],
+      choices:[{label:'File the report now',next:'b2'},{label:'Leave and file later',sub:'You have plans to get to',next:'b4'}]},
+    b4:{clock:'2:15 PM',where:'Lunch in the Mission',
+      event:'You left without filing. Nothing is lost yet, but your refund and your card claim both depend on an official report.',
+      notif:{t:'Don’t forget your bag report',b:'File it in the United app or on united.com now. Without a report, your bag fee refund and card claim can be denied.'},
+      board:{hl:'Your bag is still in Boston',rows:[['Checked bag','BOS → SFO','11:20 AM','~10:15 PM','ON A LATER FLIGHT','late']]},
+      move:{tone:'warn',label:'Do this now',title:'File the delayed-bag report online',
+        sub:'Use the bag tag number from your boarding pass, and add tonight’s hotel address for delivery.',
+        steps:['Open the United app or united.com and find the delayed-bag report.','Enter your bag tag number and describe the bag.','Save the file reference number. Rerouted adds it to your claim.'],feeds:['bags']},
+      rights:[['warn','A report is required','Both the bag fee refund and your card’s baggage coverage depend on an official delayed-bag report.','dot']],
+      choices:[{label:'File it online',next:'b2'}]},
+    b2:{clock:'7:30 PM',where:'Hotel in Union Square',
+      notif:{t:'Your bag missed the 6:40 PM flight too',b:'It’s now on tomorrow’s 7:00 AM flight. It’s been over 6 hours, so your card covers essentials tonight.'},
+      event:'Your delayed-bag report is SFOUA41827. United promised delivery to your hotel.',
+      board:{hl:'Bag expected tomorrow around 1:00 PM',rows:[['Checked bag','BOS → SFO','11:20 AM','~1:00 PM tmrw','ON TOMORROW’S 7:00 AM FLIGHT','late']]},
+      money:{kitId:'bag',payers:[['United','Bag fee refund',false,'Owed once the bag is 12 hours late, at 11:20 PM tonight.'],['Sapphire Preferred','Up to $500',true,'More than 6 hours: up to $100 a day for essentials, for up to 5 days.']],
+        kit:{cap:500,items:[['Toiletries','Essentials',27.40],['Change of clothes','Essentials',64.99],['Phone charger','Essentials',19.99]]},
+        claim:{type:'bag',card:'csp',date:'2026-11-20',dateText:'Friday, November 20, 2026',travelers:1,conf:'Q9RB2L',flights:'UA 1100 Boston to San Francisco',airline:'Bag fee refund requested; no other payment yet',
+          why:'your bag is more than 6 hours late',extra:'up to $100 a day',happened:'My checked bag did not arrive on UA 1100. Delayed-bag report SFOUA41827 was filed at 12:10 PM.'}},
+      feeds:['bags','push'],
+      choices:[{label:'Continue to tomorrow',next:'b3'}]},
+    b3:{clock:'1:10 PM',where:'Hotel, the next day',
+      notif:{t:'Your bag was delivered',b:'It reached your hotel 25 hours 50 minutes after you landed. Your bag fee refund is owed.'},
+      board:{hl:'Bag delivered, 25 hr 50 min late',rows:[['Checked bag','BOS → SFO','11:20 AM','1:10 PM','DELIVERED','ok']]},
+      money:{kitId:'bag',payers:[['United','Bag fee refund',true,'Owed: the bag was more than 12 hours late. Request it if it doesn’t arrive automatically.'],['Sapphire Preferred','Up to $500',true,'Essentials covered at up to $100 a day.']],
+        kit:{cap:500,items:[['Toiletries','Essentials',27.40],['Change of clothes','Essentials',64.99],['Phone charger','Essentials',19.99]]},
+        claim:{type:'bag',card:'csp',date:'2026-11-20',dateText:'Friday, November 20, 2026',travelers:1,conf:'Q9RB2L',flights:'UA 1100 Boston to San Francisco',airline:'Bag fee refund owed; no other payment yet',
+          why:'your bag was more than 6 hours late',extra:'up to $100 a day',happened:'My checked bag did not arrive on UA 1100. Delayed-bag report SFOUA41827 was filed at 12:10 PM, and the bag was delivered the next day at 1:10 PM, 25 hours 50 minutes after arrival.'}},
+      end:{big:'Your bag arrived the next afternoon',rows:[['Bag delayed','25 hr 50 min'],['Essentials reimbursable','$112.38'],['Bag fee','Refund owed'],['Out of pocket in the end','$0']],saved:0,back:112.38,
+        lesson:'File the report before you leave the airport. It starts the clock on your bag fee refund and gives your card claim the proof it needs.'}}
+  }}
+
+};
+
+/* ---------- Feeds behind each piece of the mock (shown in Founder view) ---------- */
+const FEEDS={
+  intake:{name:'Booking intake',src:'Forwarded confirmation email, read by AI, confirmed by the traveler',stage:'Launch',used:'Adding a trip; booked-through and separate-ticket warnings'},
+  status:{name:'Flight status',src:'FlightAware AeroAPI flight records',stage:'Launch',used:'Departure board, delays, cancellations'},
+  alerts:{name:'Pushed flight alerts',src:'FlightAware AeroAPI alerts',stage:'Launch',used:'The moment a delay or cancellation is known'},
+  push:{name:'Push notifications',src:'Apple and Google push services, SMS as backup',stage:'Launch',used:'Lock-screen and in-app alerts'},
+  sched:{name:'United schedules',src:'AeroAPI schedules or OAG',stage:'Launch',used:'Alternative flights in every move'},
+  rules:{name:'United policy rules',src:'United’s site, read by a crawler and reviewed by a person',stage:'Launch',used:'Free changes, standby, meal vouchers, status perks'},
+  dot:{name:'DOT rules',src:'DOT dashboard and the Federal Register',stage:'Launch',used:'Refunds and what counts as airline-caused'},
+  cards:{name:'Card benefit terms',src:'Each card’s Guide to Benefits, monitored for changes',stage:'Launch',used:'Wallet, coverage thresholds, claim kit'},
+  seats:{name:'Open seats',src:'An offers API such as Duffel',stage:'Recommended',used:'“4 seats open”, confirmed vs. standby advice'},
+  inbound:{name:'Inbound aircraft',src:'AeroAPI inbound flight field',stage:'Recommended',used:'Early warnings before United posts a delay'},
+  faa:{name:'Airport disruptions',src:'FAA airspace status (ground stops, delay programs)',stage:'Recommended',used:'Weather heads-ups at hubs'},
+  weather:{name:'Weather forecasts',src:'National Weather Service forecasts, or a commercial weather API',stage:'Recommended',used:'Night-before risk check'},
+  waivers:{name:'United travel waivers',src:'United’s travel alerts page, crawled and reviewed',stage:'Launch',used:'Free changes before storms; risk check'},
+  bags:{name:'Bag status',src:'No public feed; the traveler enters the bag report number, and status comes from United’s app or messages',stage:'Gap',used:'Delayed-bag alerts and claims'},
+  waits:{name:'Line and hold times',src:'No feed; estimates from Rerouted user reports and past patterns',stage:'Gap',used:'Fastest way to get help'},
+  cause:{name:'Delay cause',src:'No feed exists; the traveler confirms what United told them',stage:'Gap',used:'Meal and hotel eligibility'},
+  claims:{name:'Claims filing',src:'Card issuer or benefits-administrator partnerships',stage:'Later',used:'Filing the claim kit for the traveler'}
+};
+// Set this to an inbox you check, and testers get a one-tap “Email it” button for their answers.
+const FEEDBACK_EMAIL='';
+
+const UI={view:'home',scn:null,step:null,path:[],founder:!!load('rr4-founder'),thumbs:load('rr4-thumbs')||{},
+  fb:load('rr4-feedback')||[],played:load('rr4-played')||{},introSeen:!!load('rr4-intro'),stepAt:0,timings:[],own:'none',back:null,answers:{}};
+const $s=()=>document.getElementById('screen');
+const money=n=>'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2});
+const money2=n=>'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const feedChips=list=>UI.founder&&list?.length?`<div>${list.map(k=>`<span class="feed" title="${esc(FEEDS[k].src)}">${esc(FEEDS[k].name)}</span>`).join('')}</div>`:'';
+const icon={trips:'<svg viewBox="0 0 24 24"><path d="M3 17c4 0 4-10 9-10s5 10 9 10"/><circle cx="3" cy="17" r="1.6"/><circle cx="21" cy="17" r="1.6"/></svg>',
+  wallet:'<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18M15 15h3"/></svg>',
+  you:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>'};
+const markSvg='<svg viewBox="0 0 46 30" aria-hidden="true"><path d="M5 22 C14 22 14 6 23 6 S32 22 41 22" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>';
+
+/* ---------- Navigation ---------- */
+function go(view,o={}){
+  if(UI.view==='step'&&UI.stepAt)logTime();
+  Object.assign(UI,{view},o);
+  const tabs=document.getElementById('tabs');
+  tabs.hidden=['lock','agent'].includes(view);
+  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===({home:'home',step:'home',own:'home',add:'home',check:'home',wallet:'wallet',you:'you',feeds:'you'}[view])?'page':'false'));
+  const sc=$s();sc.className='screen'+(view==='lock'||view==='agent'?' dark':'');
+  ({home:viewHome,lock:viewLock,step:viewStep,agent:viewAgent,wallet:viewWallet,you:viewYou,feeds:viewFeeds,add:viewAdd,check:viewCheck,own:viewOwn})[view]();
+  sc.scrollTop=0;
+}
+function logTime(){UI.timings.push([UI.step,Math.round((Date.now()-UI.stepAt)/1000)]);UI.stepAt=0}
+function toast(n,time){
+  const t=document.getElementById('toast');
+  t.innerHTML=`<button class="notif" type="button"><div class="app"><span>${markSvg}REROUTED</span><span>${esc(time||'now')}</span></div><b>${esc(n.t)}</b><p>${esc(n.b)}</p></button>`;
+  const hide=()=>{t.innerHTML=''};t.querySelector('button').onclick=hide;clearTimeout(UI.toastT);UI.toastT=setTimeout(hide,5000);
+}
+
+/* ---------- Home ---------- */
+function viewHome(){
+  const own=S.trip&&S.booked;
+  $s().innerHTML=`<div class="pad">
+    <a class="mark" href="#" aria-label="Rerouted" style="margin-bottom:14px"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word">Rerouted</span></a>
+    <p class="hello">Your plan B, ready before the gate agent is.</p>
+    ${UI.introSeen?'':`<div class="intro"><b>Thanks for testing Rerouted</b>This is a prototype. Nothing here touches a real booking. Play a bad travel day below, make the calls you’d really make, and tell us what you thought at the end. <div style="margin-top:8px"><button class="btn small" id="gotIt" type="button">Got it</button></div></div>`}
+    ${(()=>{const r=recapStats();return r.n?`<section class="outcome" style="margin:18px 0 0"><div style="color:var(--tarmac-muted);font-size:13px">Your Rerouted recap</div><div class="big" style="font-size:26px;margin-bottom:6px">${recapLine(r)}</div><div style="font-size:14px;color:var(--tarmac-muted)">Across ${r.n} practice trip${r.n>1?'s':''}, counting time saved and money recovered or avoided.</div><button class="btn small" type="button" id="shareRecap" style="margin-top:10px;background:transparent;color:var(--tarmac-ink);border-color:rgba(255,255,255,.25)">Copy to share</button></section>`:''})()}
+    <h2 style="margin-top:22px">Practice a bad travel day</h2>
+    <p class="hint">${['','One','Two','Three','Four','Five','Six','Seven'][Object.keys(SCN).length]||Object.keys(SCN).length} situations travelers really face. Each takes about 3 minutes.</p>
+    ${Object.entries(SCN).map(([k,s])=>`<button class="scncard${UI.played[k]?' done':''}" type="button" data-scn="${k}">
+      <div class="strip">${esc(s.route)}<span>${esc(s.date.split(',')[0])}</span></div>
+      <div class="body"><b>${esc(s.title)}</b><p>${esc(s.blurb)}</p><div class="meta">${esc(s.persona.split(':')[0])}</div></div></button>`).join('')}
+    <h2>Your own trip</h2>
+    ${own?`<button class="scncard" type="button" id="openOwn"><div class="strip">${esc(S.booked[0].from)} → ${esc(S.booked[S.booked.length-1].to)}<span>${esc(niceDate(S.trip.date)||'Date not set')}</span></div>
+      <div class="body"><b>${S.booked.map(f=>fl(f)).join(' + ')}</b><p>See what Rerouted would tell you if this trip went wrong.</p></div></button>`
+    :`<p class="hint">Add a United booking you have coming up and see what Rerouted would do with it.</p><button class="btn block" type="button" id="addOwn">Add a booking</button>`}
+  </div>`;
+  if($('shareRecap'))$('shareRecap').onclick=async e=>{const r=recapStats();try{await navigator.clipboard.writeText(`My Rerouted recap: ${recapLine(r).replace(', ',' and ')} across ${r.n} practice trip${r.n>1?'s':''}.`);e.target.textContent='Copied'}catch(x){e.target.textContent='Copy didn’t work here'}};
+  if($('gotIt'))$('gotIt').onclick=()=>{UI.introSeen=true;store('rr4-intro',true);viewHome()};
+  $s().querySelectorAll('[data-scn]').forEach(b=>b.onclick=()=>startScn(b.dataset.scn));
+  if($('openOwn'))$('openOwn').onclick=()=>go('own');
+  if($('addOwn'))$('addOwn').onclick=()=>go('add');
+}
+function startScn(k){UI.scn=k;UI.path=[];UI.timings=[];UI.answers={};go('lock')}
+
+/* ---------- Lock screen ---------- */
+function viewLock(){
+  const s=SCN[UI.scn],st=s.steps[s.start];
+  $s().innerHTML=`<div class="lock">
+    <div class="date">${esc(s.date)}</div><div class="time">${esc(st.clock.replace(/ [AP]M/,''))}</div><div class="where">${esc(st.where)}</div>
+    <button class="notif" type="button" id="lockN"><div class="app"><span>${markSvg}REROUTED</span><span>now</span></div><b>${esc(st.notif.t)}</b><p>${esc(st.notif.b)}</p></button>
+    <div class="persona">${esc(s.persona)}${feedChips(['push'])}</div>
+    <div class="open">Tap the alert to open Rerouted</div>
+    <button class="btn small" type="button" id="lockBack" style="margin-top:14px;background:transparent;color:var(--tarmac-muted);border-color:rgba(255,255,255,.2)">Back to trips</button></div>`;
+  $('lockN').onclick=()=>enterStep(s.start,false);
+  $('lockBack').onclick=()=>go('home');
+}
+function enterStep(id,withToast=true){
+  const st=SCN[UI.scn].steps[id];
+  UI.path.push(id);
+  if(st.end){UI.played[UI.scn]=id;store('rr4-played',UI.played)}
+  go('step',{step:id,stepAt:Date.now()});
+  if(withToast&&st.notif)toast(st.notif,st.clock);
+}
+
+/* ---------- Building blocks ---------- */
+function boardHtml(b,feeds){
+  return `<section class="board" aria-label="Flight status"><p class="hl">${esc(b.hl)}</p>${b.cause?`<p class="cause">${esc(b.cause)}</p>`:''}
+    ${b.rows.map(([f,r,s,e,st,t])=>`<div class="frow"><span class="fn">${esc(f)}</span><span class="rt">${esc(r)}</span><span class="tm">${s!==e&&e!=='—'&&!/ARR|DEPARTED/.test(e)?`<s>${esc(s)}</s>${esc(e)}`:esc(e==='—'?s:e)}</span><span class="st ${t}">${esc(st)}</span></div>`).join('')}
+    ${UI.founder?`<div style="margin-top:6px">${feedChips(feeds||['status','alerts'])}</div>`:''}</section>`;
+}
+function routeSvg(rt){
+  if(!rt)return '';
+  const P={},o=rt.old,col=t=>t==='bad'?'var(--stop)':t==='late'?'var(--hold)':'var(--muted)';
+  const L=(a,b,c,d)=>`<path d="M${a[0]} ${a[1]} L${b[0]} ${b[1]}" fill="none" stroke="${c}" stroke-width="${d?5:7}" stroke-linecap="round"${d?' stroke-dasharray="10 11"':''}/>`;
+  const C=(a,b,q,c,d)=>`<path d="M${a[0]} ${a[1]} Q${q[0]} ${q[1]} ${b[0]} ${b[1]}" fill="none" stroke="${c}" stroke-width="${d?5:7}" stroke-linecap="round"${d?' stroke-dasharray="10 11"':''}/>`;
+  const N=(p,code,dy,stroke)=>`<circle cx="${p[0]}" cy="${p[1]}" r="11" fill="var(--surface)" stroke="${stroke||'var(--ink)'}" stroke-width="5"/><text x="${p[0]}" y="${p[1]+dy}" text-anchor="middle" font-size="28" font-weight="700" fill="var(--ink)" font-family="inherit">${esc(code)}</text>`;
+  let g='';
+  if(o.length===2){P[o[0][0]]=[60,104];P[o[0][1]]=[300,52];P[o[1][1]]=[540,104];g+=L(P[o[0][0]],P[o[0][1]],col(o[0][2]),1)+L(P[o[0][1]],P[o[1][1]],col(o[1][2]),1)}
+  else{P[o[0][0]]=[60,104];P[o[0][1]]=[540,104];g+=C(P[o[0][0]],P[o[0][1]],[300,10],col(o[0][2]),1)}
+  const n=rt.neu,start=P[n[0]]||[60,104],last=n[n.length-1],end=P[last]&&last!==n[0]?P[last]:[540,190],mids=n.slice(1,-1);
+  let extra='';
+  if(!mids.length)g+=C(start,end,[(start[0]+end[0])/2,Math.max(start[1],end[1])+110],'var(--center)');
+  else{
+    const pts=[start,...mids.map((c,i)=>[Math.round(start[0]+(end[0]-start[0])*(i+1)/(mids.length+1)),180]),end];
+    for(let i=0;i<pts.length-1;i++)g+=L(pts[i],pts[i+1],'var(--center)');
+    mids.forEach((c,i)=>extra+=N(pts[i+1],c,46,'var(--center)'));
+  }
+  const oldCodes=Object.keys(P);
+  g+=oldCodes.map(c=>N(P[c],c,-22)).join('')+extra+(P[last]?'':N(end,last,46,'var(--center)'));
+  return `<div class="routeviz"><svg viewBox="0 0 600 236" role="img" aria-label="Booked route compared with the suggested route">${g}</svg><div class="legend"><span class="old">Booked</span><span>Suggested</span></div></div>`;
+}
+function moveHtml(m,key){
+  if(!m)return '';
+  const th=UI.thumbs[key];
+  return `<section class="move ${m.tone==='warn'?'warn':m.tone==='neutral'?'neutral':''}" aria-label="Your move">
+    <div class="label">${esc(m.label)}</div><h3>${esc(m.title)}</h3><p class="sub">${esc(m.sub)}</p>
+    ${routeSvg(m.route)}
+    ${m.steps?.length?`<ol>${m.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`:''}
+    ${(m.scripts||[]).map((sc,i)=>`<div class="script"><div class="who"><span>What to say to ${esc(sc.who)}</span></div><p>${esc(sc.text)}</p>
+      <div class="row"><button class="btn small" type="button" data-copy="${i}">Copy</button><button class="btn small" type="button" data-show="${i}">Show to the agent</button></div></div>`).join('')}
+    ${m.note?`<p class="note">${esc(m.note)}</p>`:''}
+    ${feedChips(m.feeds)}
+    <div class="thumbs">Was this advice useful? <button type="button" data-th="up" aria-pressed="${th==='up'}">Yes</button><button type="button" data-th="down" aria-pressed="${th==='down'}">Not really</button></div>
+  </section>`;
+}
+function bindMove(root,m,key){
+  root.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(m.scripts[+b.dataset.copy].text);b.textContent='Copied'}catch(e){b.textContent='Copy failed'}});
+  root.querySelectorAll('[data-show]').forEach(b=>b.onclick=()=>{UI.agentScript=m.scripts[+b.dataset.show];UI.back=UI.view;go('agent')});
+  root.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>{UI.thumbs[key]=b.dataset.th;store('rr4-thumbs',UI.thumbs);root.querySelectorAll('[data-th]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+}
+function riskHtml(rk){
+  if(!rk)return '';
+  const hi=rk.items.filter(x=>x[1]==='high').length,lv={high:['High','bad'],med:['Watch','warn'],low:['Low','ok']};
+  return `<section class="card" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><b style="font-size:17px">${esc(rk.title||'Risk check')}</b><span class="pill ${hi?'bad':'ok'}">${hi?`${hi} high risk${hi>1?'s':''}`:'Looking good'}</span></div>
+    <ul class="rights" style="margin-top:10px">${rk.items.map(([t,l,b,f])=>`<li class="${l==='high'?'no':l==='med'?'warn':'yes'}"><b>${esc(t)} <span class="pill ${lv[l][1]}" style="margin-left:4px">${lv[l][0]}</span></b><span>${esc(b)}</span>${feedChips(f?[f]:[])}</li>`).join('')}</ul></section>`;
+}
+function linesHtml(ln){
+  if(!ln)return '';
+  return `<section class="card" style="margin:8px 0 4px"><b style="font-size:16px">Fastest way to get help right now</b>
+    <ul class="explist" style="margin:8px 0 6px">${ln.rows.map(([c,w,n,best])=>`<li style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:15px">${esc(c)}${best?' <span class="pill ok">Do this</span>':''}</b><span style="white-space:nowrap;font-weight:600">${esc(w)}</span></div><small style="display:block">${esc(n)}</small></li>`).join('')}</ul>
+    ${ln.tip?`<p class="note" style="margin:0">${esc(ln.tip)}</p>`:''}${feedChips(['waits'])}</section>`;
+}
+function recapLine(r){const parts=[];if(r.saved)parts.push(`${dur(r.saved)} saved`);if(r.back)parts.push(`${money2(r.back)} back`);return parts.join(', ')||'Every option, mapped'}
+function recapStats(){
+  let n=0,saved=0,back=0;
+  for(const [k,id] of Object.entries(UI.played)){const e=SCN[k]?.steps[id]?.end;if(!e)continue;n++;saved+=e.saved||0;back+=e.back||0}
+  return {n,saved,back};
+}
+const rightsHtml=r=>r?.length?`<h2>What you’re entitled to</h2><ul class="rights">${r.map(([c,t,b,f])=>`<li class="${c}"><b>${esc(t)}</b><span>${esc(b)}</span>${feedChips(f?[f]:[])}</li>`).join('')}</ul>`:'';
+
+/* Claim kit: who pays, expenses against the card's cap, documents, and how to file */
+// How each issuer's trip delay claims are filed. Checked Nov 11, 2026; "check" marks conflicting or unofficial sources.
+const CLAIMS={
+  chase:{admin:'Chase’s benefits administrator',site:'eclaimsline.com',url:'https://www.eclaimsline.com',call:'the number on the back of your card',notify:60,docs:100,conf:'check',
+    note:'Deadlines from published guides; confirm in your card’s Guide to Benefits.'},
+  amex:{admin:'AIG, American Express’s benefits administrator',site:'aig.claimnotify.com/americanexpress',url:'https://aig.claimnotify.com/americanexpress',call:'1-844-933-0648',notify:60,docs:180,conf:'ok',
+    note:'Notice deadline and contact details are from American Express’s own policy document.'},
+  capone:{admin:'Card Benefit Services, Capital One’s benefits administrator',site:'eclaimsline.com',url:'https://www.eclaimsline.com',call:'the number on the back of your card',notify:30,docs:null,conf:'check',
+    note:'Published guides disagree on 30 or 60 days, so Rerouted shows the earlier date.'},
+  other:{admin:'your card’s benefits administrator',site:null,url:null,call:'the number on the back of your card',notify:null,docs:null,conf:'check',
+    note:'Rerouted doesn’t have this card’s claim deadline yet. Check its Guide to Benefits.'}
+};
+// Per-day baggage delay coverage. Amex Platinum and Venture X cover lost or damaged bags, not per-day delays.
+const BAG={csr:{hrs:6,perDay:100,days:5},csp:{hrs:6,perDay:100,days:5},uacard:{hrs:6,perDay:100,days:3}};
+const CARD_CLAIM={csr:'chase',csp:'chase',uacard:'chase',amexp:'amex',amexg:'amex',vx:'capone',citisp:'other',bofapr:'other'};
+const addDays=(iso,n)=>{const d=new Date(iso+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric',timeZone:'UTC'})};
+const newKit=m=>({items:m.kit.items.map(([d,c,a])=>({d,c,a})),docs:{},status:'ready',claimNo:'',paid:''});
+
+function moneyHtml(m,key){
+  if(!m)return '';
+  const kit=m.kit?Object.assign(newKit(m),load(key)||{}):null;
+  const total=kit?kit.items.reduce((s,x)=>s+x.a,0):0;
+  return `<h2>Your delay money</h2><div class="payers">${m.payers.map(([w,a,on,p])=>`<div class="payer${on?' on':''}"><b>${esc(w)}</b><span class="amt">${esc(a)}</span><p>${esc(p)}</p></div>`).join('')}</div>
+    ${feedChips(['cards','rules'])}
+    ${kit?`<h2>Claim kit</h2><p class="hint">Log what you spend as you go. Rerouted turns it into a claim you can submit.</p>
+      <ul class="explist">${kit.items.map((x,i)=>`<li><span>${esc(x.d)} <small>${esc(x.c)}</small></span><span>${money2(x.a)} <button type="button" data-rm="${i}">Remove</button></span></li>`).join('')||'<li><small>No expenses yet.</small></li>'}</ul>
+      <div class="meter" role="img" aria-label="${money(Math.round(total))} of ${money(m.kit.cap)} covered"><i style="width:${Math.min(100,total/m.kit.cap*100)}%"></i></div>
+      <p class="note" style="margin:0 0 12px">${money2(total)} of ${money(m.kit.cap)} covered${total>m.kit.cap?`. ${money2(total-m.kit.cap)} is over the limit.`:'.'}</p>
+      <div class="exp"><label>What it was<input type="text" id="xd" placeholder="e.g. Breakfast"></label><label>Amount ($)<input type="number" id="xa" min="0" step="0.01" inputmode="decimal"></label></div>
+      <div class="row" style="margin:-4px 0 14px"><select id="xc" style="width:auto;margin:0"><option>Meals</option><option>Hotel</option><option>Transportation</option><option>Essentials</option></select><button class="btn small" type="button" id="xadd">Add expense</button></div>
+      ${m.claim?claimHtml(m,kit,total):''}`:''}`;
+}
+
+function claimHtml(m,kit,total){
+  const c=m.claim,card=CARDS[c.card],how=CLAIMS[CARD_CLAIM[c.card]]||CLAIMS.other,bag=c.type==='bag';
+  const ask=Math.min(total,m.kit.cap);
+  const docs=bag?[['rp','Delayed-bag report with the file reference number'],['dl','Proof of when the bag was delivered (United’s message works)'],['bt','Boarding pass and bag tag receipt'],['st','Card statement showing the fare was charged to this card'],['rc','Itemized receipts for the essentials you bought']]:[['ua','A written statement from United of the delay and its cause'],['it','Your itinerary or e-ticket receipt'],['st','Card statement showing the fare was charged to this card'],['rc','Itemized receipts for every expense'],['vo','Anything United already paid or gave you (vouchers count)']];
+  const done=docs.filter(([k])=>kit.docs[k]).length;
+  const steps=bag?[
+    `Keep your delayed-bag report number and the time the bag was delivered.`,
+    how.site?`Start a Baggage Delay claim at ${how.site}${how.call.startsWith('1-')?`, or call ${how.call}`:''}.`:`Call ${how.call} and ask for the benefits administrator to open a Baggage Delay claim.`,
+    `Paste your claim details from below, upload the documents, and request ${money2(ask)}.`,
+    `Choose how you want to be paid, then save your claim number here so Rerouted can track it.`]:[
+    `Get a written delay statement from United. An agent at the airport can usually provide one, or request it from United afterward.`,
+    how.site?`Start a Trip Delay claim at ${how.site}${how.call.startsWith('1-')?`, or call ${how.call}`:''}.`:`Call ${how.call} and ask for the benefits administrator to open a Trip Delay claim.`,
+    `Paste your claim details from below, upload the documents, and request ${money2(ask)}.`,
+    `Choose how you want to be paid, then save your claim number here so Rerouted can track it.`];
+  const status={ready:['Ready to file',''],filed:['Filed, waiting for a decision','warn'],paid:['Paid','ok']}[kit.status]||['Ready to file',''];
+  return `<section class="card" style="margin-top:4px;border-color:var(--center)">
+    <div class="row" style="justify-content:space-between"><b style="font-size:17px">File your claim</b><span class="pill ${status[1]||'warn'}">${status[0]}</span></div>
+    <p class="hint" style="margin:6px 0 12px">You’re eligible with your ${esc(card.name)}: ${esc(c.why)}. It covers up to ${money(m.kit.cap)}${c.extra?`, ${esc(c.extra)}`:''}.</p>
+    <div class="payers">
+      ${bag?`<div class="payer on"><b>Start the claim</b><span class="amt" style="font-size:19px;text-align:right">As soon as you can</span><p>Rerouted is still confirming this card’s baggage-delay deadlines. Filing early is always safe.</p></div>`:''}
+      ${how.notify&&!bag?`<div class="payer on"><b>Start the claim by</b><span class="amt" style="font-size:19px;text-align:right;white-space:nowrap">${addDays(c.date,how.notify)}</span><p>${how.notify} days from the delay. Starting sooner is better.</p></div>`:''}
+      ${how.docs&&!bag?`<div class="payer"><b>Send all documents by</b><span class="amt" style="font-size:19px;text-align:right;white-space:nowrap">${addDays(c.date,how.docs)}</span><p>${how.docs} days from the delay.</p></div>`:''}
+    </div>
+    <p class="note" style="margin:-4px 0 12px">${esc(how.note)}</p>
+    <b style="font-size:15px">How to file with ${esc(how.admin)}</b>
+    <ol style="margin:8px 0 14px;padding-left:20px;font-size:15px">${steps.map(s=>`<li style="margin-bottom:6px">${esc(s)}</li>`).join('')}</ol>
+    <b style="font-size:15px">Documents (${done} of ${docs.length} ready)</b>
+    <ul class="docs" style="margin-top:8px">${docs.map(([k,t])=>`<li><label class="chk"><input type="checkbox" data-doc="${k}"${kit.docs[k]?' checked':''}> ${t}</label></li>`).join('')}</ul>
+    <div class="script"><div class="who"><span>Your claim details, ready to paste</span></div><p style="white-space:pre-line;font-size:14px">${esc(claimText(m,kit,total))}</p>
+      <div class="row"><button class="btn small" type="button" id="claimCopy">Copy details</button>${how.url?`<a class="btn small" href="${how.url}" target="_blank" rel="noopener">Open ${esc(how.site)}</a>`:''}</div></div>
+    ${kit.status==='ready'?`<button class="btn primary block" type="button" id="claimFiled">I filed my claim</button>`
+      :kit.status==='filed'?`<label>Claim number<input type="text" id="claimNo" value="${esc(kit.claimNo)}" placeholder="From your confirmation email"></label>
+        <div class="row"><button class="btn small" type="button" id="claimSave">Save number</button><button class="btn small" type="button" id="claimPaid">Mark as paid</button></div>
+        <p class="note">Decisions usually take a few weeks. In the live product, Rerouted reminds you if the administrator asks for more documents.</p>`
+      :`<p class="note" style="color:var(--center);font-weight:700">Paid${kit.claimNo?` on claim ${esc(kit.claimNo)}`:''}. That’s ${money2(ask)} back for this trip.</p>`}
+    <p class="status" id="claimStatus"></p>
+    ${feedChips(['claims','cards'])}
+  </section>`;
+}
+function claimText(m,kit,total){
+  const c=m.claim,ask=Math.min(total,m.kit.cap);
+  return [c.type==='bag'?`Baggage delay claim`:`Trip delay claim`,`Card used to pay for the tickets: ${CARDS[c.card].name}`,`Travelers: ${c.travelers}`,
+    `Trip: ${c.flights}, ${c.dateText}. United confirmation ${c.conf}.`,`What happened: ${c.happened}`,
+    `Expenses: ${kit.items.length?kit.items.map(x=>`${x.d} (${x.c.toLowerCase()}) ${money2(x.a)}`).join('; '):'none logged yet'}`,
+    `Total: ${money2(total)}. Amount requested: ${money2(ask)}.`,`Paid or provided by the airline: ${c.airline}`].join('\n');
+}
+function bindMoney(root,m,key,rerender){
+  if(!m?.kit)return;
+  const kit=Object.assign(newKit(m),load(key)||{});
+  const save=()=>store(key,kit);
+  const q=s=>root.querySelector(s);
+  if(q('#xadd'))q('#xadd').onclick=()=>{const d=q('#xd').value.trim(),a=parseFloat(q('#xa').value);if(!d||!(a>0)){q('#xd').focus();return}
+    kit.items.push({d,c:q('#xc').value,a:Math.round(a*100)/100});save();rerender()};
+  root.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{kit.items.splice(+b.dataset.rm,1);save();rerender()});
+  root.querySelectorAll('[data-doc]').forEach(c=>c.onchange=()=>{kit.docs[c.dataset.doc]=c.checked;save();rerender()});
+  if(q('#claimCopy'))q('#claimCopy').onclick=async()=>{try{await navigator.clipboard.writeText(claimText(m,kit,kit.items.reduce((s,x)=>s+x.a,0)));q('#claimStatus').textContent='Copied. Paste it into the claim form.'}catch(e){q('#claimStatus').textContent='Copy didn’t work here.'}};
+  if(q('#claimFiled'))q('#claimFiled').onclick=()=>{kit.status='filed';save();rerender()};
+  if(q('#claimSave'))q('#claimSave').onclick=()=>{kit.claimNo=q('#claimNo').value.trim();save();q('#claimStatus').textContent='Saved.'};
+  if(q('#claimPaid'))q('#claimPaid').onclick=()=>{kit.claimNo=q('#claimNo').value.trim();kit.status='paid';save();rerender()};
+}
+
+/* ---------- Scenario step ---------- */
+function viewStep(){
+  const s=SCN[UI.scn],st=s.steps[UI.step],key=`${UI.scn}:${UI.step}`,kitKey=`rr4-kit-${UI.scn}-${st.money?.kitId||UI.step}`;
+  const earlier=UI.path.slice(0,-1).map(id=>s.steps[id]).filter(x=>x.notif);
+  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk">‹ Trips</button><div><div class="ttl">${esc(s.route)}</div><div class="sub">${esc(s.title)}</div></div></div>
+    <div class="pad" style="padding-bottom:${st.choices?'8px':'28px'}">
+      <div class="row" style="margin-bottom:12px"><span class="clock"><i></i>${esc(st.clock)}</span><span class="note" style="margin:0">${esc(st.where)}</span></div>
+      ${st.event?`<div class="event">${esc(st.event)}</div>`:''}
+      ${riskHtml(st.risk)}
+      ${boardHtml(st.board,st.feeds)}
+      ${st.end?endHtml(s,st):''}
+      ${moveHtml(st.move,key)}
+      ${linesHtml(st.lines)}
+      ${rightsHtml(st.rights)}
+      ${moneyHtml(st.money,kitKey)}
+      ${st.end?feedbackHtml():''}
+      ${earlier.length?`<details class="earlier"><summary>Earlier today</summary><ul class="tl">${earlier.map(x=>`<li><small>${esc(x.clock)}</small><b>${esc(x.notif.t)}</b>${esc(x.notif.b)}</li>`).join('')}</ul></details>`:''}
+    </div>
+    ${st.choices?`<div class="choices${st.choices.length===2?' two':''}"><span class="ask">What do you do?</span>${st.choices.map((c,i)=>`<button class="btn ${i===0?'primary':''}" type="button" data-next="${c.next}">${esc(c.label)}${c.sub?`<small>${esc(c.sub)}</small>`:''}</button>`).join('')}</div>`:''}`;
+  $('bk').onclick=()=>go('home');
+  bindMove($s(),st.move,key);
+  bindMoney($s(),st.money,kitKey,()=>{const y=$s().scrollTop;viewStep();$s().scrollTop=y});
+  $s().querySelectorAll('[data-next]').forEach(b=>b.onclick=()=>enterStep(b.dataset.next));
+  if(st.end)bindFeedback();
+}
+function endHtml(s,st){
+  const e=st.end;
+  return `<section class="outcome"><div class="cause" style="color:var(--tarmac-muted);font-size:13px">How it turned out</div><div class="big">${esc(e.big)}</div>
+    <dl>${e.rows.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl></section>
+    <div class="lesson"><b>The takeaway</b>${esc(e.lesson)}</div>`;
+}
+
+/* ---------- Feedback ---------- */
+const QS=[
+  {k:'clear',q:'How clear was it what to do?',o:['1 Confusing','2','3','4','5 Very clear']},
+  {k:'known',q:'Would you have known to ask for this yourself?',o:['Yes','Somewhat','No']},
+  {k:'script',q:'Would you use the script?',o:['As written','With changes','No']},
+  {k:'trust',q:'Would you trust this advice on a real trip?',o:['Yes','Not sure','No']},
+  {k:'pay',q:'What would you pay for this?',o:['Only if free','About $3 a month','About $8 a month','$50+ a year']}
+];
+function feedbackHtml(){
+  if(UI.answers.saved)return `<section class="card" style="margin-top:20px"><h2>Thank you</h2><p class="hint">Your answers are saved on this device.</p>
+    <div class="row"><button class="btn" type="button" id="fbCopy">Copy my answers</button>${FEEDBACK_EMAIL?`<a class="btn" id="fbMail" href="#">Email them to us</a>`:''}<button class="btn primary" type="button" id="fbNext">Try another scenario</button></div><p class="status" id="fbStatus"></p></section>`;
+  return `<section class="card" style="margin-top:20px"><h2>Quick questions</h2><p class="hint">Five taps and one optional note. It shapes what we build.</p>
+    ${QS.map(x=>`<div class="q"><b>${esc(x.q)}</b><div class="opts" data-q="${x.k}">${x.o.map(v=>`<button type="button" aria-pressed="${UI.answers[x.k]===v}">${esc(v)}</button>`).join('')}</div></div>`).join('')}
+    <label>What was confusing, missing, or surprising?<textarea id="fbText" placeholder="Anything at all">${esc(UI.answers.note||'')}</textarea></label>
+    <button class="btn primary block" type="button" id="fbSave">Save my answers</button><p class="status" id="fbStatus"></p></section>`;
+}
+function fbSummary(e){
+  const s=SCN[e.scn];
+  return [`Rerouted test session: ${s.title}`,`Path: ${e.path.join(' → ')} (${e.endTitle})`,...QS.map(x=>`${x.q} ${e.answers[x.k]||'(skipped)'}`),
+    `Note: ${e.answers.note||'(none)'}`,`Advice ratings: ${Object.entries(e.thumbs).map(([k,v])=>`${k}=${v}`).join(', ')||'(none)'}`,
+    `Seconds per screen: ${e.timings.map(([k,v])=>`${k} ${v}s`).join(', ')}`].join('\n');
+}
+function bindFeedback(){
+  const st=$('fbStatus');
+  $s().querySelectorAll('[data-q]').forEach(g=>g.querySelectorAll('button').forEach(b=>b.onclick=()=>{UI.answers[g.dataset.q]=b.textContent;g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b))}));
+  if($('fbSave'))$('fbSave').onclick=()=>{
+    UI.answers.note=$('fbText').value.trim();
+    if(UI.stepAt){logTime();UI.stepAt=Date.now()}
+    const thumbs=Object.fromEntries(Object.entries(UI.thumbs).filter(([k])=>k.startsWith(UI.scn+':')).map(([k,v])=>[k.split(':')[1],v]));
+    const entry={scn:UI.scn,at:new Date().toISOString(),path:[...UI.path],endTitle:SCN[UI.scn].steps[UI.step].end.big,answers:{...UI.answers},thumbs,timings:[...UI.timings]};
+    UI.fb.push(entry);store('rr4-feedback',UI.fb);
+    UI.answers.saved=true;UI.lastFb=entry;const y=$s().scrollTop;viewStep();$s().scrollTop=y;
+  };
+  if($('fbCopy'))$('fbCopy').onclick=async()=>{try{await navigator.clipboard.writeText(fbSummary(UI.lastFb));$('fbStatus').textContent='Copied. Paste it into a message to the Rerouted team.'}catch(e){$('fbStatus').textContent='Copy didn’t work here. Your answers are still saved.'}};
+  if($('fbMail'))$('fbMail').href=`mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent('Rerouted test: '+SCN[UI.scn].title)}&body=${encodeURIComponent(fbSummary(UI.lastFb))}`;
+  if($('fbNext'))$('fbNext').onclick=()=>go('home');
+}
+
+/* ---------- Show the agent ---------- */
+function viewAgent(){
+  const sc=UI.agentScript;
+  $s().innerHTML=`<div class="agent"><div class="who">Show this to ${esc(sc.who)}, or read it out</div><p>${esc(sc.text)}</p><button class="btn block" type="button" id="done">Done</button></div>`;
+  $('done').onclick=()=>{const v=UI.back||'home';UI.back=null;if(v==='step'){go('step');}else go(v)};
+}
+
+/* ---------- Wallet ---------- */
+/* Original Rerouted card art: the face shows each card's delay coverage at a glance. */
+const CARD_TONE={csr:'#12A26B',csp:'#8B5CF6',uacard:'#F2A900',vx:'#3564F0',amexp:'#12A26B',amexg:'#8B5CF6',citisp:'#3564F0',bofapr:'#F2A900'};
+const CARD_SHAPE={csr:0,csp:1,uacard:2,vx:0,amexp:2,amexg:1,citisp:2,bofapr:0};
+function cardFace(k,c,big){
+  const t=CARD_TONE[k]||'#3564F0',g=`cf-${k}-${big?'b':'s'}`,F='font-family="Archivo, system-ui, sans-serif"';
+  // Curves stay in the lower half so they never cross the coverage label.
+  const line=['M-10 150 C70 150 70 100 160 100 S250 150 330 150','M-10 108 C80 108 100 150 180 150 S290 104 330 104','M-10 162 C80 162 120 106 200 106 S300 140 330 140'][CARD_SHAPE[k]??0];
+  return `<svg class="cardface" viewBox="0 0 320 202" role="img" aria-label="Card art for ${esc(c.name)}: ${esc(cardTerms(c))}">
+    <defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2A3650"/><stop offset="1" stop-color="#121A26"/></linearGradient></defs>
+    <rect width="320" height="202" rx="18" fill="url(#${g})"/>
+    <path d="M-10 150 L330 150" stroke="#fff" stroke-opacity=".16" stroke-width="3" stroke-dasharray="4 10"/>
+    <path d="${line}" fill="none" stroke="${t}" stroke-width="10" stroke-linecap="round"/>
+    <rect x="22" y="24" width="40" height="30" rx="6" fill="#fff" fill-opacity=".2"/><path d="M22 39 H62 M42 24 V54" stroke="#121A26" stroke-opacity=".35" stroke-width="2"/>
+    ${big?`<text x="298" y="50" text-anchor="end" font-size="36" font-weight="800" fill="#fff" ${F}>${c.hrs} hr</text>
+    <text x="298" y="72" text-anchor="end" font-size="14" fill="#fff" fill-opacity=".75" ${F}>${c.overnight?'delay or overnight':'delay'}</text>
+    <text x="22" y="186" font-size="19" font-weight="700" fill="#fff" ${F}>${money(c.cap)} per ${c.per==='ticket'?'traveler':'trip'}</text>`
+    :`<text x="298" y="64" text-anchor="end" font-size="52" font-weight="800" fill="#fff" ${F}>${c.hrs}h</text>`}
+  </svg>`;
+}
+function viewWallet(){
+  const kits=Object.keys(localStorage).filter(k=>k.startsWith('rr4-kit-')).map(k=>[k,load(k)]).filter(([,v])=>v?.items?.length);
+  const mine=Object.keys(CARDS).filter(k=>S.profile.cards.includes(k));
+  $s().innerHTML=`<div class="pad"><h2>Your wallet</h2><p class="hint">Each card shows when its trip delay coverage starts and how much it pays. Terms checked ${CHECKED}.</p>
+    ${mine.length?`<div class="cardrail" aria-label="Cards in your wallet">${mine.map(k=>`<div class="railitem">${cardFace(k,CARDS[k],true)}<b>${esc(CARDS[k].name)}</b><small>${esc(cardTerms(CARDS[k]))}</small></div>`).join('')}</div>`:`<div class="emptywallet">Turn on the cards you carry below and they’ll appear here.</div>`}
+    <h2>All cards</h2>
+    ${Object.entries(CARDS).map(([k,c])=>`<label class="cardrow${S.profile.cards.includes(k)?' on':''}"><span class="thumb" aria-hidden="true">${cardFace(k,c,false)}</span><span style="flex:1"><b>${esc(c.name)}</b><small>${esc(cardTerms(c))}</small>${c.conf!=='ok'?'<small>From a published comparison; we confirm against the official terms before launch.</small>':''}</span><input type="checkbox" data-card="${k}"${S.profile.cards.includes(k)?' checked':''} aria-label="I have ${esc(c.name)}" style="width:22px;height:22px;accent-color:var(--edge)"></label>`).join('')}
+    ${feedChips(['cards'])}
+    <h2>Claim kits</h2>${kits.length?`<ul class="explist">${kits.map(([k,v])=>`<li><span>${esc(k.replace('rr4-kit-','').replace(/-/g,' '))}</span><span>${money2(v.items.reduce((s,x)=>s+x.a,0))}</span></li>`).join('')}</ul>`:'<p class="hint">Claim kits appear here when a delay makes you eligible for reimbursement.</p>'}</div>`;
+  $s().querySelectorAll('[data-card]').forEach(c=>c.onchange=()=>{const k=c.dataset.card;S.profile.cards=c.checked?[...new Set([...S.profile.cards,k])]:S.profile.cards.filter(x=>x!==k);store('rr4-profile',S.profile);viewWallet()});
+}
+
+/* ---------- You ---------- */
+function viewYou(){
+  const o=(arr,v)=>arr.map(([k,t])=>`<option value="${esc(k)}"${String(k)===String(v)?' selected':''}>${esc(t)}</option>`).join('');
+  $s().innerHTML=`<div class="pad"><h2>You</h2>
+    <label>United status<select id="pStatus">${o(AL.UA.tiers.map((t,i)=>[i,t]),S.profile.status.UA||0)}</select></label>
+    <label>Alert me when a delay reaches<select id="pAlert">${o([[15,'15 minutes'],[30,'30 minutes'],[60,'1 hour'],[120,'2 hours']],S.profile.alertMin)}</select></label>
+    <label class="chk"><input type="checkbox" id="pAlt"${S.profile.alt?' checked':''}> Show flights to nearby airports during disruptions</label>
+    <h2>Your test answers</h2><p class="hint">${UI.fb.length?`${UI.fb.length} saved on this device.`:'None yet. Play a scenario to the end.'}</p>
+    ${UI.fb.length?`<button class="btn" type="button" id="copyAll">Copy all answers</button><p class="status" id="yStatus"></p>`:''}
+    <h2>Prototype settings</h2>
+    <div class="switch"><span>Founder view<small>Shows which real data feed would power each part of the app.</small></span><input type="checkbox" id="pFounder"${UI.founder?' checked':''}></div>
+    <div class="switch"><span>Launch feeds<small>Every feed this mock stands in for, and when you need it.</small></span><button class="btn small" type="button" id="openFeeds">Open</button></div>
+    <div class="switch"><span>Start over<small>Clears trips, answers, and claim kits on this device.</small></span><button class="btn small" type="button" id="reset">Reset</button></div></div>`;
+  $('pStatus').onchange=e=>{S.profile.status.UA=+e.target.value;store('rr4-profile',S.profile)};
+  $('pAlert').onchange=e=>{S.profile.alertMin=+e.target.value;store('rr4-profile',S.profile)};
+  $('pAlt').onchange=e=>{S.profile.alt=e.target.checked;store('rr4-profile',S.profile)};
+  $('pFounder').onchange=e=>{UI.founder=e.target.checked;store('rr4-founder',UI.founder)};
+  $('openFeeds').onclick=()=>go('feeds');
+  if($('copyAll'))$('copyAll').onclick=async()=>{try{await navigator.clipboard.writeText(UI.fb.map(fbSummary).join('\n\n'));$('yStatus').textContent='Copied.'}catch(e){$('yStatus').textContent='Copy didn’t work here.'}};
+  $('reset').onclick=()=>{if(!confirm('Clear everything Rerouted saved on this device?'))return;Object.keys(localStorage).filter(k=>k.startsWith('rr4-')).forEach(k=>localStorage.removeItem(k));location.reload()};
+}
+function viewFeeds(){
+  const order=['Launch','Recommended','Later','Gap'],label={Launch:'Needed at launch',Recommended:'Strongly recommended at launch',Later:'After launch',Gap:'No feed exists'};
+  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk">‹ You</button><div class="ttl">Launch feeds</div></div><div class="pad">
+    <p class="hint">Every simulated part of this prototype stands in for one of these. Turn on Founder view to see them tagged on each screen.</p>
+    ${order.map(stg=>`<h2>${label[stg]}</h2><ul class="feedlist">${Object.values(FEEDS).filter(f=>f.stage===stg).map(f=>`<li><span class="stage-tag ${stg}">${stg}</span><b>${esc(f.name)}</b><small>Source: ${esc(f.src)}</small><small>Powers: ${esc(f.used)}</small></li>`).join('')}</ul>`).join('')}</div>`;
+  $('bk').onclick=()=>go('you');
+}
+
+/* ---------- Your own trip: intake ---------- */
+function viewAdd(){
+  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk">‹ Trips</button><div class="ttl">Add a booking</div></div><div class="pad">
+    <p class="hint">Paste your United confirmation email, or the one from the site you booked on. Rerouted picks out the flights, confirmation numbers, and who sold the ticket.</p>
+    <textarea id="emailText" aria-label="Confirmation email" placeholder="Paste your confirmation email here" style="min-height:200px"></textarea>
+    <div class="row" style="margin-top:10px"><button class="btn primary" type="button" id="readBtn">Read my booking</button></div>
+    <p class="status" id="readStatus" role="status"></p>
+    ${feedChips(['intake'])}
+    <h2>No email handy?</h2><p class="hint">Try a sample.</p>
+    <div class="row"><button class="btn small" type="button" data-sample="direct">Booked on united.com</button><button class="btn small" type="button" data-sample="expedia">Booked on Expedia</button><button class="btn small" type="button" data-sample="split">Two separate tickets</button></div></div>`;
+  $('bk').onclick=()=>go('home');
+  $('readBtn').onclick=()=>readOwn($('emailText').value.trim());
+  $s().querySelectorAll('[data-sample]').forEach(b=>b.onclick=()=>{$('emailText').value=SAMPLES[b.dataset.sample];readOwn(SAMPLES[b.dataset.sample])});
+}
+async function readOwn(text){
+  const st=$('readStatus'),btn=$('readBtn');
+  if(!text){st.className='status err';st.textContent='Paste your confirmation email first.';return}
+  st.className='status';st.textContent='Reading your booking…';btn.disabled=true;
+  let parsed=null;
+  try{const sample=await sampleP;if(sample)parsed=await sample.json(PROMPT+text,{modelTier:'quick'})}catch(e){/* fall back below */}
+  if(!parsed?.segments?.length)parsed=regexParse(text);
+  btn.disabled=false;
+  if(!parsed.segments.length){st.className='status err';st.textContent='No flights found. Check that you pasted the whole email.';return}
+  S.draft=normalize(parsed);st.textContent='';go('check');
+}
+
+/* ---------- Your own trip: check details ---------- */
+function viewCheck(){
+  const d=S.draft,o=(arr,v)=>arr.map(([k,t])=>`<option value="${esc(k)}"${String(k)===String(v)?' selected':''}>${esc(t)}</option>`).join('');
+  const aps=[['','Airport'],...Object.keys(AP).sort().map(k=>[k,k])];
+  const confs=[...new Set(d.segments.map(s=>s.conf).filter(Boolean))];
+  const notes=[];
+  if(d.otherAirline)notes.push(['bad','Rerouted tracks United flights for now','Delta and American are next.']);
+  if(confs.length>1)notes.push(['no','These flights are on separate tickets',`If the first is late and you miss the second, United doesn’t have to rebook you for free.`]);
+  if(d.via==='ota'||d.via==='agency')notes.push(['warn',`Booked through ${d.viaName||'a third party'}`,'United agents may send you back to them for changes. Rerouted will tell you who to call.']);
+  if(d.fare===0)notes.push(['warn','Basic Economy','No same-day changes, but free rebooking still applies if United delays or cancels.']);
+  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk">‹ Back</button><div class="ttl">Check your booking</div></div><div class="pad">
+    ${notes.length?`<ul class="rights" style="margin-bottom:16px">${notes.map(([c,t,b])=>`<li class="${c}"><b>${esc(t)}</b><span>${esc(b)}</span></li>`).join('')}</ul>`:''}
+    <div class="grid2"><label>Travel date<input type="date" id="cDate" value="${esc(d.date)}"></label><label>Fare<select id="cFare">${o(FARES.map((f,i)=>[i,f]),d.fare)}</select></label></div>
+    <label>Booked through<select id="cVia">${o(Object.entries(VIA),d.via)}</select></label>
+    <label${d.via==='ota'||d.via==='agency'?'':' hidden'}>Site or agency name<input type="text" id="cVname" value="${esc(d.viaName)}" placeholder="e.g. Expedia"></label>
+    ${d.segments.map((s,i)=>`<fieldset class="seg"><legend>Flight ${i+1}</legend>
+      <div class="grid2"><label>Flight<input type="text" class="sNum" data-i="${i}" value="${esc(s.num)}" inputmode="numeric"></label><label>Confirmation<input type="text" class="sConf" data-i="${i}" value="${esc(s.conf)}"></label>
+      <label>From<select class="sFrom" data-i="${i}">${o(aps,s.from)}</select></label><label>To<select class="sTo" data-i="${i}">${o(aps,s.to)}</select></label>
+      <label>Departs<input type="time" class="sDep" data-i="${i}" value="${esc(s.dep)}"></label><label>Arrives<input type="time" class="sArr" data-i="${i}" value="${esc(s.arr)}"></label></div></fieldset>`).join('')}
+    <div class="grid2"><label>Travelers<input type="number" id="cTrav" min="1" max="9" value="${d.travelers}"></label><label>Bags<select id="cBag">${o([['0','Carry-on only'],['1','Checking a bag']],d.bags?1:0)}</select></label></div>
+    <label>Paid for with<select id="cPaid">${o([['','Choose a card'],...Object.entries(CARDS).map(([k,c])=>[k,c.name]),['other','Another card or payment']],d.paidWith)}</select></label>
+    <label class="chk"><input type="checkbox" id="cRt"${d.roundTrip?' checked':''}> This booking is a round trip</label>
+    <label>Your United status<select id="cStatus">${o(AL.UA.tiers.map((t,i)=>[i,t]),S.profile.status.UA||0)}</select></label>
+    <button class="btn primary block" type="button" id="cGo">Watch this trip</button><p class="status err" id="cErr" role="alert"></p></div>`;
+  $('bk').onclick=()=>go('add');
+  $('cVia').onchange=()=>{collectOwn();viewCheck()};
+  $('cGo').onclick=()=>{
+    collectOwn();
+    const e=[];const d=S.draft;
+    if(d.otherAirline)e.push('Only United flights can be tracked for now.');
+    d.segments.forEach((s,i)=>{if(!s.num||!s.from||!s.to||!s.dep||!s.arr)e.push(`Fill in every field for flight ${i+1}.`)});
+    if(d.segments.length===2&&d.segments[0].to!==d.segments[1].from)e.push('The second flight should leave from where the first lands.');
+    if(e.length){$('cErr').textContent=e.join(' ');return}
+    if(d.paidWith&&CARDS[d.paidWith]&&!S.profile.cards.includes(d.paidWith))S.profile.cards.push(d.paidWith);
+    S.trip=JSON.parse(JSON.stringify(d));store('rr4-trip',S.trip);store('rr4-profile',S.profile);
+    buildBooked();UI.own='none';go('own');
+  };
+}
+function collectOwn(){
+  const d=S.draft,v=id=>$(id).value;
+  d.date=v('cDate');d.fare=+v('cFare');d.via=v('cVia');d.viaName=$('cVname').value.trim();d.travelers=Math.max(1,+v('cTrav')||1);
+  d.bags=v('cBag')==='1';d.paidWith=v('cPaid');d.roundTrip=$('cRt').checked;S.profile.status.UA=+v('cStatus');
+  d.segments.forEach((s,i)=>{const g=c=>$s().querySelector(`.${c}[data-i="${i}"]`).value;s.num=g('sNum').replace(/\D/g,'');s.conf=g('sConf').toUpperCase().trim();s.from=g('sFrom');s.to=g('sTo');s.dep=g('sDep');s.arr=g('sArr');s.al='UA'});
+}
+
+/* ---------- Your own trip: what Rerouted would do ---------- */
+const OWN_KINDS=[['none','On time'],['small','20 min late'],['conn','Connection 2.5 hr late'],['cancel','First flight canceled'],['miss','Missed connection'],['weather','Weather, 7 hr late']];
+function viewOwn(){
+  const st=engineStep(UI.own),key=`own:${UI.own}`,kitKey=`rr4-kit-own-${UI.own}`;
+  const kinds=OWN_KINDS.filter(([k])=>!(k==='miss'&&S.booked.length<2));
+  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk">‹ Trips</button><div><div class="ttl">${esc(S.booked[0].from)} → ${esc(S.booked[S.booked.length-1].to)}</div><div class="sub">${esc(niceDate(S.trip.date)||'Your trip')}</div></div></div>
+    <div class="pad">
+      <p class="hint" style="margin:0 0 8px">What if this happened on your trip?</p>
+      <div class="opts" style="margin-bottom:16px">${kinds.map(([k,l])=>`<button type="button" data-kind="${k}" aria-pressed="${UI.own===k}">${l}</button>`).join('')}</div>
+      ${UI.own==='none'?riskHtml(ownRisk()):''}
+      ${boardHtml(st.board)}
+      ${moveHtml(st.move,key)}
+      ${linesHtml(st.lines)}
+      ${rightsHtml(st.rights)}
+      ${moneyHtml(st.money,kitKey)}
+      <p class="note">On your own trip, alternative flights and seat counts are simulated. In the live product they come from United’s schedule and a seat feed.</p>
+      <div class="row" style="margin-top:16px"><button class="btn small" type="button" id="editOwn">Edit details</button><button class="btn small" type="button" id="rmOwn">Remove trip</button></div>
+    </div>`;
+  $('bk').onclick=()=>go('home');
+  $s().querySelectorAll('[data-kind]').forEach(b=>b.onclick=()=>{UI.own=b.dataset.kind;const y=$s().scrollTop;viewOwn();$s().scrollTop=y;const n=engineStep(UI.own).notif;if(n)toast(n)});
+  bindMove($s(),st.move,key);
+  bindMoney($s(),st.money,kitKey,()=>{const y=$s().scrollTop;viewOwn();$s().scrollTop=y});
+  $('editOwn').onclick=()=>{S.draft=JSON.parse(JSON.stringify(S.trip));go('check')};
+  $('rmOwn').onclick=()=>{S.trip=null;S.booked=null;store('rr4-trip',null);go('home')};
+}
+
+/** Night-before risk check for the traveler's own trip. Weather and inbound aircraft are simulated here. */
+function ownRisk(){
+  const segs=S.booked,T=S.trip,out=[],R=rng('risk'+T.date+segs.map(x=>x.from).join(''));
+  if(segs.length>1){const m=segs[1].dep-segs[0].arr;out.push(['Your connection',m<60?'high':m<90?'med':'low',`${dur(m)} in ${segs[0].to}.${m<60?' A short delay on your first flight would break it.':m<90?' Fine unless the first flight runs late.':' Plenty of time.'}`,'status'])}
+  const spots=[...new Set([segs[0].from,...segs.map(x=>x.to)])],wx=spots.map(h=>[h,R()]).sort((a,b)=>b[1]-a[1])[0];
+  out.push([`Weather at ${AP[wx[0]][0]}`,wx[1]>.8?'high':wx[1]>.5?'med':'low',(wx[1]>.8?'Storms forecast near your travel time.':wx[1]>.5?'Some rain or wind in the forecast.':'Clear forecast.')+' (Simulated until the weather feed is connected.)','weather']);
+  const ib=R();
+  out.push(['Your first plane',ib>.8?'med':'low',(ib>.8?'It arrives from a late-evening flight that often runs behind.':'It spends the night at your departure airport, which helps an on-time start.')+' (Simulated.)','inbound']);
+  const sep=new Set(T.segments.map(x=>x.conf).filter(Boolean)).size>1,third=T.via==='ota'||T.via==='agency';
+  out.push(['Your ticket',sep?'high':third?'med':'low',sep?'Two separate bookings, so a missed connection isn’t protected.':third?`Booked through ${T.viaName||'a third party'}, so changes may have to go through them.`:'One booking with United, so the whole trip is protected.','intake']);
+  if(T.fare===0)out.push(['Your fare','med','Basic Economy: no same-day changes, so fixing problems early is harder.','rules']);
+  return {title:'Night-before risk check',items:out};
+}
+
+/** Run the tested rules engine for one what-if and shape it like a scenario step. */
+function engineStep(kind){
+  const segs=S.booked,n=segs.length;
+  S.segDelay=segs.map(()=>0);S.segCancel=segs.map(()=>false);S.cause='unknown';
+  if(kind==='small')S.segDelay[0]=20;
+  if(kind==='conn'){S.segDelay[n-1]=150;S.cause='ctrl'}
+  if(kind==='cancel'){S.segCancel[0]=true;S.cause='ctrl'}
+  if(kind==='miss'&&n>1){const g=segs[1].dep-segs[0].arr;S.segDelay[0]=Math.max(5,Math.ceil((g-AL.UA.policy.mct+15)/5)*5);S.cause='ctrl'}
+  if(kind==='weather'){S.segDelay[n-1]=420;S.cause='wx'}
+  S.now=Math.max(0,Math.floor((segs[0].dep+AP[segs[0].from][3]*60-90)/5)*5);
+  const r=analyze(),best=recommend(r),ce=cardEval(r),ae=airlineEval(r,ce),to=r.to,eff=r.eff;
+  const late=r.projArr!==null?r.projArr-r.schedArr:0;
+  const hl={ontime:()=>`On time. Landing ${to} at ${fmt(r.projArr,to)}`,
+    minor:()=>late>0?`Running ${dur(late)} late. Landing ${to} at ${fmt(r.projArr,to)}`:`${fl(eff.find(e=>e.delay>0).f)} is ${dur(r.maxDelay)} late. Your connection still works`,
+    major:()=>`Landing ${to} at ${fmt(r.projArr,to)}, ${dur(late)} late`,
+    misconnect:()=>`You’ll miss your connection in ${eff[0].f.to}`,
+    canceled:()=>`${fl(eff.find(e=>e.cancel).f)} is canceled`}[r.status]();
+  const rows=eff.map((e,i)=>{
+    let s,t;if(e.cancel){s='CANCELED';t='bad'}else if(i===1&&r.status==='misconnect'){s='CONNECTION MISSED';t='bad'}else if(e.delay>0){s=`DELAYED ${dur(e.delay).toUpperCase()}`;t='late'}else{s='ON TIME';t='ok'}
+    return [fl(e.f),`${e.f.from} → ${e.f.to}`,fmt(e.f.dep,e.f.from),e.cancel?'—':fmt(e.dep,e.f.from),s,t];
+  });
+  const tone=(e,i)=>e.cancel||(i===1&&r.status==='misconnect')?'bad':e.delay>0?'late':'ok';
+  let move;
+  if(best){
+    const o=best.it,k=best.method.kind,dest=o[o.length-1].f.to,ref=r.projArr??r.schedArr,g=ref-best.arr,pl=plan(r,best);
+    const what=`${fls(o)}, the ${fmt(o[0].dep,o[0].f.from)} ${via(o)}`;
+    const title=k==='standby'?`Stand by for ${what}`:k==='ota'?`Call ${r.viaName} about ${what}`:k==='ask'?`Ask United for ${what}`:`Switch to ${what}`;
+    const cost=k==='paid'?`for $${best.method.fee}`:k==='standby'?'free, on standby':k==='ota'?`for whatever ${r.viaName} charges`:k==='ask'?'if United agrees':'at no cost';
+    const sub=`You’d land at ${fmt(best.arr,dest)}${best.alt?` in ${AP[dest][0]}`:''}, ${r.projArr!==null?`${dur(g)} earlier`:rel(g)}, ${cost}. ${best.seats>0?`${best.seats} seat${best.seats>1?'s':''} open.`:'Currently full.'}`;
+    move={tone:['free','paid'].includes(k)?'go':'warn',label:k==='ask'?'Not guaranteed':k==='standby'?'Worth a try':'Your best move',title,sub,
+      route:{old:eff.map((e,i)=>[e.f.from,e.f.to,tone(e,i)]),neu:[o[0].f.from,...o.map(x=>x.f.to)]},
+      steps:pl.steps,scripts:[{who:pl.who,text:pl.script}],feeds:['sched','seats','rules']};
+  } else move={tone:'neutral',label:r.status==='ontime'?'All good':'No better option right now',title:r.status==='ontime'?'Nothing to do. Rerouted is watching.':'Keep your current booking',
+    sub:r.status==='ontime'?'You’ll hear from Rerouted the moment something changes.':'Rerouted will alert you if seats open on an earlier flight.',feeds:['status']};
+  // Entitlements, from the same rules as the prototype engine
+  const R=[];
+  const why={major:`a ${dur(r.maxDelay)} delay`,misconnect:'a missed connection',canceled:'a cancellation'}[r.status];
+  if(r.covered)R.push(['yes',`Free rebooking on any United flight to ${to} today`,`Triggered by ${why}. No change fee or fare difference, including onto a nonstop, when seats are open.`,'rules']);
+  else if(r.disrupted)R.push(['no','Your connection isn’t protected','Your flights are on separate tickets, so United only has to protect each ticket on its own.','intake']);
+  if(!r.direct)R.push(['warn',`Changes go through ${r.viaName}`,r.disrupted?`You’re still owed free rebooking, but United may send you to ${r.viaName}. Call them and United at the same time.`:`United usually can’t make voluntary changes to tickets sold by ${r.viaName}.`,'intake']);
+  if(r.tight)R.push(['warn',`Your ${eff[0].f.to} connection is down to ${dur(r.margin)}`,'Moving now, before it becomes a missed connection, gives you the most choices.','status']);
+  if(r.disrupted){
+    if(ae.ctrl)R.push([ae.meal?'yes':'',ae.meal?'Meal voucher from United':'Meal voucher at 3 hours',ae.meal?'Your wait is past 3 hours on a delay United caused.':`Owed once the wait reaches 3 hours on a delay United caused.`,'rules']);
+    else R.push(['no','No meals or hotel from United','Weather and air traffic control delays aren’t covered by United’s commitments.','rules']);
+  }
+  if(!r.disrupted&&r.direct){const cf=AL.UA.policy.confirmedFee[r.tier];R.push([cf===0?'yes':'',cf===0?'Same-day change: free with your status':`Same-day change: up to $${cf}`,'When the same fare class is open on the new flight.','rules'])}
+  if(r.status==='canceled'||late>=180)R.push(['yes','Refund if you decide not to travel','Owed after a cancellation or a 3+ hour domestic delay.','dot']);
+  // Money
+  let cash=null;
+  if(r.status!=='ontime'&&r.status!=='minor'){
+    const payers=[['United',ae.meal||ae.hotel?(ae.hotel?'Meal + hotel':'Meal voucher'):ae.ctrl?'Not yet':'Not owed',ae.meal||ae.hotel,ae.meal||ae.hotel?'Owed because United caused the delay.':ae.ctrl?'Owed once your wait reaches 3 hours on a delay United caused.':'Not owed for weather or air traffic control.']];
+    if(ce.card)payers.push([ce.card.name,ce.triggered?`Up to ${money(ce.cap)}`:`${money(ce.cap)} cap`,ce.triggered,ce.triggered?'Your trip delay coverage applies. Keep every receipt.':ce.eligible?`Starts after ${ce.card.hrs} hours${ce.card.overnight?' or an overnight stay':''}.`:ce.why]);
+    else payers.push(['Your card','—',false,'Add the card you paid with to see its coverage.']);
+    cash={payers,kit:ce.triggered?{cap:ce.cap,items:[]}:null};
+    if(ce.triggered)cash.claim={card:S.trip.paidWith,date:S.trip.date||new Date().toISOString().slice(0,10),dateText:niceDate(S.trip.date)||'your travel date',travelers:S.trip.travelers,
+      conf:[...new Set(S.trip.segments.map(s=>s.conf).filter(Boolean))].join(', ')||'(add it)',flights:S.booked.map(f=>`${fl(f)} ${AP[f.from][0]} to ${AP[f.to][0]}`).join(', then '),
+      airline:ae.meal||ae.hotel?'List any vouchers you received':'Nothing',
+      why:ce.delayMin===Infinity||ce.overnight?'the disruption forced an overnight stay':`you’ll land ${dur(ce.delayMin)} late, past its ${ce.card.hrs}-hour threshold`,
+      happened:`${hl}. Cause: ${({ctrl:'within United’s control',wx:'weather',unknown:'not stated'})[S.cause]||'not stated'}.`};
+  }
+  const notif=r.status==='ontime'?null:{t:hl,b:best?move.title+'.':'Open Rerouted for details.'};
+  let lines=null;
+  if(r.disrupted&&best){
+    const R2=rng('lines'+kind+S.trip.date),m=n=>Math.round((n[0]+R2()*(n[1]-n[0]))/5)*5;
+    const rows=[];
+    if(!r.direct)rows.push([`${r.viaName} phone`,`About ${m([20,50])} min hold`,'They sold the ticket, so they can always change it.','best']);
+    rows.push([`United desk at ${r.loc}`,`About ${m([5,25])} people`,'Agents can rebook you directly during a disruption.','best']);
+    rows.push([`United phone${r.tier>=1?', Premier line':''}`,`About ${m(r.tier>=1?[5,25]:[20,60])} min`,r.direct?'Good backup while you wait in line.':`May send you back to ${r.viaName}.`,r.direct&&r.tier>=1?'best':'']);
+    rows.push(['United app','Instant','Fastest, but often shows only the automatic rebooking.','']);
+    lines={rows,tip:'Use two channels at once, and stop when one works.'};
+  }
+  return {lines,board:{hl,cause:{ctrl:'Within United’s control',wx:'Weather',unknown:''}[S.cause]||'',rows},move,rights:R,money:cash,notif};
+}
+
+
+/* ---------- Start ---------- */
+(function init(){
+  document.querySelectorAll('[data-ic]').forEach(s=>s.outerHTML=icon[s.dataset.ic]);
+  document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+  const t=load('rr4-trip');
+  if(t&&t.segments?.length&&t.segments.every(s=>AP[s.from]&&AP[s.to])){S.trip=t;buildBooked()}
+  go('home');
+})();
+
+
+
+/* ---------- Website: launch scenarios from the page ---------- */
+(function site(){
+  const demo=document.getElementById('demo');
+  const play=k=>{
+    startScn(k);
+    const r=demo.getBoundingClientRect();
+    if(r.top<60||r.bottom>innerHeight){
+      const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+      demo.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});
+    }
+  };
+  const tiles=document.getElementById('siteScns');
+  tiles.innerHTML=Object.entries(SCN).map(([k,s])=>`<button class="scncard" type="button" data-play="${k}">
+    <div class="strip">${esc(s.route)}<span>${esc(s.date.split(',')[0])}</span></div>
+    <div class="body"><b>${esc(s.title)}</b><p>${esc(s.blurb)}</p><div class="meta">${esc(s.persona.split(':')[0])}</div><span class="go">Play in the phone →</span></div></button>`).join('');
+  document.querySelectorAll('.site [data-play]').forEach(b=>b.addEventListener('click',()=>play(b.dataset.play)));
+  document.getElementById('storyRoute').innerHTML=routeSvg({old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','LAX']});
+  document.getElementById('siteCards').innerHTML=['csr','uacard','amexp'].map(k=>`<div>${cardFace(k,CARDS[k],true)}</div>`).join('');
+})();
+
+</script>
+
+</html>
