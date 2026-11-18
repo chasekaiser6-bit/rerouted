@@ -1187,7 +1187,7 @@ denver:{
         ['UA 2216','DEN → LAX','11:20 AM','1:50 PM','DELAYED 2 HR 30 MIN','late','12:40 PM','3:10 PM']]},
       move:{tone:'go',label:'Your best move',title:'Switch to UA 1288, the 8:15 AM nonstop',
         sub:'Free, and seats available.',
-        route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','LAX'],t:{old:'3:10 PM',ot:'late',dep:'8:15 AM',arr:'11:40 AM',gain:'3 hr 30 min sooner'}},
+        route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','LAX'],t:{oldDep:'7:05 AM',old:'3:10 PM',ot:'late',dep:'8:15 AM',arr:'11:40 AM',gain:'3 hr 30 min sooner'}},
         steps:['Open the United app, go to My Trips, and tap Change flight. Disrupted trips show a rebooking option at the top.',
           'If UA 1288 isn’t offered, don’t accept the app’s suggestion. It usually keeps you on the Denver route.',
           'Call United or ask at the Logan check-in desk, and use the script. Confirm the new seat before you hang up.'],
@@ -1207,7 +1207,7 @@ denver:{
         ['UA 2216','DEN → LAX','11:20 AM','1:50 PM','DELAYED 2 HR 30 MIN','late','12:40 PM','3:10 PM']]},
       move:{tone:'warn',label:'Don’t tap Accept',title:'Skip the app’s offer and call instead',
         sub:'Apps usually show the airline’s automatic rebooking first. An agent can see and book the nonstop.',
-        route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','LAX'],t:{old:'3:10 PM',ot:'late',dep:'8:15 AM',arr:'11:40 AM',gain:'3 hr 30 min sooner'}},
+        route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','LAX'],t:{oldDep:'7:05 AM',old:'3:10 PM',ot:'late',dep:'8:15 AM',arr:'11:40 AM',gain:'3 hr 30 min sooner'}},
         steps:['Tap Back, not Accept. Accepting locks you into the 3:55 PM arrival.',
           'Call United. Premier members get a shorter phone line.',
           'Read the script. If they say the nonstop is full, ask for standby on it plus a confirmed seat on the best backup.'],
@@ -1236,7 +1236,7 @@ denver:{
         ['UA 2216','DEN → LAX','11:20 AM','3:05 PM','DELAYED 3 HR 45 MIN','late','12:40 PM','4:25 PM']]},
       move:{tone:'go',label:'Your best move',title:'Take UA 532 + UA 1971 via San Francisco, and stand by for the nonstop',
         sub:'Confirmed seats, plus standby on the nonstop. Premier Gold clears early.',
-        route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','SFO','LAX'],sb:['BOS','LAX'],t:{old:'4:25 PM',ot:'late',dep:'9:10 AM',arr:'2:05 PM',gain:'2 hr 20 min sooner',sbDep:'8:15 AM',sbArr:'11:40 AM',sbGain:'3 hr 30 min if you clear'}},
+        route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','SFO','LAX'],sb:['BOS','LAX'],t:{oldDep:'7:05 AM',old:'4:25 PM',ot:'late',dep:'9:10 AM',arr:'2:05 PM',gain:'2 hr 20 min sooner',sbDep:'8:15 AM',sbArr:'11:40 AM',sbGain:'3 hr 30 min if you clear'}},
         steps:['Don’t board UA 1543 to Denver yet. Once you fly the first leg, most of your options disappear.',
           'Go to the United desk in Terminal B, or call, and use the script.',
           'Ask for standby on UA 1288 at the same time. You keep the confirmed San Francisco seat as a backup.'],
@@ -1292,7 +1292,7 @@ ohare:{
         ['UA 2054','ORD → SEA','9:05 AM','—','CANCELED','bad','11:40 AM','—']]},
       move:{tone:'go',label:'Your best move',title:'Ask for UA 1940 + UA 2290 via Denver, leaving 12:30 PM',
         sub:'Free, and seats available for both of you.',
-        route:{old:[['BOS','ORD','ok'],['ORD','SEA','bad']],neu:['ORD','DEN','SEA'],fromHub:true,t:{old:'Canceled',ot:'bad',dep:'12:30 PM',arr:'5:58 PM',gain:'Lands today'}},
+        route:{old:[['BOS','ORD','ok'],['ORD','SEA','bad']],neu:['ORD','DEN','SEA'],fromHub:true,t:{oldDep:'9:05 AM',old:'Canceled',ot:'bad',dep:'12:30 PM',arr:'5:58 PM',gain:'Lands today'}},
         steps:['Call Expedia now. Tickets they sold are usually changed by them.',
           'While you’re on hold, get in line at the United desk near gate C11. In a cancellation, United agents can often rebook you directly.',
           'Whoever answers first, ask for the Denver flights by number. Make sure both of you are moved and both checked bags are rerouted.',
@@ -1369,7 +1369,7 @@ newark:{
         ['UA 2291','EWR → MIA','9:00 AM','9:00 AM','ON TIME, GATE C120','bad','12:10 PM','12:10 PM']]},
       move:{tone:'warn',label:'Not guaranteed on separate tickets',title:'Go straight to a United desk and ask for a courtesy rebooking',
         sub:'United doesn’t have to help, but the late flight was theirs. Ask for UA 1610 at 11:15, or standby on it.',
-        route:{old:[['BOS','EWR','late'],['EWR','MIA','bad']],neu:['EWR','MIA'],fromHub:true,t:{old:'Missed',ot:'bad',dep:'11:15 AM',arr:'2:25 PM'}},
+        route:{old:[['BOS','EWR','late'],['EWR','MIA','bad']],neu:['EWR','MIA'],fromHub:true,t:{oldDep:'9:00 AM',old:'Missed',ot:'bad',dep:'11:15 AM',arr:'2:25 PM'}},
         steps:['Skip the gate. A customer service desk can change your ticket; the gate agent for a departed flight usually can’t.',
           'Be specific and polite. Mention that United’s own delay caused the miss.',
           'If they offer standby only, ask to be listed on every remaining Miami flight today.'],
@@ -1405,7 +1405,7 @@ eve:{
         ['Travel waiver','med','United hasn’t issued a snow waiver for Chicago yet. If it does, changes become free for everyone and seats go fast.','waivers']]},
       move:{tone:'go',label:'Fix it tonight',title:'Switch to UA 1555, the 8:30 AM nonstop to San Francisco',
         sub:'Earlier, with no connection to miss. Free with Premier Platinum if the same fare class is open. Seats are for sale.',
-        route:{old:[['BOS','ORD','late'],['ORD','SFO','late']],neu:['BOS','SFO'],t:{old:'12:20 PM',ot:'late',dep:'8:30 AM',arr:'11:58 AM',gain:'No connection'}},
+        route:{old:[['BOS','ORD','late'],['ORD','SFO','late']],neu:['BOS','SFO'],t:{oldDep:'7:00 AM',old:'12:20 PM',ot:'late',dep:'8:30 AM',arr:'11:58 AM',gain:'No connection'}},
         steps:['Open the United app, go to My Trips, and tap Change flight. Same-day changes open 24 hours before departure, so it’s available now.',
           'Pick UA 1555. The price should show $0 for Premier Platinum.',
           'If it shows a charge, call United and use the script.'],
@@ -1430,7 +1430,7 @@ eve:{
         ['UA 655','ORD → SFO','9:42 AM','9:42 AM','DEPARTED','bad','12:20 PM','12:20 PM']]},
       move:{tone:'warn',label:'Still worth a try',title:'Stand by for UA 1290 at 11:15 AM',
         sub:'No seats are for sale, but standby is free, higher status clears first, and your 1:50 PM rebooking stays as your backup.',
-        route:{old:[['BOS','ORD','late'],['ORD','SFO','bad']],neu:['ORD','SFO'],t:{old:'4:55 PM',ot:'bad',dep:'11:15 AM',arr:'1:55 PM',gain:'3 hr sooner'}},
+        route:{old:[['BOS','ORD','late'],['ORD','SFO','bad']],neu:['ORD','SFO'],t:{oldDep:'1:50 PM',old:'4:55 PM',ot:'bad',dep:'11:15 AM',arr:'1:55 PM',gain:'3 hr sooner'}},
         steps:['Request standby for UA 1290 in the United app. Your confirmed 1:50 PM seat stays put.','If the app won’t list you, ask the agent at gate B6 with the script.','Stay near the gate. Standby names are called about 15 minutes before departure.'],
         scripts:[{who:'the gate agent',text:'Hi, I missed UA 655 to San Francisco because of the snow delay, and I’m confirmed on UA 2177 at 1:50. I’m a Premier Platinum member. Could you add me to the standby list for UA 1290 at 11:15, and keep my 1:50 seat as a backup?'}],
         feeds:['sched','seats','rules']},
@@ -1541,7 +1541,7 @@ delta:{al:'DL',
         ['DL 1440','DTW → SEA','10:15 AM','10:15 AM','CONNECTION MISSED','bad','12:20 PM','12:20 PM']]},
       move:{tone:'go',label:'Your best move',title:'Get rebooked on DL 353, the 9:55 AM nonstop',
         sub:'Lands 45 minutes after your original arrival. Free, because Delta’s delay broke your trip.',
-        route:{old:[['BOS','DTW','late'],['DTW','SEA','bad']],neu:['BOS','SEA'],t:{old:'Missed',ot:'bad',dep:'9:55 AM',arr:'1:05 PM'}},
+        route:{old:[['BOS','DTW','late'],['DTW','SEA','bad']],neu:['BOS','SEA'],t:{oldDep:'7:55 AM',old:'Missed',ot:'bad',dep:'9:55 AM',arr:'1:05 PM'}},
         steps:['Don’t board DL 1129. Once you fly to Detroit, the nonstop is no longer an option.','Ask at the Delta desk in Terminal A, or call, and use the script.'],
         scripts:[{who:'a Delta agent',text:'Hi, I’m a Gold Medallion member on confirmation GQ7M4R. DL 1129 is now 55 minutes late, so I’ll miss DL 1440 in Detroit. Could you rebook me on DL 353, the 9:55 nonstop to Seattle? It shows seats available. Since the delay is Delta’s, there shouldn’t be any charge.'}],
         feeds:['sched','seats','rules']},
@@ -1567,7 +1567,7 @@ american:{al:'AA',
         ['AA 2160','DFW → PHX','1:30 PM','1:30 PM','ON TIME','ok','2:45 PM','2:45 PM']]},
       move:{tone:'go',label:'Your best move',title:'Stand by for AA 2417 at 10:40 AM, for free',
         sub:'While seats are still for sale, standby usually clears, and your 1:30 PM seat stays as your backup.',
-        route:{old:[['BOS','DFW','ok'],['DFW','PHX','ok']],neu:['DFW','PHX'],t:{old:'2:45 PM',ot:'ok',dep:'10:40 AM',arr:'11:55 AM',gain:'2 hr 50 min sooner'}},
+        route:{old:[['BOS','DFW','ok'],['DFW','PHX','ok']],neu:['DFW','PHX'],t:{oldDep:'1:30 PM',old:'2:45 PM',ot:'ok',dep:'10:40 AM',arr:'11:55 AM',gain:'2 hr 50 min sooner'}},
         steps:['In the American app, open your trip and request standby for AA 2417. It’s the same route, so it qualifies.','If the app won’t list you, ask the agent at the gate. Airport standby requests close 45 minutes before departure, at 9:55 AM.','Stay near gate C14. Standby names are called shortly before departure.'],
         scripts:[{who:'the gate agent',text:'Hi, I’m on AA 2160 to Phoenix at 1:30, confirmation MXR4TQ, and I’m AAdvantage Gold. Could you add me to the standby list for AA 2417 at 10:40, and keep my 1:30 seat as a backup?'}],
         note:'On American, AAdvantage Gold and Platinum members pay for confirmed same-day changes. Only Executive Platinum, Platinum Pro and premium fares get them free.',
@@ -1605,7 +1605,7 @@ southwest:{al:'WN',
         ['WN 2205','MDW → DEN','9:30 AM','1:00 PM','DELAYED 3 HR 30 MIN','late','11:05 AM','2:35 PM']]},
       move:{tone:'go',label:'Fastest way there',title:'Switch to WN 1873 and WN 642 through Dallas Love Field',
         sub:'Free, and seats available.',
-        route:{old:[['BOS','MDW','ok'],['MDW','DEN','late']],neu:['MDW','DAL','DEN'],t:{old:'2:35 PM',ot:'late',dep:'9:05 AM',arr:'12:55 PM',gain:'1 hr 40 min sooner'}},
+        route:{old:[['BOS','MDW','ok'],['MDW','DEN','late']],neu:['MDW','DAL','DEN'],t:{oldDep:'1:00 PM',old:'2:35 PM',ot:'late',dep:'9:05 AM',arr:'12:55 PM',gain:'1 hr 40 min sooner'}},
         steps:['Open the Southwest app and look for the rebooking option on your trip. A delay this long usually unlocks free changes.','If it isn’t there, ask the agent at gate B12 and use the script.','Decide first: switching gets you there sooner, but staying earns a travel credit (see what you’re entitled to).'],
         scripts:[{who:'a Southwest agent',text:'Hi, I’m on WN 2205 to Denver, confirmation 7KQ2ZD. It’s now three and a half hours late for a crew issue. Could you move me to WN 1873 to Dallas Love Field at 9:05 and WN 642 to Denver? It shows seats available. Since the delay is Southwest’s, it should be free.'}],
         note:'Southwest doesn’t rebook on other airlines, so Rerouted only shows Southwest flights.',
@@ -1781,7 +1781,7 @@ function routeSvg(rt){
   const oldCodes=Object.keys(P);
   g+=oldCodes.map(c=>N(P[c],c,-22)).join('')+extra+(P[last]?'':N(end,last,46,'var(--center)'));
   const tm=rt.t;
-  const key=tm?`<div class="tkey"><div class="tk old"><i></i><span>Booked</span><b class="${tm.ot}">${/^\d/.test(tm.old)?'Lands '+esc(tm.old):esc(tm.old)}</b></div><div class="tk neu"><i></i><span>${tm.sbDep?'Confirmed':'Suggested'}</span><b>${esc(tm.dep)} → ${esc(tm.arr)}</b></div>${tm.sbDep?`<div class="tk sb"><i></i><span>Standby</span><b>${esc(tm.sbDep)} → ${esc(tm.sbArr)}</b></div>`:''}</div>`:`<div class="legend"><span class="old">Booked</span><span>Suggested</span></div>`;
+  const key=tm?`<div class="tkey"><div class="tk old"><i></i><span>Booked</span><b class="${tm.ot}">${tm.oldDep?esc(tm.oldDep)+(/^\d/.test(tm.old)?' → ':' · '):(/^\d/.test(tm.old)?'Lands ':'')}${esc(tm.old)}</b></div><div class="tk neu"><i></i><span>${tm.sbDep?'Confirmed':'Suggested'}</span><b>${esc(tm.dep)} → ${esc(tm.arr)}</b></div>${tm.sbDep?`<div class="tk sb"><i></i><span>Standby</span><b>${esc(tm.sbDep)} → ${esc(tm.sbArr)}</b></div>`:''}</div>`:`<div class="legend"><span class="old">Booked</span><span>Suggested</span></div>`;
   return `<div class="routeviz"><svg viewBox="0 0 600 ${!mids.length&&P[last]?178:236}" role="img" aria-label="Booked route compared with the suggested route">${g}</svg>${key}</div>`;
 }
 function moveHtml(m,key){
@@ -2258,7 +2258,8 @@ function engineStep(kind){
     const lead={free:'Free',paid:`$${best.method.fee}`,standby:'Free on standby',ota:`Whatever ${r.viaName} charges`,ask:`Only if ${AN} agrees`}[k]||'Free';
     const sub=`${best.alt?`Lands in ${AP[dest][0]}. `:''}${lead}${best.seats>=(S.trip.travelers||1)?', and seats available.':'. No seats for sale right now.'}${best.sb?' Plus standby on an earlier flight.':''}`;
     const sbo=best.sb?.it;
-    const tt={old:r.status==='canceled'?'Canceled':r.status==='misconnect'?'Missed':fmt(ref,r.to),ot:r.status==='canceled'||r.status==='misconnect'?'bad':'late',dep:fmt(o[0].dep,o[0].f.from),arr:fmt(best.arr,dest),gain:r.projArr!==null&&g>0?`${dur(g)} sooner`:null,
+    const oe=eff.find(e=>e.f.from===o[0].f.from);
+    const tt={oldDep:oe?fmt(oe.cancel?oe.f.dep:oe.dep,oe.f.from):null,old:r.status==='canceled'?'Canceled':r.status==='misconnect'?'Missed':fmt(ref,r.to),ot:r.status==='canceled'||r.status==='misconnect'?'bad':'late',dep:fmt(o[0].dep,o[0].f.from),arr:fmt(best.arr,dest),gain:r.projArr!==null&&g>0?`${dur(g)} sooner`:null,
       ...(sbo?{sbDep:fmt(sbo[0].dep,sbo[0].f.from),sbArr:fmt(best.sb.arr,dest),sbGain:`${dur(ref-best.sb.arr)} if you clear`}:{})};
     move={tone:['free','paid'].includes(k)?'go':'warn',label:k==='ask'?'Not guaranteed':k==='standby'?'Worth a try':'Your best move',title,sub,
       route:{old:eff.map((e,i)=>[e.f.from,e.f.to,tone(e,i)]),neu:[o[0].f.from,...o.map(x=>x.f.to)],t:tt,...(sbo?{sb:[sbo[0].f.from,...sbo.map(x=>x.f.to)]}:{})},
