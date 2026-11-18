@@ -913,7 +913,7 @@ denver:{
   confirmation:'K7XQ2M', start:'d1',
   steps:{
     d1:{clock:'5:40 AM',where:'At home in Boston',
-      notif:{t:'Denver connection 2.5 hr late',b:'You now land in LA at 3:10 PM. United owes you a free change: the 8:15 AM nonstop lands at 11:40 AM and has seats.'},
+      notif:{t:'Denver connection 2.5 hr late',b:'Switch free to the 8:15 AM nonstop. It lands at 11:40 AM, instead of 3:10 PM, and has seats.'},
       board:{hl:'Landing in LA 2 hr 30 min late',rows:[
         ['UA 1543','BOS → DEN','7:05 AM','7:05 AM','ON TIME','ok','9:30 AM','9:30 AM'],
         ['UA 2216','DEN → LAX','11:20 AM','1:50 PM','DELAYED 2 HR 30 MIN','late','12:40 PM','3:10 PM']]},
@@ -962,7 +962,7 @@ denver:{
       end:{big:'You landed in LA at 3:55 PM',rows:[['Your arrival','3:55 PM'],['The nonstop you could have had','11:40 AM'],['Time lost','4 hr 15 min'],['Cost','$0']],saved:0,back:0,
         lesson:'Accepting the app’s first offer usually ends your options. The free change covered any United flight with seats, including the nonstop.'}},
     d3:{clock:'6:35 AM',where:'At Logan, Terminal B',
-      notif:{t:'Delayed again; nonstop is full',b:'You now land in LA at 4:25 PM. A 9:10 AM route through San Francisco lands at 2:05 PM and still has seats.'},
+      notif:{t:'Delayed again; nonstop is full',b:'Switch to the 9:10 AM through San Francisco. It lands at 2:05 PM, instead of 4:25 PM. Stand by for the nonstop too.'},
       board:{hl:'Landing in LA 3 hr 45 min late',rows:[
         ['UA 1543','BOS → DEN','7:05 AM','7:05 AM','ON TIME','ok','9:30 AM','9:30 AM'],
         ['UA 2216','DEN → LAX','11:20 AM','3:05 PM','DELAYED 3 HR 45 MIN','late','12:40 PM','4:25 PM']]},
@@ -1017,7 +1017,7 @@ ohare:{
       feeds:['faa','alerts','push'],
       choices:[{label:'Continue',next:'o2'}]},
     o2:{clock:'9:20 AM',where:'O’Hare, gate C18',
-      notif:{t:'UA 2054 to Seattle is canceled',b:'United usually rebooks you automatically, often on a much later flight. A route through Denver lands Seattle at 5:58 PM today, with seats for both of you. Call Expedia and get in line at the desk at the same time.'},
+      notif:{t:'UA 2054 to Seattle is canceled',b:'Ask for the 12:30 PM through Denver. It lands in Seattle at 5:58 PM today and has seats for both of you. Call Expedia and line up at the desk at once.'},
       event:'The United app shows you’ve both been moved to tomorrow at 7:00 AM.',
       board:{hl:'UA 2054 to Seattle canceled',rows:[
         ['UA 1287','BOS → ORD','6:00 AM','6:45 AM','ARRIVED','ok','7:55 AM','8:40 AM'],
@@ -1069,7 +1069,7 @@ newark:{
   confirmation:'PLM3QA + ZR82KD', start:'n1',
   steps:{
     n1:{clock:'4:50 AM',where:'At home in Boston',
-      notif:{t:'Early warning: inbound plane late',b:'It’s stuck in Chicago. United hasn’t posted a delay yet, but you’ll likely be 35+ minutes late. On separate tickets, that puts your Miami flight at risk.'},
+      notif:{t:'Early warning: inbound plane late',b:'Move your Miami flight to the 11:15 AM now. Your 6:30 AM plane is stuck in Chicago, and separate tickets aren’t protected.'},
       board:{hl:'Newark connection at risk',cause:'Inbound aircraft delayed in Chicago (not yet posted by United)',rows:[
         ['UA 1872','BOS → EWR','6:30 AM','~7:05 AM','LIKELY 35 MIN LATE','late','8:05 AM','~8:40 AM'],
         ['UA 2291','EWR → MIA','9:00 AM','9:00 AM','ON TIME','ok','12:10 PM','12:10 PM']]},
@@ -1125,7 +1125,7 @@ eve:{
   confirmation:'T4WN8C', start:'e1',
   steps:{
     e1:{clock:'8:00 PM',where:'At home in Boston, the night before',
-      notif:{t:'Risky connection tomorrow',b:'Snow is forecast at O’Hare during your connection, and you have 50 minutes to make it. A nonstop to San Francisco lands at 11:58 AM, has seats, and switching tonight is free with your status.'},
+      notif:{t:'Risky connection tomorrow',b:'Switch tonight to the 8:30 AM nonstop, free with your status. It lands at 11:58 AM and skips a 50-minute O’Hare connection in forecast snow.'},
       board:{hl:'Tomorrow: 2 risks, 1 fix',rows:[
         ['UA 1802','BOS → ORD','7:00 AM','7:00 AM','TOMORROW, SNOW FORECAST AT ORD','late','8:52 AM','8:52 AM'],
         ['UA 655','ORD → SFO','9:42 AM','9:42 AM','TOMORROW','late','12:20 PM','12:20 PM']]},
@@ -1155,7 +1155,7 @@ eve:{
       end:{big:'You landed in San Francisco at 11:58 AM',rows:[['Your arrival','11:58 AM'],['If you’d kept the Chicago plan','4:55 PM'],['Time saved','4 hr 57 min'],['Cost','$0']],saved:297,back:0,
         lesson:'The best time to fix a bad day is the night before, while seats are open and before a waiver sends everyone else looking.'}},
     e3:{clock:'9:38 AM',where:'O’Hare, gate B6',
-      notif:{t:'You missed your SFO connection',b:'You landed at 9:35 AM and UA 655 left at 9:42 AM. United’s rebooking lands at 4:55 PM. UA 1290 at 11:15 AM lands at 1:55 PM: no seats for sale, but standby is free.'},
+      notif:{t:'You missed your SFO connection',b:'Stand by free for the 11:15 AM. It lands at 1:55 PM, instead of 4:55 PM. United’s rebooking stays as your backup.'},
       event:'The United app shows you’ve been moved to UA 2177 at 1:50 PM, landing 4:55 PM.',
       board:{hl:'Landing in SFO at 4:55 PM',cause:'FAA: snow, arrivals slowed at O’Hare',rows:[
         ['UA 1802','BOS → ORD','7:00 AM','7:40 AM','LANDED 43 MIN LATE','late','8:52 AM','9:35 AM'],
@@ -1241,7 +1241,7 @@ delta:{al:'DL',
   confirmation:'GQ7M4R', start:'dl1',
   steps:{
     dl1:{clock:'5:10 AM',where:'At home in Boston',
-      notif:{t:'Tight Detroit connection',b:'Your 7:00 AM flight is running 30 minutes late, leaving 40 minutes to connect. Moving to the 6:00 AM flight to Detroit is free with Gold Medallion.'},
+      notif:{t:'Tight Detroit connection',b:'Move free to the 6:00 AM to Detroit with Gold Medallion. Your 7:00 AM is 30 minutes late, leaving just 40 minutes to connect.'},
       board:{hl:'Detroit connection: 40 min',cause:'The plane coming in is running late (flight data)',rows:[
         ['DL 1129','BOS → DTW','7:00 AM','7:30 AM','DELAYED 30 MIN','late','9:05 AM','9:35 AM'],
         ['DL 1440','DTW → SEA','10:15 AM','10:15 AM','ON TIME','ok','12:20 PM','12:20 PM']]},
@@ -1267,7 +1267,7 @@ delta:{al:'DL',
         lesson:'On Delta, a voluntary change keeps your routing. When a connection gets tight, move the first flight earlier instead of hoping for a nonstop.'}},
     dl3:{clock:'5:24 AM',where:'On the phone with Delta',
       event:'The agent said same-day changes can’t move a connecting trip to a nonstop. By the time you called back about the 6:00 AM, it was full. At 8:20 AM DL 1129 slipped to 55 minutes late, breaking your connection.',
-      notif:{t:'Missed connection: nonstop open',b:'You’re owed free rebooking on any Delta flight. DL 353, the 9:55 AM Boston–Seattle nonstop, lands at 1:05 PM and has seats for sale.'},
+      notif:{t:'Missed connection: nonstop open',b:'Rebook free on the 9:55 AM nonstop to Seattle. It lands at 1:05 PM and has seats.'},
       board:{hl:'You’ll miss your Detroit flight',cause:'The plane coming in is running late (flight data)',rows:[
         ['DL 1129','BOS → DTW','7:00 AM','7:55 AM','DELAYED 55 MIN','late','9:05 AM','10:00 AM'],
         ['DL 1440','DTW → SEA','10:15 AM','10:15 AM','CONNECTION MISSED','bad','12:20 PM','12:20 PM']]},
@@ -1293,7 +1293,7 @@ american:{al:'AA',
   confirmation:'MXR4TQ', start:'aa1',
   steps:{
     aa1:{clock:'9:20 AM',where:'DFW, Terminal C, after landing early',
-      notif:{t:'Earlier Phoenix flight has seats',b:'You land at 2:45 PM now. AA 2417 leaves DFW at 10:40 AM and lands at 11:55 AM. As AAdvantage Gold, standby is free.'},
+      notif:{t:'Earlier Phoenix flight has seats',b:'Stand by free for the 10:40 AM from Dallas. It lands at 11:55 AM, instead of 2:45 PM, and has open seats.'},
       board:{hl:'Landing in Phoenix on time',rows:[
         ['AA 1508','BOS → DFW','6:00 AM','6:00 AM','ARRIVED 10 MIN EARLY','ok','9:15 AM','9:05 AM'],
         ['AA 2160','DFW → PHX','1:30 PM','1:30 PM','ON TIME','ok','2:45 PM','2:45 PM']]},
@@ -1331,7 +1331,7 @@ southwest:{al:'WN',
   confirmation:'7KQ2ZD', start:'wn1',
   steps:{
     wn1:{clock:'7:40 AM',where:'Chicago Midway, gate B12',
-      notif:{t:'Denver flight 3.5 hr late',b:'You now land in Denver at 2:35 PM. Southwest owes you a free change: a route through Dallas lands at 12:55 PM.'},
+      notif:{t:'Denver flight 3.5 hr late',b:'Switch free to the 9:05 AM through Dallas. It lands at 12:55 PM, instead of 2:35 PM, and has seats.'},
       board:{hl:'Landing DEN 3 hr 30 min late',rows:[
         ['WN 418','BOS → MDW','6:10 AM','6:10 AM','ARRIVED','ok','8:05 AM','8:05 AM'],
         ['WN 2205','MDW → DEN','9:30 AM','1:00 PM','DELAYED 3 HR 30 MIN','late','11:05 AM','2:35 PM']]},
