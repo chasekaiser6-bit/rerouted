@@ -212,6 +212,9 @@ details.payer p{margin:6px 0 0}
 .tk.old b.late{color:#B07A00}.tk.old b.bad{color:var(--stop)}
 .tk.neu b,.tk.sb b{color:var(--center)}
 .tk.sb i{border-top:4px dotted var(--center)}
+.move .gains{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 8px}
+.move .gains .gain{margin:0}
+.stepshd{margin:14px 0 -2px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--edge)}
 .move .gain.sbg{background:transparent;border:1.5px dashed var(--center)}
 .move .gain{font-style:normal;font-weight:700;font-size:13px;color:var(--center);background:var(--center-soft);border-radius:10px;padding:3px 9px;margin-right:8px;white-space:nowrap;display:inline-block}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tk.old b.late{color:var(--hold)}}
@@ -1523,9 +1526,9 @@ function moveHtml(m,key){
   if(!m)return '';
   const th=UI.thumbs[key];
   return `<section class="move ${m.tone==='warn'?'warn':m.tone==='neutral'?'neutral':''}" aria-label="Your move">
-    <div class="label">${esc(m.label)}</div><h3>${esc(m.title)}</h3><p class="sub">${m.route?.t?.gain?`<em class="gain">${esc(m.route.t.gain)}</em>`:''}${m.route?.t?.sbGain?`<em class="gain sbg">${esc(m.route.t.sbGain)}</em>`:''}${esc(m.sub)}</p>
+    <div class="label">${esc(m.label)}</div><h3>${esc(m.title)}</h3>${m.route?.t?.gain||m.route?.t?.sbGain?`<div class="gains">${m.route.t.gain?`<em class="gain">${esc(m.route.t.gain)}</em>`:''}${m.route.t.sbGain?`<em class="gain sbg">${esc(m.route.t.sbGain)}</em>`:''}</div>`:''}<p class="sub">${esc(m.sub)}</p>
     ${routeSvg(m.route)}
-    ${m.steps?.length?`<ol>${m.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`:''}
+    ${m.steps?.length?`<div class="stepshd">Action items</div><ol>${m.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`:''}
     ${(m.scripts||[]).map((sc,i)=>`<div class="script"><div class="who"><span>What to say to ${esc(sc.who)}</span></div><p>${esc(sc.text)}</p>
       <div class="row"><button class="btn small" type="button" data-copy="${i}">Copy</button><button class="btn small" type="button" data-show="${i}">Show to the agent</button></div></div>`).join('')}
     ${m.note?`<p class="note">${esc(m.note)}</p>`:''}
