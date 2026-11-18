@@ -186,6 +186,12 @@ details.payer p{margin:6px 0 0}
 .move ol li::marker{color:var(--edge);font-weight:800}
 .rts{border-top:4px solid var(--edge)}
 .btn:not(.primary):not(.small){border-color:var(--edge);color:var(--edge)}
+.pagehead{background:var(--brand);color:var(--on-brand);padding:22px 18px 20px}
+.pagehead h1{margin:0;font-weight:800;font-stretch:87.5%;font-size:30px;line-height:1.05;letter-spacing:-.01em}
+.pagehead p{margin:6px 0 0;color:var(--brand-muted);font-size:15px;line-height:1.45}
+.pagehead + .pad{padding-top:20px}
+.lock{background:radial-gradient(120% 60% at 50% 0%,var(--brand),var(--tarmac) 75%)}
+.lock .date,.lock .where,.lock .open{color:rgba(255,255,255,.78)}
 /* Toast (in-app notification) */
 #toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
 #toast .notif{background:rgba(26,34,48,.94);box-shadow:0 16px 30px -18px rgba(0,0,0,.7)}
@@ -435,11 +441,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .s-hood li span{color:var(--muted);font-size:14px}
 
 /* CTA band */
-.s-cta{background:var(--tarmac);color:var(--tarmac-ink);position:relative;overflow:hidden}
+.s-cta{background:var(--brand);color:var(--tarmac-ink);position:relative;overflow:hidden}
 .s-cta::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:repeating-linear-gradient(90deg,var(--hold) 0 30px,transparent 30px 52px)}
 .s-cta .s-wrap{padding-block:80px;display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:space-between}
+.s-cta .s-btn.pri{background:#fff;border-color:#fff;color:var(--brand)}
 .s-cta .s-h2{color:var(--tarmac-ink);margin:0;max-width:16em}
-.s-cta p{color:var(--tarmac-muted);margin:10px 0 0;font-size:17px}
+.s-cta p{color:var(--brand-muted);margin:10px 0 0;font-size:17px}
 .s-foot{padding-block:32px 48px;font-size:14px;color:var(--muted)}
 .s-foot .s-wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
 .s-foot p{margin:0;max-width:52em}
@@ -2007,10 +2014,10 @@ function cardFace(k,c,big){
 function viewWallet(){
   const kits=Object.keys(localStorage).filter(k=>k.startsWith('rr4-kit-')).map(k=>[k,load(k)]).filter(([,v])=>v?.items?.length);
   const mine=Object.keys(CARDS).filter(k=>S.profile.cards.includes(k));
-  $s().innerHTML=`<div class="pad"><h2>Your wallet</h2><p class="hint">Each card shows when its trip delay coverage starts and how much it pays. Terms checked ${CHECKED}.</p>
+  $s().innerHTML=`<header class="pagehead"><h1>Your wallet</h1><p>When each card’s delay coverage starts, and what it pays. Terms checked ${CHECKED}.</p></header><div class="pad">
     ${mine.length?`<div class="cardrail" aria-label="Cards in your wallet">${mine.map(k=>`<div class="railitem">${cardFace(k,CARDS[k],true)}<b>${esc(CARDS[k].name)}</b><small>${esc(cardTerms(CARDS[k]))}</small></div>`).join('')}</div>`:`<div class="emptywallet">Turn on the cards you carry below and they’ll appear here.</div>`}
     <h2>All cards</h2>
-    ${Object.entries(CARDS).map(([k,c])=>`<label class="cardrow${S.profile.cards.includes(k)?' on':''}"><span class="thumb" aria-hidden="true">${cardFace(k,c,false)}</span><span style="flex:1"><b>${esc(c.name)}</b><small>${esc(cardTerms(c))}</small>${c.conf!=='ok'?'<small>From a published comparison; we confirm against the official terms before launch.</small>':''}</span><input type="checkbox" data-card="${k}"${S.profile.cards.includes(k)?' checked':''} aria-label="I have ${esc(c.name)}" style="width:22px;height:22px;accent-color:var(--edge)"></label>`).join('')}
+    ${Object.entries(CARDS).map(([k,c])=>`<label class="cardrow${S.profile.cards.includes(k)?' on':''}"><span class="thumb" aria-hidden="true">${cardFace(k,c,false)}</span><span style="flex:1"><b>${esc(c.name)}</b><small>${esc(cardTerms(c))}</small>${c.conf!=='ok'&&UI.founder?'<small>From a published comparison; we confirm against the official terms before launch.</small>':''}</span><input type="checkbox" data-card="${k}"${S.profile.cards.includes(k)?' checked':''} aria-label="I have ${esc(c.name)}" style="width:22px;height:22px;accent-color:var(--edge)"></label>`).join('')}
     ${feedChips(['cards'])}
     <h2>Claim kits</h2>${kits.length?`<ul class="explist">${kits.map(([k,v])=>`<li><span>${esc(k.replace('rr4-kit-','').replace(/-/g,' '))}</span><span>${money2(v.items.reduce((s,x)=>s+x.a,0))}</span></li>`).join('')}</ul>`:'<p class="hint">Claim kits appear here when a delay makes you eligible for reimbursement.</p>'}</div>`;
   $s().querySelectorAll('[data-card]').forEach(c=>c.onchange=()=>{const k=c.dataset.card;S.profile.cards=c.checked?[...new Set([...S.profile.cards,k])]:S.profile.cards.filter(x=>x!==k);store('rr4-profile',S.profile);viewWallet()});
@@ -2019,7 +2026,7 @@ function viewWallet(){
 /* ---------- You ---------- */
 function viewYou(){
   const o=(arr,v)=>arr.map(([k,t])=>`<option value="${esc(k)}"${String(k)===String(v)?' selected':''}>${esc(t)}</option>`).join('');
-  $s().innerHTML=`<div class="pad"><h2>You</h2>
+  $s().innerHTML=`<header class="pagehead"><h1>You</h1><p>Your status sets what changes cost you.</p></header><div class="pad"><h2>Airline status</h2>
     ${Object.entries(AL).map(([k,A])=>`<label>${esc(A.name)} status<select class="pStatusSel" data-al="${k}">${o(A.tiers.map((t,i)=>[i,t]),S.profile.status[k]||0)}</select></label>`).join('')}
     <label>Alert me when a delay reaches<select id="pAlert">${o([[15,'15 minutes'],[30,'30 minutes'],[60,'1 hour'],[120,'2 hours']],S.profile.alertMin)}</select></label>
     <label class="chk"><input type="checkbox" id="pAlt"${S.profile.alt?' checked':''}> Show flights to nearby airports during disruptions</label>
