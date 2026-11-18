@@ -244,6 +244,7 @@ details.payer p{margin:6px 0 0}
 .sharecr{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.14)}
 .sharecr b{display:block;font-size:15px;color:var(--tarmac-ink)}
 .sharecr small{display:block;font-size:13px;line-height:1.35;color:var(--tarmac-muted);margin-top:2px}
+.sharebtn{background:var(--hold)!important;border-color:var(--hold)!important;color:#121A26!important;font-weight:800!important;padding:8px 16px!important}
 .sharecr .btn{flex:none;background:var(--hold);border-color:var(--hold);color:#121A26;font-weight:800;padding:8px 16px}
 .crdone{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:#6FE3B0}
 .crdone svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
@@ -1758,7 +1759,6 @@ function viewHome(){
   $s().innerHTML=`<header class="homehero"><a class="mark" href="#" aria-label="Rerouted"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word">Rerouted</span></a>
     <p class="hello">Ready before the gate agent.</p></header><div class="pad">
     ${UI.introSeen?'':`<div class="intro"><b>Thanks for testing Rerouted</b>This is a prototype. Nothing here touches a real booking. Play a bad travel day below, make the calls you’d really make, and tell us what you thought at the end. <div style="margin-top:8px"><button class="btn small" id="gotIt" type="button">Got it</button></div></div>`}
-    ${(()=>{const r=recapStats();return r.n?`<section class="outcome" style="margin:18px 0 0"><div style="color:var(--tarmac-muted);font-size:13px">Your Rerouted recap</div><div class="big" style="font-size:26px;margin-bottom:6px">${recapLine(r)}</div><div style="font-size:14px;color:var(--tarmac-muted)">Across ${r.n} practice trip${r.n>1?'s':''}, counting time saved and money recovered or avoided.</div><div class="sharecr">${load('rr4-shared')?`<span class="crdone"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg>Credit added to your account</span>`:`<div><b>Share it publicly, get a credit</b><small>Post your recap and we add a credit to your Rerouted account.</small></div><button class="btn small" type="button" id="shareRecap">Share</button>`}</div></section>`:''})()}
     <h2 style="margin-top:22px">Practice a bad travel day</h2>
     <p class="hint">${['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'][Object.keys(SCN).length]||Object.keys(SCN).length} situations travelers really face. Each takes about 3 minutes.</p>
     ${Object.entries(SCN).map(([k,s])=>`<button class="scncard${UI.played[k]?' done':''}" type="button" data-scn="${k}">
@@ -1769,10 +1769,7 @@ function viewHome(){
       <div class="body"><b>${S.booked.map(f=>fl(f)).join(' + ')}</b><p>See what Rerouted would tell you if this trip went wrong.</p></div></button>`
     :`<p class="hint">Add a United, Delta, American or Southwest booking you have coming up and see what Rerouted would do with it.</p><button class="btn block" type="button" id="addOwn">Add a booking</button>`}
   </div>`;
-  if($('shareRecap'))$('shareRecap').onclick=async e=>{const r=recapStats(),text=`My Rerouted recap: ${recapLine(r).replace(', ',' and ')} across ${r.n} trip${r.n>1?'s':''}. Ready before the gate agent.`,url='https://chasekaiser6-bit.github.io/rerouted/';
-    let ok=false;try{if(navigator.share){await navigator.share({title:'Rerouted',text,url});ok=true}}catch(x){if(x&&x.name==='AbortError')return}
-    if(!ok){try{await navigator.clipboard.writeText(text+' '+url);ok=true}catch(x){}}
-    if(ok){store('rr4-shared',true);toast({t:'Credit added to your account',b:'Thanks for sharing your Rerouted recap.'});viewHome()}else e.target.textContent='Sharing didn’t work here'};
+
   if($('gotIt'))$('gotIt').onclick=()=>{UI.introSeen=true;store('rr4-intro',true);viewHome()};
   $s().querySelectorAll('[data-scn]').forEach(b=>b.onclick=()=>startScn(b.dataset.scn));
   if($('openOwn'))$('openOwn').onclick=()=>go('own');
@@ -2207,15 +2204,19 @@ function viewSavings(){
     <div class="svgrid">
       <div class="sv big"><small>Time saved</small><b>${r.saved?dur(r.saved):'0 min'}</b><span>${r.n} trip${r.n===1?'':'s'}</span></div>
       <div class="sv"><small>Money back</small><b>${money2(r.back)}</b><span>Cards and airlines</span></div>
-      <div class="sv"><small>Credits</small><b>${shared?1:0}</b><span>${shared?'From sharing':'Share a recap to earn one'}</span></div>
+      <div class="sv"><small>Credits</small><b>${shared?1:0}</b><span>${shared?'From sharing':'Share to earn one'}</span></div>
     </div>
     <h2>By trip</h2>
     ${trips.length?`<ul class="svlist">${trips.map(([k,e])=>`<li><span class="svt"><span class="svr">${esc(SCN[k].route)}</span><b>${esc(SCN[k].title)}</b><small>${esc(e.big)}</small></span><span class="svv">${e.saved?`<em>${dur(e.saved)}</em>`:''}${e.back?`<em class="m">${money2(e.back)}</em>`:''}${!e.saved&&!e.back?'<em class="z">—</em>':''}</span></li>`).join('')}</ul>`
       :`<p class="hint">Play a bad travel day and your time and money saved add up here.</p>`}
     ${logged?`<h2>Receipts logged</h2><p class="hint">${money2(logged)} in claim kits, ready to file with your card.</p>`:''}
     <h2>Credits</h2>
-    <ul class="svlist">${shared?`<li><span class="svt"><span class="svr ok">✓ Credit</span><b>Shared your recap</b><small>Credit added to your account</small></span></li>`:`<li><span class="svt"><span class="svr">+1 Credit</span><b>Share your recap</b><small>From Trips, tap Share on your recap</small></span></li>`}</ul>
+    <ul class="svlist">${shared?`<li><span class="svt"><span class="svr ok">✓ Credit</span><b>Shared your recap</b><small>Credit added to your account</small></span></li>`:`<li><span class="svt"><span class="svr">+1 Credit</span><b>Share your savings publicly</b><small>Post it and we add a credit to your account</small></span>${r.n?'<button class="btn small sharebtn" type="button" id="shareRecap">Share</button>':''}</li>`}</ul>
   </div>`;
+  if($('shareRecap'))$('shareRecap').onclick=async e=>{const r=recapStats(),text=`Rerouted has saved me ${recapLine(r).replace(', ',' and ')} across ${r.n} trip${r.n>1?'s':''}. Ready before the gate agent.`,url='https://chasekaiser6-bit.github.io/rerouted/';
+    let ok=false;try{if(navigator.share){await navigator.share({title:'Rerouted',text,url});ok=true}}catch(x){if(x&&x.name==='AbortError')return}
+    if(!ok){try{await navigator.clipboard.writeText(text+' '+url);ok=true}catch(x){}}
+    if(ok){store('rr4-shared',true);toast({t:'Credit added to your account',b:'Thanks for sharing your Rerouted recap.'});viewSavings()}else e.target.textContent='Sharing didn’t work here'};
 }
 /* ---------- You ---------- */
 function viewYou(){
