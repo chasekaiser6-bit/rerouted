@@ -1152,7 +1152,7 @@ denver:{
   steps:{
     d1:{clock:'5:40 AM',where:'At home in Boston',
       notif:{t:'Denver connection 2.5 hr late',b:'You now land in LA at 3:10 PM. United owes you a free change: the 8:15 AM nonstop lands at 11:40 AM and has seats.'},
-      board:{hl:'Landing in LA 2 hr 30 min late',cause:'You noted: United cites a late crew',rows:[
+      board:{hl:'Landing in LA 2 hr 30 min late',rows:[
         ['UA 1543','BOS → DEN','7:05 AM','7:05 AM','ON TIME','ok','9:30 AM','9:30 AM'],
         ['UA 2216','DEN → LAX','11:20 AM','1:50 PM','DELAYED 2 HR 30 MIN','late','12:40 PM','3:10 PM']]},
       move:{tone:'go',label:'Your best move',title:'Switch to UA 1288, the 8:15 AM nonstop',
@@ -1172,7 +1172,7 @@ denver:{
       choices:[{label:'Change it in the United app',next:'d2'},{label:'Wait and see',sub:'Delays sometimes shrink',next:'d3'}]},
     d2:{clock:'5:46 AM',where:'At home in Boston',
       event:'The United app offers one option: a later Denver connection that lands at 3:55 PM. The nonstop isn’t listed.',
-      board:{hl:'Landing in LA 2 hr 30 min late',cause:'You noted: United cites a late crew',rows:[
+      board:{hl:'Landing in LA 2 hr 30 min late',rows:[
         ['UA 1543','BOS → DEN','7:05 AM','7:05 AM','ON TIME','ok','9:30 AM','9:30 AM'],
         ['UA 2216','DEN → LAX','11:20 AM','1:50 PM','DELAYED 2 HR 30 MIN','late','12:40 PM','3:10 PM']]},
       move:{tone:'warn',label:'Don’t tap Accept',title:'Skip the app’s offer and call instead',
@@ -1201,7 +1201,7 @@ denver:{
         lesson:'Accepting the app’s first offer usually ends your options. The free change covered any United flight with seats, including the nonstop.'}},
     d3:{clock:'6:35 AM',where:'At Logan, Terminal B',
       notif:{t:'Delayed again; nonstop is full',b:'You now land in LA at 4:25 PM. A 9:10 AM route through San Francisco lands at 2:05 PM and still has seats.'},
-      board:{hl:'Landing in LA 3 hr 45 min late',cause:'You noted: United cites a late crew',rows:[
+      board:{hl:'Landing in LA 3 hr 45 min late',rows:[
         ['UA 1543','BOS → DEN','7:05 AM','7:05 AM','ON TIME','ok','9:30 AM','9:30 AM'],
         ['UA 2216','DEN → LAX','11:20 AM','3:05 PM','DELAYED 3 HR 45 MIN','late','12:40 PM','4:25 PM']]},
       move:{tone:'go',label:'Your best move',title:'Take UA 532 + UA 1971 via San Francisco, and stand by for the nonstop',
@@ -1257,7 +1257,7 @@ ohare:{
     o2:{clock:'9:20 AM',where:'O’Hare, gate C18',
       notif:{t:'UA 2054 to Seattle is canceled',b:'United usually rebooks you automatically, often on a much later flight. A route through Denver lands Seattle at 5:58 PM today, with seats for both of you. Call Expedia and get in line at the desk at the same time.'},
       event:'The United app shows you’ve both been moved to tomorrow at 7:00 AM.',
-      board:{hl:'UA 2054 to Seattle canceled',cause:'You noted: United cites weather',rows:[
+      board:{hl:'UA 2054 to Seattle canceled',rows:[
         ['UA 1287','BOS → ORD','6:00 AM','6:45 AM','ARRIVED','ok','7:55 AM','8:40 AM'],
         ['UA 2054','ORD → SEA','9:05 AM','—','CANCELED','bad','11:40 AM','—']]},
       move:{tone:'go',label:'Your best move',title:'Ask for UA 1940 + UA 2290 via Denver, leaving 12:30 PM',
@@ -1570,7 +1570,7 @@ southwest:{al:'WN',
   steps:{
     wn1:{clock:'7:40 AM',where:'Chicago Midway, gate B12',
       notif:{t:'Denver flight 3.5 hr late',b:'You now land in Denver at 2:35 PM. It’s a crew problem, so Southwest owes you a free change: a route through Dallas lands at 12:55 PM.'},
-      board:{hl:'Landing DEN 3 hr 30 min late',cause:'You noted: Southwest cites crew availability',rows:[
+      board:{hl:'Landing DEN 3 hr 30 min late',rows:[
         ['WN 418','BOS → MDW','6:10 AM','6:10 AM','ARRIVED','ok','8:05 AM','8:05 AM'],
         ['WN 2205','MDW → DEN','9:30 AM','1:00 PM','DELAYED 3 HR 30 MIN','late','11:05 AM','2:35 PM']]},
       move:{tone:'go',label:'Fastest way there',title:'Switch to WN 1873 and WN 642 through Dallas Love Field',
