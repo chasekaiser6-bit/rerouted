@@ -11,7 +11,7 @@
 <style>
 :root{
   --page:#E9EDF2; --surface:#FBFCFE; --field:#F4F6F9; --ink:#121A26; --muted:#566275; --line:#DCE1E8;
-  --tarmac:#1A2230; --tarmac-2:#243045; --tarmac-ink:#EEF2F7; --tarmac-muted:#9AA9C0;
+  --tarmac:#16245A; --tarmac-2:#213479; --tarmac-ink:#F2F5FC; --tarmac-muted:#A9B8E2;
   --edge:#3564F0; --edge-soft:#E7EDFE; --center:#12A26B; --center-soft:#E2F4EC; --hold:#F2A900; --hold-soft:#FFF4D6;
   --stop:#D7352B; --stop-soft:#FBE7E5; --brand:#2B4FC7; --on-brand:#FFFFFF; --brand-muted:rgba(255,255,255,.8); --on-accent:#FFFFFF; --feed:#7A4DD8; --feed-soft:#F0EAFD;
   color-scheme:light;
@@ -22,7 +22,7 @@
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     --page:#0B1018; --surface:#141B27; --field:#101722; --ink:#E8EDF4; --muted:#9AA7BA; --line:#263043;
-    --tarmac:#1B2434; --tarmac-2:#25314A;
+    --tarmac:#15204A; --tarmac-2:#1F2E66;
     --edge:#7C9BFF; --edge-soft:#1C2647; --center:#3FD195; --center-soft:#123227; --hold:#FFC23D; --hold-soft:#3A2F12;
     --stop:#FF6F63; --stop-soft:#3B1C1A; --brand:#2C51C9; --on-brand:#FFFFFF; --brand-muted:rgba(255,255,255,.78); --on-accent:#0B1018; --feed:#B79BFF; --feed-soft:#271D45;
     color-scheme:dark;
@@ -30,7 +30,7 @@
 }
 :root[data-theme="dark"]{
   --page:#0B1018; --surface:#141B27; --field:#101722; --ink:#E8EDF4; --muted:#9AA7BA; --line:#263043;
-  --tarmac:#1B2434; --tarmac-2:#25314A;
+  --tarmac:#15204A; --tarmac-2:#1F2E66;
   --edge:#7C9BFF; --edge-soft:#1C2647; --center:#3FD195; --center-soft:#123227; --hold:#FFC23D; --hold-soft:#3A2F12;
   --stop:#FF6F63; --stop-soft:#3B1C1A; --brand:#2C51C9; --on-brand:#FFFFFF; --brand-muted:rgba(255,255,255,.78); --on-accent:#0B1018; --feed:#B79BFF; --feed-soft:#271D45;
   color-scheme:dark;
@@ -142,32 +142,32 @@ textarea{min-height:120px;resize:vertical;font-size:14px;line-height:1.45}
 .rts-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0 6px}
 .rts-h h2{margin:0;font-size:19px}
 .rts-h > span:not(.pill){font-size:12px;color:var(--muted)}
-.rt{border-top:1px solid var(--line)}
-.rt summary{list-style:none;display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;min-height:48px;cursor:pointer}
-.rt summary::-webkit-details-marker{display:none}
+.rrow{border-top:1px solid var(--line)}
+.rrow summary{list-style:none;display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;min-height:48px;cursor:pointer}
+.rrow summary::-webkit-details-marker{display:none}
 .ri{width:32px;height:32px;border-radius:50%;display:grid;place-items:center}
 .ri svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .rl{font-weight:700;font-size:15px;line-height:1.25}
 .rv{font-weight:700;font-size:13px;line-height:1.2;border-radius:12px;padding:4px 10px;text-align:right;max-width:9.5em}
-.rt.yes .ri,.rt.yes .rv{background:var(--center-soft);color:var(--center)}
-.rt.no .ri,.rt.no .rv{background:var(--stop-soft);color:var(--stop)}
-.rt.warn .ri,.rt.warn .rv{background:var(--hold-soft);color:var(--ink)}
-.rt.pend .ri,.rt.pend .rv{background:var(--field);color:var(--muted)}
-.rt.pend .rv{color:var(--ink)}
-.rt p{margin:-2px 0 12px 42px;font-size:15px;line-height:1.5;color:var(--muted)}
-.rt .feed{margin-left:42px}
-.rt[open] .rl{color:var(--edge)}
+.rrow.yes .ri,.rrow.yes .rv{background:var(--center-soft);color:var(--center)}
+.rrow.no .ri,.rrow.no .rv{background:var(--stop-soft);color:var(--stop)}
+.rrow.warn .ri,.rrow.warn .rv{background:var(--hold-soft);color:var(--ink)}
+.rrow.pend .ri,.rrow.pend .rv{background:var(--field);color:var(--muted)}
+.rrow.pend .rv{color:var(--ink)}
+.rrow p{margin:-2px 0 12px 42px;font-size:15px;line-height:1.5;color:var(--muted)}
+.rrow .feed{margin-left:42px}
+.rrow[open] .rl{color:var(--edge)}
 details.payer{display:block}
 details.payer summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
 details.payer summary::-webkit-details-marker{display:none}
 details.payer p{margin:6px 0 0}
 
 .help .ri svg{stroke-width:2}
-.rt.go .ri{background:var(--edge);color:var(--on-accent)}
-.rt.go .rv{background:var(--center-soft);color:var(--center)}
-.rt.skip .ri{background:var(--field);color:var(--muted)}
-.rt.skip .rl{color:var(--muted);font-weight:600}
-.rt.skip .rv{background:var(--field);color:var(--muted)}
+.rrow.go .ri{background:var(--edge);color:var(--on-accent)}
+.rrow.go .rv{background:var(--center-soft);color:var(--center)}
+.rrow.skip .ri{background:var(--field);color:var(--muted)}
+.rrow.skip .rl{color:var(--muted);font-weight:600}
+.rrow.skip .rv{background:var(--field);color:var(--muted)}
 .tipbar{display:flex;gap:10px;align-items:center;margin:2px 0 10px;padding:10px 12px;border-radius:12px;background:var(--hold-soft);color:var(--ink);font-weight:700;font-size:14px;line-height:1.35}
 .tipbar svg{flex:none;width:18px;height:18px;fill:var(--hold);stroke:var(--ink);stroke-width:1.4;stroke-linejoin:round}
 
@@ -1502,7 +1502,7 @@ const CH_ICON={app:'<rect x="7" y="3.5" width="10" height="17" rx="2.5"/><path d
 const chKind=c=>/app|online|website/i.test(c)?'app':/phone|call|line\b/i.test(c)?'phone':/gate/i.test(c)?'gate':'desk';
 function linesHtml(ln){
   if(!ln)return '';
-  return `<section class="rts help" aria-label="Best way to get help"><div class="rts-h"><h2>Get help fastest</h2><span>Tap for why</span></div>${ln.tip?`<p class="tipbar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/></svg>${esc(ln.tip)}</p>`:''}${ln.rows.map(([c,w,n,best])=>`<details class="rt ${best?'go':'skip'}"><summary><span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24">${CH_ICON[chKind(c)]}</svg></span><span class="rl">${esc(c)}</span>${best?'<span class="rv">Do this</span>':w?`<span class="rv">${esc(w)}</span>`:''}</summary><p>${esc(n)}</p></details>`).join('')}${UI.founder?'<p class="note" style="margin:6px 0 4px;font-size:12px">Ranked from airline rules and how you booked; no feed has wait times.</p>':''}${feedChips(['waits'])}</section>`;
+  return `<section class="rts help" aria-label="Best way to get help"><div class="rts-h"><h2>Get help fastest</h2><span>Tap for why</span></div>${ln.tip?`<p class="tipbar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/></svg>${esc(ln.tip)}</p>`:''}${ln.rows.map(([c,w,n,best])=>`<details class="rrow ${best?'go':'skip'}"><summary><span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24">${CH_ICON[chKind(c)]}</svg></span><span class="rl">${esc(c)}</span>${best?'<span class="rv">Do this</span>':w?`<span class="rv">${esc(w)}</span>`:''}</summary><p>${esc(n)}</p></details>`).join('')}${UI.founder?'<p class="note" style="margin:6px 0 4px;font-size:12px">Ranked from airline rules and how you booked; no feed has wait times.</p>':''}${feedChips(['waits'])}</section>`;
 }
 function recapLine(r){const parts=[];if(r.saved)parts.push(`${dur(r.saved)} saved`);if(r.back)parts.push(`${money2(r.back)} back`);return parts.join(', ')||'Every option, mapped'}
 function recapStats(){
@@ -1541,7 +1541,7 @@ function shortRight(c,t){
   return [t,yes?'Yes':no?'No':c==='warn'?'Heads up':'Not yet'];
 }
 function rightRow(k,label,val,body,f){
-  return `<details class="rt ${k}"><summary><span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24">${R_ICON[k]}</svg></span><span class="rl">${esc(label)}</span>${val?`<span class="rv">${esc(val)}</span>`:''}</summary><p>${esc(body)}</p>${feedChips(f?[f]:[])}</details>`;
+  return `<details class="rrow ${k}"><summary><span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24">${R_ICON[k]}</svg></span><span class="rl">${esc(label)}</span>${val?`<span class="rv">${esc(val)}</span>`:''}</summary><p>${esc(body)}</p>${feedChips(f?[f]:[])}</details>`;
 }
 const rightsHtml=r=>r?.length?`<section class="rts" aria-label="Your rights"><div class="rts-h"><h2>Your rights</h2><span>Tap for details</span></div>${r.map(([c,t,b,f])=>{const k=c||'pend',[l,v]=shortRight(c,t);return rightRow(k,l,v,b,f)}).join('')}</section>`:'';
 function riskHtml(rk){
