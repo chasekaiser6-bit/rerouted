@@ -238,6 +238,12 @@ details.payer p{margin:6px 0 0}
 .dtl-m b{font-size:11px;font-weight:700;color:var(--muted);margin-top:4px;line-height:1}
 .dtl-m span{font-size:12px;font-weight:700;color:var(--ink);text-align:center;line-height:1.15;margin-top:2px}
 .dtl-m.on span{color:var(--center)}
+.stickhd{position:sticky;top:0;z-index:6}
+.stickhd .topbar{position:static}
+.jump{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:8px 14px;background:var(--surface);border-bottom:1px solid var(--line)}
+.jump::-webkit-scrollbar{display:none}
+.jump button{flex:none;font:inherit;font-size:13px;font-weight:700;padding:6px 12px;border-radius:16px;border:1px solid var(--line);background:var(--field);color:var(--muted);cursor:pointer;min-height:32px}
+.jump button.on{background:var(--edge);border-color:var(--edge);color:var(--on-accent)}
 /* Toast (in-app notification) */
 #toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
 #toast .notif{background:rgba(26,34,48,.94);box-shadow:0 16px 30px -18px rgba(0,0,0,.7)}
@@ -1430,6 +1436,7 @@ function go(view,o={}){
   const tabs=document.getElementById('tabs');
   tabs.hidden=['lock','agent'].includes(view);
   tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===({home:'home',step:'home',own:'home',add:'home',check:'home',wallet:'wallet',you:'you',feeds:'you'}[view])?'page':'false'));
+  $s().onscroll=null;
   const sc=$s();sc.className='screen'+(view==='lock'||view==='agent'?' dark':'');
   ({home:viewHome,lock:viewLock,step:viewStep,agent:viewAgent,wallet:viewWallet,you:viewYou,feeds:viewFeeds,add:viewAdd,check:viewCheck,own:viewOwn})[view]();
   sc.scrollTop=0;
@@ -1751,6 +1758,21 @@ function bindMoney(root,m,key,rerender){
 }
 
 /* ---------- Scenario step ---------- */
+/* Section shortcuts: a sticky chip row under the header that jumps to each card and lights up as you scroll. */
+function addJump(){
+  const sc=$s(),tb=sc.querySelector('.topbar');if(!tb)return;
+  const secs=[['Flight',sc.querySelector('.board')],['Move',sc.querySelector('.move')],['Get help',sc.querySelector('.rts.help')],
+    ['Rights',sc.querySelector('.rts[aria-label="Your rights"]')],['Money',[...sc.querySelectorAll('h2')].find(h=>/delay money/i.test(h.textContent))]].filter(x=>x[1]);
+  if(secs.length<3)return;
+  const wrap=document.createElement('div');wrap.className='stickhd';tb.replaceWith(wrap);wrap.appendChild(tb);
+  const nav=document.createElement('nav');nav.className='jump';nav.setAttribute('aria-label','Jump to section');
+  nav.innerHTML=secs.map(([l],i)=>`<button type="button" data-j="${i}">${esc(l)}</button>`).join('');wrap.appendChild(nav);
+  const off=()=>wrap.offsetHeight+8,btns=[...nav.children];
+  const set=i=>{btns.forEach((b,j)=>b.classList.toggle('on',j===i));const b=btns[i];if(b&&nav.scrollTo)nav.scrollTo({left:b.offsetLeft-nav.clientWidth/2+b.offsetWidth/2,behavior:'smooth'})};
+  btns.forEach((b,i)=>b.onclick=()=>{sc.scrollTo&&sc.scrollTo({top:secs[i][1].getBoundingClientRect().top-sc.getBoundingClientRect().top+sc.scrollTop-off(),behavior:'smooth'});set(i)});
+  let cur=-1;const spy=()=>{let i=0;secs.forEach(([,el],j)=>{if(el.getBoundingClientRect().top-sc.getBoundingClientRect().top<=off()+20)i=j});if(sc.scrollTop+sc.clientHeight>=sc.scrollHeight-4)i=secs.length-1;if(i!==cur){cur=i;set(i)}};
+  sc.onscroll=spy;spy();
+}
 function viewStep(){
   const s=SCN[UI.scn],st=s.steps[UI.step],key=`${UI.scn}:${UI.step}`,kitKey=`rr4-kit-${UI.scn}-${st.money?.kitId||UI.step}`;
   const earlier=UI.path.slice(0,-1).map(id=>s.steps[id]).filter(x=>x.notif);
@@ -1770,7 +1792,7 @@ function viewStep(){
     </div>
     ${st.choices?`<div class="choices${st.choices.length===2?' two':''}"><span class="ask">What do you do?</span>${st.choices.map((c,i)=>`<button class="btn ${i===0?'primary':''}" type="button" data-next="${c.next}">${esc(c.label)}${c.sub?`<small>${esc(c.sub)}</small>`:''}</button>`).join('')}</div>`:''}`;
   $('bk').onclick=()=>go('home');
-  bindMove($s(),st.move,key);
+  bindMove($s(),st.move,key);addJump();
   bindMoney($s(),st.money,kitKey,()=>{const y=$s().scrollTop;viewStep();$s().scrollTop=y});
   $s().querySelectorAll('[data-next]').forEach(b=>b.onclick=()=>enterStep(b.dataset.next));
   if(st.end)bindFeedback();
@@ -1985,7 +2007,7 @@ function viewOwn(){
     </div>`;
   $('bk').onclick=()=>go('home');
   $s().querySelectorAll('[data-kind]').forEach(b=>b.onclick=()=>{UI.own=b.dataset.kind;const y=$s().scrollTop;viewOwn();$s().scrollTop=y;const n=engineStep(UI.own).notif;if(n)toast(n)});
-  bindMove($s(),st.move,key);
+  bindMove($s(),st.move,key);addJump();
   bindMoney($s(),st.money,kitKey,()=>{const y=$s().scrollTop;viewOwn();$s().scrollTop=y});
   $('editOwn').onclick=()=>{S.draft=JSON.parse(JSON.stringify(S.trip));go('check')};
   $('rmOwn').onclick=()=>{S.trip=null;S.booked=null;store('rr4-trip',null);go('home')};
