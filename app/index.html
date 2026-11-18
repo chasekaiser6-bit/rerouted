@@ -162,6 +162,14 @@ details.payer summary{list-style:none;display:flex;justify-content:space-between
 details.payer summary::-webkit-details-marker{display:none}
 details.payer p{margin:6px 0 0}
 
+.help .ri svg{stroke-width:2}
+.rt.go .ri{background:var(--edge);color:var(--on-accent)}
+.rt.go .rv{background:var(--center-soft);color:var(--center)}
+.rt.skip .ri{background:var(--field);color:var(--muted)}
+.rt.skip .rl{color:var(--muted);font-weight:600}
+.rt.skip .rv{background:var(--field);color:var(--muted)}
+.tipbar{display:flex;gap:10px;align-items:center;margin:2px 0 10px;padding:10px 12px;border-radius:12px;background:var(--hold-soft);color:var(--ink);font-weight:700;font-size:14px;line-height:1.35}
+.tipbar svg{flex:none;width:18px;height:18px;fill:var(--hold);stroke:var(--ink);stroke-width:1.4;stroke-linejoin:round}
 /* Toast (in-app notification) */
 #toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
 #toast .notif{background:rgba(26,34,48,.94);box-shadow:0 16px 30px -18px rgba(0,0,0,.7)}
@@ -1466,11 +1474,11 @@ function bindMove(root,m,key){
   root.querySelectorAll('[data-show]').forEach(b=>b.onclick=()=>{UI.agentScript=m.scripts[+b.dataset.show];UI.back=UI.view;go('agent')});
   root.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>{UI.thumbs[key]=b.dataset.th;store('rr4-thumbs',UI.thumbs);root.querySelectorAll('[data-th]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
 }
+const CH_ICON={app:'<rect x="7" y="3.5" width="10" height="17" rx="2.5"/><path d="M11 17.5h2"/>',phone:'<path d="M6.5 4h3l1.5 4-2 1.3a10 10 0 0 0 4.7 4.7l1.3-2 4 1.5v3a2 2 0 0 1-2 2A15 15 0 0 1 4.5 6a2 2 0 0 1 2-2z"/>',desk:'<path d="M4 10h16M6 10v9M18 10v9M4 19h16M8 10V6h8v4"/>',gate:'<path d="M5 20V8l7-4 7 4v12M9 20v-6h6v6"/>'};
+const chKind=c=>/app|online|website/i.test(c)?'app':/phone|call|line\b/i.test(c)?'phone':/gate/i.test(c)?'gate':'desk';
 function linesHtml(ln){
   if(!ln)return '';
-  return `<section class="card" style="margin:8px 0 4px"><b style="font-size:16px">Best way to get help right now</b>
-    <ul class="explist" style="margin:8px 0 6px">${ln.rows.map(([c,w,n,best])=>`<li style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:15px">${esc(c)}${best?' <span class="pill ok">Do this</span>':''}</b>${w?`<span style="white-space:nowrap;font-weight:600">${esc(w)}</span>`:''}</div><small style="display:block">${esc(n)}</small></li>`).join('')}</ul>
-    ${ln.tip?`<p class="note" style="margin:0">${esc(ln.tip)}</p>`:''}${UI.founder?'<p class="note" style="margin:6px 0 0;font-size:12px">Ranked from airline rules and how you booked; no feed has wait times.</p>':''}${feedChips(['waits'])}</section>`;
+  return `<section class="rts help" aria-label="Best way to get help"><div class="rts-h"><h2>Get help fastest</h2><span>Tap for why</span></div>${ln.tip?`<p class="tipbar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/></svg>${esc(ln.tip)}</p>`:''}${ln.rows.map(([c,w,n,best])=>`<details class="rt ${best?'go':'skip'}"><summary><span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24">${CH_ICON[chKind(c)]}</svg></span><span class="rl">${esc(c)}</span>${best?'<span class="rv">Do this</span>':w?`<span class="rv">${esc(w)}</span>`:''}</summary><p>${esc(n)}</p></details>`).join('')}${UI.founder?'<p class="note" style="margin:6px 0 4px;font-size:12px">Ranked from airline rules and how you booked; no feed has wait times.</p>':''}${feedChips(['waits'])}</section>`;
 }
 function recapLine(r){const parts=[];if(r.saved)parts.push(`${dur(r.saved)} saved`);if(r.back)parts.push(`${money2(r.back)} back`);return parts.join(', ')||'Every option, mapped'}
 function recapStats(){
