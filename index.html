@@ -1306,7 +1306,7 @@ ohare:{
     o2:{clock:'9:20 AM',where:'O’Hare, gate C18',
       notif:{t:'UA 2054 to Seattle is canceled',b:'Ask for the 12:30 PM through Denver. It lands in Seattle at 5:58 PM today and has seats for both of you. Call Expedia and line up at the desk at once.'},
       event:'The United app shows you’ve both been moved to tomorrow at 7:00 AM.',
-      board:{hl:'UA 2054 to Seattle canceled',rows:[
+      board:{dl:{min:1345,label:'Arriving 22 hr 25 min late'},hl:'UA 2054 to Seattle canceled',rows:[
         ['UA 1287','BOS → ORD','6:00 AM','6:45 AM','ARRIVED','ok','7:55 AM','8:40 AM'],
         ['UA 2054','ORD → SEA','9:05 AM','—','CANCELED','bad','11:40 AM','—']]},
       move:{tone:'go',label:'Your best move',title:'Ask for UA 1940 + UA 2290 via Denver, leaving 12:30 PM',
@@ -1383,7 +1383,7 @@ newark:{
         lesson:'The aircraft’s previous flight is the earliest warning there is. Acting before the delay is posted gets you the seats everyone else will want.'}},
     n3:{clock:'8:41 AM',where:'Newark, gate C71',
       notif:{t:'You likely won’t make UA 2291',b:'You landed at 8:41 AM at gate C71. UA 2291 leaves at 9:00 AM from gate C120, and boarding doors usually close 15 minutes before departure.'},
-      board:{hl:'You’ll miss your Miami flight',rows:[
+      board:{dl:{min:135,label:'Arriving 2 hr 15 min late'},hl:'You’ll miss your Miami flight',rows:[
         ['UA 1872','BOS → EWR','6:30 AM','7:06 AM','ARRIVED 36 MIN LATE','late','8:05 AM','8:41 AM'],
         ['UA 2291','EWR → MIA','9:00 AM','9:00 AM','ON TIME, GATE C120','bad','12:10 PM','12:10 PM']]},
       move:{tone:'warn',label:'Not guaranteed on separate tickets',title:'Go straight to a United desk and ask for a courtesy rebooking',
@@ -1444,7 +1444,7 @@ eve:{
     e3:{clock:'9:38 AM',where:'O’Hare, gate B6',
       notif:{t:'You missed your SFO connection',b:'Stand by free for the 11:15 AM. It lands at 1:55 PM, instead of 4:55 PM. United’s rebooking stays as your backup.'},
       event:'The United app shows you’ve been moved to UA 2177 at 1:50 PM, landing 4:55 PM.',
-      board:{hl:'Landing in SFO at 4:55 PM',cause:'FAA: snow, arrivals slowed at O’Hare',rows:[
+      board:{dl:{min:275},hl:'Landing in SFO at 4:55 PM',cause:'FAA: snow, arrivals slowed at O’Hare',rows:[
         ['UA 1802','BOS → ORD','7:00 AM','7:40 AM','LANDED 43 MIN LATE','late','8:52 AM','9:35 AM'],
         ['UA 655','ORD → SFO','9:42 AM','9:42 AM','DEPARTED','bad','12:20 PM','12:20 PM']]},
       move:{tone:'warn',label:'Still worth a try',title:'Stand by for UA 1290 at 11:15 AM',
@@ -1473,7 +1473,7 @@ bag:{
     b1:{clock:'11:55 AM',where:'SFO, baggage claim',
       notif:{t:'Did your checked bag arrive?',b:'UA 1100 landed 35 minutes ago. If your bag isn’t on the carousel, file a delayed-bag report before you leave the airport. It protects your refund and your card claim.'},
       event:'Your suitcase isn’t on the carousel. You tapped “No, it’s missing.”',
-      board:{hl:'Your bag is missing',rows:[
+      board:{dl:{min:35,label:'Bag missing 35 min'},hl:'Your bag is missing',rows:[
         ['UA 1100','BOS → SFO','8:05 AM','8:05 AM','ARRIVED','ok','11:20 AM','11:20 AM'],
         ['Checked bag','BOS → SFO','—','—','YOU REPORTED IT MISSING','late']]},
       move:{tone:'go',label:'Do this before you leave',title:'File a delayed-bag report at the United baggage office',
@@ -1503,7 +1503,7 @@ bag:{
     b2:{clock:'7:30 PM',where:'Hotel in Union Square',
       notif:{t:'Card bag coverage starts now',b:'It’s been more than 6 hours since UA 1100 landed and you haven’t marked your bag delivered, so Sapphire Preferred covers essentials. Keep every receipt.'},
       event:'You saved delayed-bag report SFOUA41827 in Rerouted. United told you the bag should be delivered to your hotel tomorrow.',
-      board:{hl:'Bag missing 8 hr 10 min',rows:[['Checked bag','BOS → SFO','—','—','REPORT SFOUA41827, NOT DELIVERED','late']]},
+      board:{dl:{min:490,label:'Bag missing 8 hr 10 min'},hl:'Bag missing 8 hr 10 min',rows:[['Checked bag','BOS → SFO','—','—','REPORT SFOUA41827, NOT DELIVERED','late']]},
       money:{kitId:'bag',payers:[['United','Bag fee refund',false,'Owed once the bag is 12 hours late, at 11:20 PM tonight.'],['Sapphire Preferred','Up to $500',true,'More than 6 hours: up to $100 a day for essentials, for up to 5 days.']],
         kit:{cap:500,items:[['Toiletries','Essentials',27.40],['Change of clothes','Essentials',64.99],['Phone charger','Essentials',19.99]]},
         claim:{type:'bag',card:'csp',date:'2026-11-20',dateText:'Friday, November 20, 2026',travelers:1,conf:'Q9RB2L',flights:'UA 1100 Boston to San Francisco',airline:'Bag fee refund requested; no other payment yet',
@@ -1512,7 +1512,7 @@ bag:{
       choices:[{label:'Continue to tomorrow',next:'b3'}]},
     b3:{clock:'1:10 PM',where:'Hotel, the next day',
       notif:{t:'You marked your bag delivered',b:'It arrived 25 hours 50 minutes after you landed, past the 12-hour mark, so your bag fee refund is owed.'},
-      board:{hl:'Bag arrived 25 hr 50 min late',rows:[['Checked bag','BOS → SFO','—','1:10 PM','DELIVERED (YOU MARKED IT)','ok']]},
+      board:{dl:{min:1550,label:'Bag arrived 25 hr 50 min late'},hl:'Bag arrived 25 hr 50 min late',rows:[['Checked bag','BOS → SFO','—','1:10 PM','DELIVERED (YOU MARKED IT)','ok']]},
       money:{kitId:'bag',payers:[['United','Bag fee refund',true,'Owed: the bag was more than 12 hours late. Request it if it doesn’t arrive automatically.'],['Sapphire Preferred','Up to $500',true,'Essentials covered at up to $100 a day.']],
         kit:{cap:500,items:[['Toiletries','Essentials',27.40],['Change of clothes','Essentials',64.99],['Phone charger','Essentials',19.99]]},
         claim:{type:'bag',card:'csp',date:'2026-11-20',dateText:'Friday, November 20, 2026',travelers:1,conf:'Q9RB2L',flights:'UA 1100 Boston to San Francisco',airline:'Bag fee refund owed; no other payment yet',
@@ -1770,7 +1770,7 @@ function connHtml(a,b){
   return `<div class="conn ${cls}"><span>Connection in ${esc(ra[1])}</span><b>${chg?`<s>${dur(sch)}</s>`:''}${txt}</b></div>`;
 }
 function boardHtml(b,feeds){
-  UI.curDelay=boardDelay(b);
+  UI.curDelayLabel=b?.dl?.label||null;UI.curDelay=boardDelay(b);
   return `<section class="board" aria-label="Flight status"><p class="hl">${esc(b.hl)}</p>${b.cause?`<p class="cause">${esc(b.cause)}</p>`:''}
     ${b.rows.map((row,i)=>{const [f,r,s,e,st,t,sa,ea]=row;
       const body=sa!=null?`<div class="frow f2"><span class="fn">${esc(f)}</span><span class="rt">${esc(r)}</span>
@@ -1891,7 +1891,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-cause]');i
   document.querySelectorAll('[data-askpay]').forEach(d=>{if(d.dataset.askpay!==row.dataset.askkey)return;const t2=document.createElement('div');t2.innerHTML=payerHtml(JSON.parse(d.dataset.row),d.dataset.askpay);d.replaceWith(t2.firstElementChild)})});
 /* Delay timeline: how late you are now, and what each milestone unlocks. */
 function boardDelay(b){
-  if(!b?.rows?.length)return null;const last=b.rows[b.rows.length-1];
+  if(b?.dl)return b.dl.min;UI.curDelayLabel=null;if(!b?.rows?.length)return null;const last=b.rows[b.rows.length-1];
   if(/CANCEL/i.test(last[4]||''))return null;
   const sa=clockMin(last[6]),ea=clockMin(last[7]);if(sa==null||ea==null)return null;
   let d=ea-sa;if(d<0)d+=1440;return d;
@@ -1902,15 +1902,16 @@ function delayTimeline(r){
   const body={},state={};UI.tlHide=new Set();
   r.forEach(([c,t,b,f],idx)=>{if(c==='ask'){const k=3,nm=t==='Southwest'?'Meal + credit':'Meal';(ms[k]=ms[k]||[]).push(nm);state[k]='ask';body[k]=(body[k]?body[k]+' ':'')+`Depends why the flight is late. Answer below.`;return}const [l,v]=shortRight(c,t);
     let h=null,name=l;
-    const m=String(v).match(/(\d+) hr/);if(m)h=+m[1];
+    const m=String(v).match(/(\d+) hr/)||String(t).match(/(?:after|reaches) (\d+) hours|(\d+)\+ hours/i);if(m)h=+(m[1]||m[2]);
+    else if(/^Refund/.test(l))h=3;
     else if(c==='yes'&&/^(Rebook|Free rebooking|Change flights|Same-day change)/.test(l))h=1;
     if(h==null)return;
-    name=/Meal/i.test(l)?'Meal':/^Refund/i.test(l)?'Refund':/Bag fee/i.test(l)?'Bag fee':/^(Rebook|Free rebooking|Change flights|Same-day)/.test(l)?'Rebook':l.split(' ')[0];
+    name=/Meal/i.test(l)?'Meal':/^Refund/i.test(l)?'Refund':/Bag fee/i.test(l)?'Bag fee':/^(Rebook|Free rebooking|Change flights|Same-day)/.test(l)?'Rebook':(w=>/^(United|Delta|Capital|Citi|Bank|American)$/.test(w[0])&&w[1]?w[1]:w[0])(l.split(' '));
     (ms[h]=ms[h]||[]).includes(name)||(ms[h]=ms[h]||[]).push(name);body[h]=(body[h]?body[h]+' ':'')+b;if(!c)UI.tlHide.add(idx)});
   const hs=Object.keys(ms).map(Number).sort((a,b)=>a-b);if(!hs.length)return '';
-  const max=Math.max(hs[hs.length-1]*60,d)*1.1,pct=x=>Math.min(100,x/max*100);
+  const L=hs[hs.length-1]*60,max=Math.max(L*1.1,Math.min(d*1.1,L*1.6)),pct=x=>Math.min(100,x/max*100);
   const next=hs.find(h=>h*60>d);
-  return `<div class="dtl" aria-label="Delay timeline"><div class="dtl-h"><b>${dur(d)} late</b>${next?`<span>Next: ${esc(ms[next].join(' + '))} in ${dur(next*60-d)}</span>`:''}</div>
+  return `<div class="dtl" aria-label="Delay timeline"><div class="dtl-h"><b>${esc(UI.curDelayLabel||dur(d)+' late')}</b>${next?`<span>Next: ${esc(ms[next].join(' + '))} in ${dur(next*60-d)}</span>`:''}</div>
     <div class="dtl-track"><div class="dtl-fill" style="width:${pct(d)}%"></div><div class="dtl-now" style="left:${pct(d)}%"></div>
     ${hs.map(h=>{const ask=state[h]==='ask'&&h*60<=d,on=h*60<=d&&!ask;return `<button type="button" class="dtl-m${on?' on':''}${ask?' ask':''}" style="left:${pct(h*60)}%" data-tl="${esc(body[h]||'')}"><i>${on?'<svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg>':ask?'?':''}</i><b>${h} hr</b><span>${esc(ms[h].join(' + '))}</span></button>`}).join('')}</div><p class="dtl-d" hidden></p></div>`;
 }
