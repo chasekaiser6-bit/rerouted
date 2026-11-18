@@ -233,6 +233,8 @@ details.payer p{margin:6px 0 0}
 .conn span{color:var(--tarmac-muted)}
 .conn b{font-weight:700}
 .conn.ok b{color:#6FE3B0}.conn.late b{color:#FFC23D}.conn.bad b{color:#FF8A7E}
+.frow em{font-style:normal}.chg.late{color:#FFC23D}.chg.bad{color:#FF8A7E}.chg.new{color:#9FB7FF}
+.conn b s{color:var(--tarmac-muted);font-weight:500;margin-right:6px}
 .st.ok{color:#6FE3B0}.st.late{color:#FFC23D}.st.bad{color:#FF8A7E}.st.new{color:#9FB7FF}
 
 .evlab{display:block;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
@@ -1438,7 +1440,7 @@ function enterStep(id,withToast=true){
 /* Board rows: [flight, route, sched dep, expected dep, status, tone, sched arr, expected arr].
    Times are local to each airport, so a connection is the next departure minus this arrival. */
 const clockMin=t=>{const m=String(t).match(/(\d{1,2}):(\d{2})\s*([AP])M/i);return m?(+m[1]%12+(m[3].toUpperCase()==='P'?12:0))*60+ +m[2]:null};
-const timeCell=(s,e)=>e==='—'?'—':s&&e&&s!==e?`<s>${esc(s)}</s>${esc(e)}`:esc(e||s);
+const timeCell=(s,e,t)=>e==='—'?'—':s&&e&&s!==e?`<s>${esc(s)}</s><em class="chg ${t||''}">${esc(e)}</em>`:esc(e||s);
 function connHtml(a,b){
   const [ra,rb]=[a[1],b[1]].map(x=>String(x).split(' → '));
   if(ra.length<2||rb.length<2||ra[1]!==rb[0]||a[7]==null)return '';
@@ -1446,15 +1448,16 @@ function connHtml(a,b){
   const gap=dep-arr,missed=gap<0||/MISSED|DEPARTED/.test(b[4]);
   const cls=missed||gap<40?'bad':gap<60?'late':'ok';
   const txt=gap<0?'missed':`${dur(gap)}${missed?', missed':gap<40?', too short':gap<60?', tight':''}`;
-  return `<div class="conn ${cls}"><span>Connection in ${esc(ra[1])}</span><b>${txt}</b></div>`;
+  const sch=clockMin(a[6])!=null&&clockMin(b[2])!=null?clockMin(b[2])-clockMin(a[6]):null,chg=sch!=null&&sch!==gap&&sch>0;
+  return `<div class="conn ${cls}"><span>${chg?'New connection':'Connection'} in ${esc(ra[1])}</span><b>${chg?`<s>${dur(sch)}</s>`:''}${txt}</b></div>`;
 }
 function boardHtml(b,feeds){
   return `<section class="board" aria-label="Flight status"><p class="hl">${esc(b.hl)}</p>${b.cause?`<p class="cause">${esc(b.cause)}</p>`:''}
     ${b.rows.map((row,i)=>{const [f,r,s,e,st,t,sa,ea]=row;
       const body=sa!=null?`<div class="frow f2"><span class="fn">${esc(f)}</span><span class="rt">${esc(r)}</span>
-        <div class="tms"><div><small>Departs</small><span>${timeCell(s,e)}</span></div><div><small>Arrives</small><span>${timeCell(sa,ea)}</span></div></div>
+        <div class="tms"><div><small>Departs</small><span>${timeCell(s,e,t)}</span></div><div><small>Arrives</small><span>${timeCell(sa,ea,t)}</span></div></div>
         <span class="st ${t}">${esc(st)}</span></div>`
-      :`<div class="frow"><span class="fn">${esc(f)}</span><span class="rt">${esc(r)}</span><span class="tm">${s!==e&&e!=='—'&&!/ARR|DEPARTED/.test(e)?`<s>${esc(s)}</s>${esc(e)}`:esc(e==='—'?s:e)}</span><span class="st ${t}">${esc(st)}</span></div>`;
+      :`<div class="frow"><span class="fn">${esc(f)}</span><span class="rt">${esc(r)}</span><span class="tm">${s!==e&&e!=='—'&&!/ARR|DEPARTED/.test(e)?`<s>${esc(s)}</s><em class="chg ${t}">${esc(e)}</em>`:esc(e==='—'?s:e)}</span><span class="st ${t}">${esc(st)}</span></div>`;
       return (i&&sa!=null?connHtml(b.rows[i-1],row):'')+body}).join('')}
     ${UI.founder?`<div style="margin-top:6px">${feedChips(feeds||['status','alerts'])}</div>`:''}</section>`;
 }
