@@ -229,9 +229,10 @@ details.payer p{margin:6px 0 0}
 .tms small{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tarmac-muted);font-stretch:100%}
 .tms span{font-size:17px;font-weight:600}
 .tms s{color:var(--tarmac-muted);margin-right:6px;font-weight:500}
-.conn{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:2px 0 6px;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.07);font-size:14px}
+.conn{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:2px 0 6px;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.07);font-size:13.5px}
 .conn span{color:var(--tarmac-muted)}
-.conn b{font-weight:700}
+.conn b{font-weight:700;white-space:nowrap}
+.conn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .conn.ok b{color:#6FE3B0}.conn.late b{color:#FFC23D}.conn.bad b{color:#FF8A7E}
 .frow em{font-style:normal}.chg.late{color:#FFC23D}.chg.bad{color:#FF8A7E}.chg.new{color:#9FB7FF}
 .conn b s{color:var(--tarmac-muted);font-weight:500;margin-right:6px}
@@ -1448,8 +1449,8 @@ function connHtml(a,b){
   const gap=dep-arr,missed=gap<0||/MISSED|DEPARTED/.test(b[4]);
   const cls=missed||gap<40?'bad':gap<60?'late':'ok';
   const txt=gap<0?'missed':`${dur(gap)}${missed?', missed':gap<40?', too short':gap<60?', tight':''}`;
-  const sch=clockMin(a[6])!=null&&clockMin(b[2])!=null?clockMin(b[2])-clockMin(a[6]):null,chg=sch!=null&&sch!==gap&&sch>0;
-  return `<div class="conn ${cls}"><span>${chg?'New connection':'Connection'} in ${esc(ra[1])}</span><b>${chg?`<s>${dur(sch)}</s>`:''}${txt}</b></div>`;
+  const sch=clockMin(a[6])!=null&&clockMin(b[2])!=null?clockMin(b[2])-clockMin(a[6]):null,chg=sch!=null&&sch!==gap&&sch>0&&cls==='ok';
+  return `<div class="conn ${cls}"><span>Connection in ${esc(ra[1])}</span><b>${chg?`<s>${dur(sch)}</s>`:''}${txt}</b></div>`;
 }
 function boardHtml(b,feeds){
   return `<section class="board" aria-label="Flight status"><p class="hl">${esc(b.hl)}</p>${b.cause?`<p class="cause">${esc(b.cause)}</p>`:''}
