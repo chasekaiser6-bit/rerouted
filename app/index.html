@@ -219,6 +219,25 @@ details.payer p{margin:6px 0 0}
 .move .gain{font-style:normal;font-weight:700;font-size:13px;color:var(--center);background:var(--center-soft);border-radius:10px;padding:3px 9px;margin-right:8px;white-space:nowrap;display:inline-block}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tk.old b.late{color:var(--hold)}}
 :root[data-theme="dark"] .tk.old b.late{color:var(--hold)}
+.dtl{margin:4px 0 10px;padding:12px 12px 4px;border-radius:14px;background:var(--field)}
+.dtl-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.dtl-h b{font-size:18px;font-weight:800;font-stretch:87.5%;color:var(--ink)}
+.dtl-h span{font-size:13px;font-weight:700;color:var(--edge)}
+.dtl-h::after{content:"Tap a milestone";flex-basis:100%;font-size:11px;color:var(--muted);order:3}
+.dtl-track{position:relative;height:8px;border-radius:4px;background:var(--line);margin:18px 6px 68px}
+.dtl-fill{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:linear-gradient(90deg,var(--hold),#E8890C)}
+.dtl-now{position:absolute;top:-6px;width:4px;height:20px;margin-left:-2px;border-radius:2px;background:var(--ink)}
+.dtl-m{position:absolute;top:-8px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;width:76px;background:none;border:0;padding:0;font:inherit;cursor:pointer}
+.dtl-m.ask i{background:var(--edge);border-color:var(--edge);color:#fff;font-weight:800;font-size:13px}
+.dtl-m.ask span{color:var(--edge)}
+.dtl-m.sel span{text-decoration:underline;text-underline-offset:3px}
+.dtl-d{margin:-2px 0 10px;font-size:14px;line-height:1.45;color:var(--muted)}
+.dtl-m i{width:24px;height:24px;border-radius:50%;background:var(--surface);border:3px solid var(--line);display:grid;place-items:center}
+.dtl-m.on i{background:var(--center);border-color:var(--center)}
+.dtl-m i svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.dtl-m b{font-size:11px;font-weight:700;color:var(--muted);margin-top:4px;line-height:1}
+.dtl-m span{font-size:12px;font-weight:700;color:var(--ink);text-align:center;line-height:1.15;margin-top:2px}
+.dtl-m.on span{color:var(--center)}
 /* Toast (in-app notification) */
 #toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
 #toast .notif{background:rgba(26,34,48,.94);box-shadow:0 16px 30px -18px rgba(0,0,0,.7)}
@@ -1483,6 +1502,7 @@ function connHtml(a,b){
   return `<div class="conn ${cls}"><span>Connection in ${esc(ra[1])}</span><b>${chg?`<s>${dur(sch)}</s>`:''}${txt}</b></div>`;
 }
 function boardHtml(b,feeds){
+  UI.curDelay=boardDelay(b);
   return `<section class="board" aria-label="Flight status"><p class="hl">${esc(b.hl)}</p>${b.cause?`<p class="cause">${esc(b.cause)}</p>`:''}
     ${b.rows.map((row,i)=>{const [f,r,s,e,st,t,sa,ea]=row;
       const body=sa!=null?`<div class="frow f2"><span class="fn">${esc(f)}</span><span class="rt">${esc(r)}</span>
@@ -1597,10 +1617,36 @@ function askRow(al,key,f){
   if(a==='unsure')return rightRow('warn','Meal voucher','Ask the agent',`Ask the agent why the flight is late. If it’s crew or mechanical, ${al} owes you a meal voucher.`,f);
   return `<details class="rrow ask" open data-askkey="${esc(key)}" data-al="${esc(al)}" data-f="${esc(f||'')}"><summary><span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24">${R_ICON.ask}</svg></span><span class="rl">${al==='Southwest'?'Meal and credit':'Meals and hotel'}</span><span class="rv">Depends why</span></summary><p>You’re past 3 hours. ${esc(al)} owes ${al==='Southwest'?'a meal and a travel credit':'meals'} only if the delay is its fault. What reason did ${esc(al)} give?</p><div class="causebtns">${[['airline','Crew or mechanical'],['weather','Weather'],['unsure','Not sure']].map(([v,l])=>`<button type="button" class="btn small" data-cause="${v}">${l}</button>`).join('')}</div></details>`;
 }
+document.addEventListener('click',e=>{const m=e.target.closest('[data-tl]');if(!m)return;const box=m.closest('.dtl'),d=box.querySelector('.dtl-d');const same=!d.hidden&&d.dataset.k===m.style.left;box.querySelectorAll('.dtl-m').forEach(x=>x.classList.remove('sel'));if(same){d.hidden=true;return}m.classList.add('sel');d.textContent=m.dataset.tl;d.dataset.k=m.style.left;d.hidden=false});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cause]');if(!b)return;const row=b.closest('[data-askkey]');if(!row)return;
   UI.cause[row.dataset.askkey]=b.dataset.cause;const tmp=document.createElement('div');tmp.innerHTML=askRow(row.dataset.al,row.dataset.askkey,row.dataset.f||null);const ns=[...tmp.children];if(ns[0])ns[0].open=true;row.replaceWith(...ns);
   document.querySelectorAll('[data-askpay]').forEach(d=>{if(d.dataset.askpay!==row.dataset.askkey)return;const t2=document.createElement('div');t2.innerHTML=payerHtml(JSON.parse(d.dataset.row),d.dataset.askpay);d.replaceWith(t2.firstElementChild)})});
-const rightsHtml=r=>r?.length?`<section class="rts" aria-label="Your rights"><div class="rts-h"><h2>Your rights</h2><span>Tap for details</span></div>${r.map(([c,t,b,f])=>{if(c==='ask')return askRow(t,UI.scn+'|'+t,f);const k=c||'pend',[l,v]=shortRight(c,t);return rightRow(k,l,v,b,f)}).join('')}</section>`:'';
+/* Delay timeline: how late you are now, and what each milestone unlocks. */
+function boardDelay(b){
+  if(!b?.rows?.length)return null;const last=b.rows[b.rows.length-1];
+  if(/CANCEL/i.test(last[4]||''))return null;
+  const sa=clockMin(last[6]),ea=clockMin(last[7]);if(sa==null||ea==null)return null;
+  let d=ea-sa;if(d<0)d+=1440;return d;
+}
+function delayTimeline(r){
+  const d=UI.curDelay;if(d==null||d<30)return '';
+  const ms={};
+  const body={},state={};UI.tlHide=new Set();
+  r.forEach(([c,t,b,f],idx)=>{if(c==='ask'){const k=3,nm=t==='Southwest'?'Meal + credit':'Meal';(ms[k]=ms[k]||[]).push(nm);state[k]='ask';body[k]=(body[k]?body[k]+' ':'')+`Depends why the flight is late. Answer below.`;return}const [l,v]=shortRight(c,t);
+    let h=null,name=l;
+    const m=String(v).match(/(\d+) hr/);if(m)h=+m[1];
+    else if(c==='yes'&&/^(Rebook|Free rebooking|Change flights|Same-day change)/.test(l))h=1;
+    if(h==null)return;
+    name=/Meal/i.test(l)?'Meal':/^Refund/i.test(l)?'Refund':/Bag fee/i.test(l)?'Bag fee':/^(Rebook|Free rebooking|Change flights|Same-day)/.test(l)?'Rebook':l.split(' ')[0];
+    (ms[h]=ms[h]||[]).includes(name)||(ms[h]=ms[h]||[]).push(name);body[h]=(body[h]?body[h]+' ':'')+b;if(!c)UI.tlHide.add(idx)});
+  const hs=Object.keys(ms).map(Number).sort((a,b)=>a-b);if(!hs.length)return '';
+  const max=Math.max(hs[hs.length-1]*60,d)*1.1,pct=x=>Math.min(100,x/max*100);
+  const next=hs.find(h=>h*60>d);
+  return `<div class="dtl" aria-label="Delay timeline"><div class="dtl-h"><b>${dur(d)} late</b>${next?`<span>Next: ${esc(ms[next].join(' + '))} in ${dur(next*60-d)}</span>`:''}</div>
+    <div class="dtl-track"><div class="dtl-fill" style="width:${pct(d)}%"></div><div class="dtl-now" style="left:${pct(d)}%"></div>
+    ${hs.map(h=>{const ask=state[h]==='ask'&&h*60<=d,on=h*60<=d&&!ask;return `<button type="button" class="dtl-m${on?' on':''}${ask?' ask':''}" style="left:${pct(h*60)}%" data-tl="${esc(body[h]||'')}"><i>${on?'<svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg>':ask?'?':''}</i><b>${h} hr</b><span>${esc(ms[h].join(' + '))}</span></button>`}).join('')}</div><p class="dtl-d" hidden></p></div>`;
+}
+const rightsHtml=r=>r?.length?`<section class="rts" aria-label="Your rights"><div class="rts-h"><h2>Your rights</h2><span>Tap for details</span></div>${delayTimeline(r)}${r.map(([c,t,b,f],idx)=>{if(UI.curDelay!=null&&UI.curDelay>=30&&UI.tlHide?.has(idx))return '';if(c==='ask')return askRow(t,UI.scn+'|'+t,f);const k=c||'pend',[l,v]=shortRight(c,t);return rightRow(k,l,v,b,f)}).join('')}</section>`:'';
 function riskHtml(rk){
   if(!rk)return '';
   const hi=rk.items.filter(x=>x[1]==='high').length,map={high:['no','High'],med:['warn','Watch'],low:['yes','Low']};
