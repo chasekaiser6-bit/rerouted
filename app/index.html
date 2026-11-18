@@ -195,6 +195,10 @@ details.payer p{margin:6px 0 0}
 .pagehead + .pad{padding-top:20px}
 .lock{background:radial-gradient(120% 60% at 50% 0%,var(--brand),var(--tarmac) 75%)}
 .lock .date,.lock .where,.lock .open{color:rgba(255,255,255,.78)}
+.rrow.ask .ri{background:var(--edge);color:var(--on-accent)}
+.rrow.ask .rv{background:var(--edge-soft);color:var(--edge)}
+.causebtns{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px 42px}
+.causebtns .btn{min-height:40px;border-color:var(--edge);color:var(--edge)}
 /* Toast (in-app notification) */
 #toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
 #toast .notif{background:rgba(26,34,48,.94);box-shadow:0 16px 30px -18px rgba(0,0,0,.7)}
@@ -893,10 +897,10 @@ denver:{
         steps:['Open the United app, go to My Trips, and tap Change flight. Disrupted trips show a rebooking option at the top.',
           'If UA 1288 isn’t offered, don’t accept the app’s suggestion. It usually keeps you on the Denver route.',
           'Call United or ask at the Logan check-in desk, and use the script. Confirm the new seat before you hang up.'],
-        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M, and I’m a Premier Gold member. UA 2216 is delayed two and a half hours for a late crew, which gets me into LA at 3:10. Could you move me to UA 1288, the 8:15 nonstop from Boston? It shows seats available. Since the delay is on United’s side, I understand there’s no change fee or fare difference.'}],
+        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M, and I’m a Premier Gold member. UA 2216 is delayed two and a half hours, which gets me into LA at 3:10. Could you move me to UA 1288, the 8:15 nonstop from Boston? It shows seats available. Since the delay is on United’s side, I understand there’s no change fee or fare difference.'}],
         feeds:['sched','seats','rules']},
       rights:[
-        ['yes','Free change to any United flight to LA today','The delay is over an hour and United caused it, so the change fee and fare difference are waived, including onto a nonstop.','rules'],
+        ['yes','Free change to any United flight to LA today','The delay is over an hour, so the change fee and fare difference are waived, including onto a nonstop.','rules'],
         ['','Meal voucher once your wait reaches 3 hours','United commits to one for delays it causes. You’re at 2 hr 30 min.','rules'],
         ['','Refund if you decide not to go','Owed once you’re 3 or more hours late. You’re not there yet.','dot'],
         ['','Sapphire Reserve covers expenses after 6 hours','Not likely needed today.','cards']],
@@ -913,7 +917,7 @@ denver:{
         steps:['Tap Back, not Accept. Accepting locks you into the 3:55 PM arrival.',
           'Call United. Premier members get a shorter phone line.',
           'Read the script. If they say the nonstop is full, ask for standby on it plus a confirmed seat on the best backup.'],
-        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M, and I’m a Premier Gold member. UA 2216 is delayed two and a half hours for a late crew. The app is only offering a later Denver connection, but UA 1288, the 8:15 nonstop from Boston, shows seats available. Could you move me to that flight? Since the delay is on United’s side, I understand there’s no change fee or fare difference.'}],
+        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M, and I’m a Premier Gold member. UA 2216 is delayed two and a half hours. The app is only offering a later Denver connection, but UA 1288, the 8:15 nonstop from Boston, shows seats available. Could you move me to that flight? Since the delay is on United’s side, I understand there’s no change fee or fare difference.'}],
         feeds:['sched','seats']},
       lines:{rows:[['United app','','Often shows only the automatic rebooking.',''],['Phone, Premier line','','Can see and book the nonstop.','best'],['Logan check-in desk','','Slower, and you’re not at the airport yet.','']],tip:'Call while you finish getting ready.'},
       rights:[['yes','Free change to any United flight to LA today','You don’t have to take the first option offered. Any United flight with seats qualifies.','rules']],
@@ -942,14 +946,14 @@ denver:{
         steps:['Don’t board UA 1543 to Denver yet. Once you fly the first leg, most of your options disappear.',
           'Go to the United desk in Terminal B, or call, and use the script.',
           'Ask for standby on UA 1288 at the same time. You keep the confirmed San Francisco seat as a backup.'],
-        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles, confirmation K7XQ2M. UA 2216 is now delayed almost four hours for a late crew. Could you move me to UA 532 and UA 1971 through San Francisco, leaving at 9:10? It shows seats available. Please also add me to the standby list for UA 1288, the 8:15 nonstop. Since United caused the delay, the change should be free.'}],
+        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles, confirmation K7XQ2M. UA 2216 is now delayed almost four hours. Could you move me to UA 532 and UA 1971 through San Francisco, leaving at 9:10? It shows seats available. Please also add me to the standby list for UA 1288, the 8:15 nonstop. With a delay this long, the change should be free.'}],
         feeds:['sched','seats','rules']},
       lines:{rows:[['United desk, Terminal B','','Can book the San Francisco route and add you to standby.','best'],['Phone, Premier line','','A good backup while you wait in line.','best'],['Gate B9','','Gate agents focus on their own flight.','']],tip:'Get in line and call at the same time. Hang up or step out of line when one works.'},
       rights:[
         ['yes','Free change to any United flight to LA today','Including a different connection city.','rules'],
-        ['yes','Meal voucher: your wait is now over 3 hours','United commits to one for delays it causes. Check the app or ask the agent.','rules'],
+        ['ask','United','','rules'],
         ['yes','Refund available if you’d rather not go','You’re past the 3-hour domestic threshold.','dot']],
-      money:{payers:[['United','Meal voucher',true,'Owed because United caused a 3+ hour delay.'],['Sapphire Reserve','$500 cap',false,'Starts after 6 hours or an overnight stay. You’re at 3 hr 45 min.']]},
+      money:{payers:[['United','Meal voucher',true,'Owed if United caused the 3+ hour delay.','ask'],['Sapphire Reserve','$500 cap',false,'Starts after 6 hours or an overnight stay. You’re at 3 hr 45 min.']]},
       feeds:['alerts','status','push'],
       choices:[{label:'Take San Francisco, and stand by for the nonstop',next:'d6'},{label:'Only stand by for the nonstop',sub:'Keep the Denver flights as backup',next:'d7'}]},
     d6:{clock:'8:02 AM',where:'Gate B9, Logan',
@@ -1301,12 +1305,12 @@ southwest:{al:'WN',
   confirmation:'7KQ2ZD', start:'wn1',
   steps:{
     wn1:{clock:'7:40 AM',where:'Chicago Midway, gate B12',
-      notif:{t:'Denver flight 3.5 hr late',b:'You now land in Denver at 2:35 PM. It’s a crew problem, so Southwest owes you a free change: a route through Dallas lands at 12:55 PM.'},
+      notif:{t:'Denver flight 3.5 hr late',b:'You now land in Denver at 2:35 PM. Southwest owes you a free change: a route through Dallas lands at 12:55 PM.'},
       board:{hl:'Landing DEN 3 hr 30 min late',rows:[
         ['WN 418','BOS → MDW','6:10 AM','6:10 AM','ARRIVED','ok','8:05 AM','8:05 AM'],
         ['WN 2205','MDW → DEN','9:30 AM','1:00 PM','DELAYED 3 HR 30 MIN','late','11:05 AM','2:35 PM']]},
       move:{tone:'go',label:'Fastest way there',title:'Switch to WN 1873 and WN 642 through Dallas Love Field',
-        sub:'Leaves 9:05 AM, lands Denver 12:55 PM, 1 hr 40 min sooner. Free, because Southwest caused the delay. Seats are for sale.',
+        sub:'Leaves 9:05 AM, lands Denver 12:55 PM, 1 hr 40 min sooner. Free, because of the delay. Seats are for sale.',
         route:{old:[['BOS','MDW','ok'],['MDW','DEN','late']],neu:['MDW','DAL','DEN']},
         steps:['Open the Southwest app and look for the rebooking option on your trip. A delay this long usually unlocks free changes.','If it isn’t there, ask the agent at gate B12 and use the script.','Decide first: switching gets you there sooner, but staying earns a travel credit (see what you’re entitled to).'],
         scripts:[{who:'a Southwest agent',text:'Hi, I’m on WN 2205 to Denver, confirmation 7KQ2ZD. It’s now three and a half hours late for a crew issue. Could you move me to WN 1873 to Dallas Love Field at 9:05 and WN 642 to Denver? It shows seats available. Since the delay is Southwest’s, it should be free.'}],
@@ -1316,9 +1320,9 @@ southwest:{al:'WN',
       rights:[
         ['yes','Free change, even on a Basic fare','Basic fares normally can’t change the same day, even for A-List, but a Southwest-caused delay changes that.','wn'],
         ['no','No rebooking on other airlines','Unlike United, Delta and American, Southwest doesn’t commit to moving you to another airline.','dashboard'],
-        ['yes','Meal voucher: your wait is over 3 hours','Southwest commits to one for delays it causes.','dashboard'],
-        ['yes','Travel credit if you stay on the delayed flight','Southwest commits to a credit voucher when its delay reaches 3 hours. Ask the gate agent.','dashboard']],
-      money:{payers:[['Southwest','Meal + travel credit',true,'Owed for a 3+ hour delay Southwest caused, if you stay on this flight.'],['Sapphire Preferred','$500 cap',false,'Starts after 12 hours or an overnight stay.']]},
+        ['ask','Southwest','','dashboard'],
+        ],
+      money:{payers:[['Southwest','Meal + travel credit',true,'Owed if Southwest caused the 3+ hour delay and you stay on this flight.','ask'],['Sapphire Preferred','$500 cap',false,'Starts after 12 hours or an overnight stay.']]},
       feeds:['alerts','push','cause'],
       choices:[{label:'Switch through Dallas',sub:'Land 1 hr 40 min sooner',next:'wn2'},{label:'Stay and collect the credit',sub:'Land at 2:35 PM',next:'wn3'}]},
     wn2:{clock:'8:52 AM',where:'Gate B4, Midway',
@@ -1547,7 +1551,26 @@ function shortRight(c,t){
 function rightRow(k,label,val,body,f){
   return `<details class="rrow ${k}"><summary><span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24">${R_ICON[k]}</svg></span><span class="rl">${esc(label)}</span>${val?`<span class="rv">${esc(val)}</span>`:''}</summary><p>${esc(body)}</p>${feedChips(f?[f]:[])}</details>`;
 }
-const rightsHtml=r=>r?.length?`<section class="rts" aria-label="Your rights"><div class="rts-h"><h2>Your rights</h2><span>Tap for details</span></div>${r.map(([c,t,b,f])=>{const k=c||'pend',[l,v]=shortRight(c,t);return rightRow(k,l,v,b,f)}).join('')}</section>`:'';
+/* Meals and hotel depend on why the flight is late. Ask only when the delay is long enough for it to matter. */
+R_ICON.ask='<path d="M9.2 9.2a2.9 2.9 0 1 1 4.1 2.6c-.8.4-1.3 1-1.3 1.9v.4M12 17v.4"/>';
+UI.cause=UI.cause||{};
+function payerHtml([w,amt,on,p,ask],key){
+  const a=ask?UI.cause[key]:'airline';
+  const [A,O,P]=a==='airline'?[amt,on,p]:a==='weather'?['Not owed',false,`${w} doesn’t owe meals or credits for weather.`]:a==='unsure'?['Ask the agent',false,p]:['Depends why',false,p];
+  return `<details class="payer${O?' on':''}"${ask?` data-askpay="${esc(key)}" data-row="${esc(JSON.stringify([w,amt,on,p,ask]))}"`:''}><summary><b>${esc(w)}</b><span class="amt">${esc(A)}</span></summary><p>${esc(P)}</p></details>`;
+}
+function askRow(al,key,f){
+  const a=UI.cause[key];
+  if(a==='airline'&&al==='Southwest')return rightRow('yes','Meal voucher','Owed','Southwest commits to a meal voucher for delays it causes. Check the Southwest app or ask the agent.',f)+rightRow('yes','Travel credit','Owed','Southwest commits to a credit voucher when its delay reaches 3 hours. Ask the gate agent.',f);
+  if(a==='airline')return rightRow('yes','Meal voucher','Owed',`${al} commits to a meal voucher for delays it causes. Check the ${al} app or ask the agent.`,f);
+  if(a==='weather')return rightRow('no','Meals and hotel','Not owed',`${al} doesn’t owe meals${al==='Southwest'?', credits':''} or a hotel for weather. Your card’s trip delay coverage can still pay; keep your receipts.`,f);
+  if(a==='unsure')return rightRow('warn','Meal voucher','Ask the agent',`Ask the agent why the flight is late. If it’s crew or mechanical, ${al} owes you a meal voucher.`,f);
+  return `<details class="rrow ask" open data-askkey="${esc(key)}" data-al="${esc(al)}" data-f="${esc(f||'')}"><summary><span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24">${R_ICON.ask}</svg></span><span class="rl">${al==='Southwest'?'Meal and credit':'Meals and hotel'}</span><span class="rv">Depends why</span></summary><p>You’re past 3 hours. ${esc(al)} owes ${al==='Southwest'?'a meal and a travel credit':'meals'} only if the delay is its fault. What reason did ${esc(al)} give?</p><div class="causebtns">${[['airline','Crew or mechanical'],['weather','Weather'],['unsure','Not sure']].map(([v,l])=>`<button type="button" class="btn small" data-cause="${v}">${l}</button>`).join('')}</div></details>`;
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cause]');if(!b)return;const row=b.closest('[data-askkey]');if(!row)return;
+  UI.cause[row.dataset.askkey]=b.dataset.cause;const tmp=document.createElement('div');tmp.innerHTML=askRow(row.dataset.al,row.dataset.askkey,row.dataset.f||null);const ns=[...tmp.children];if(ns[0])ns[0].open=true;row.replaceWith(...ns);
+  document.querySelectorAll('[data-askpay]').forEach(d=>{if(d.dataset.askpay!==row.dataset.askkey)return;const t2=document.createElement('div');t2.innerHTML=payerHtml(JSON.parse(d.dataset.row),d.dataset.askpay);d.replaceWith(t2.firstElementChild)})});
+const rightsHtml=r=>r?.length?`<section class="rts" aria-label="Your rights"><div class="rts-h"><h2>Your rights</h2><span>Tap for details</span></div>${r.map(([c,t,b,f])=>{if(c==='ask')return askRow(t,UI.scn+'|'+t,f);const k=c||'pend',[l,v]=shortRight(c,t);return rightRow(k,l,v,b,f)}).join('')}</section>`:'';
 function riskHtml(rk){
   if(!rk)return '';
   const hi=rk.items.filter(x=>x[1]==='high').length,map={high:['no','High'],med:['warn','Watch'],low:['yes','Low']};
@@ -1576,7 +1599,7 @@ function moneyHtml(m,key){
   if(!m)return '';
   const kit=m.kit?Object.assign(newKit(m),load(key)||{}):null;
   const total=kit?kit.items.reduce((s,x)=>s+x.a,0):0;
-  return `<h2>Your delay money</h2><div class="payers">${m.payers.map(([w,a,on,p])=>`<details class="payer${on?' on':''}"><summary><b>${esc(w)}</b><span class="amt">${esc(a)}</span></summary><p>${esc(p)}</p></details>`).join('')}</div>
+  return `<h2>Your delay money</h2><div class="payers">${m.payers.map(x=>payerHtml(x,UI.scn+'|'+x[0])).join('')}</div>
     ${feedChips(['cards','rules'])}
     ${kit?`<h2>Claim kit</h2><p class="hint">Log what you spend as you go. Rerouted turns it into a claim you can submit.</p>
       <ul class="explist">${kit.items.map((x,i)=>`<li><span>${esc(x.d)} <small>${esc(x.c)}</small></span><span>${money2(x.a)} <button type="button" data-rm="${i}">Remove</button></span></li>`).join('')||'<li><small>No expenses yet.</small></li>'}</ul>
