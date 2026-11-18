@@ -247,6 +247,34 @@ details.payer p{margin:6px 0 0}
 .sharecr .btn{flex:none;background:var(--hold);border-color:var(--hold);color:#121A26;font-weight:800;padding:8px 16px}
 .crdone{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:#6FE3B0}
 .crdone svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.chs{display:grid;gap:8px;margin:0 0 12px}
+.ch{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:var(--field)}
+.ch .ri{width:32px;height:32px;border-radius:50%;display:grid;place-items:center}
+.ch .ri svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ch.go .ri{background:var(--edge);color:var(--on-accent)}
+.ch.skip{background:transparent;padding-block:4px}
+.ch.skip .ri{background:var(--field);color:var(--muted)}
+.ch.skip b{color:var(--muted);font-weight:600}
+.chn b{display:block;font-size:15px;line-height:1.25}
+.chn small{display:block;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ch em{font-style:normal;font-weight:700;font-size:12px;color:var(--center);background:var(--center-soft);border-radius:10px;padding:3px 9px}
+.callbtn{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;text-decoration:none;color:var(--on-accent);background:var(--center);border-radius:18px;padding:8px 16px}
+.svgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sv{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px}
+.sv.big{grid-column:1/-1;background:var(--tarmac);border-color:var(--tarmac);color:var(--tarmac-ink)}
+.sv small{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.sv.big small,.sv.big span{color:var(--tarmac-muted)}
+.sv b{display:block;font-weight:800;font-stretch:87.5%;font-size:28px;line-height:1.1;margin:4px 0 2px}
+.sv.big b{font-size:40px;color:#6FE3B0}
+.sv span{font-size:13px;color:var(--muted)}
+.svlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.svlist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.svr{display:inline-block;margin-bottom:4px;font-weight:800;font-stretch:112.5%;font-size:12px;color:var(--on-brand);background:var(--brand);border-radius:8px;padding:4px 7px;white-space:nowrap}
+.svr.ok{background:var(--center)}
+.svt b{display:block;font-size:15px}.svt small{display:block;font-size:13px;color:var(--muted)}
+.svv{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.svv em{font-style:normal;font-weight:800;font-size:13px;color:var(--center);background:var(--center-soft);border-radius:10px;padding:2px 8px;white-space:nowrap}
+.svv em.m{color:var(--edge);background:var(--edge-soft)}.svv em.z{color:var(--muted);background:var(--field)}
 /* Toast (in-app notification) */
 #toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
 #toast .notif{background:rgba(26,34,48,.94);box-shadow:0 16px 30px -18px rgba(0,0,0,.7)}
@@ -545,7 +573,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
         <nav class="tabs" id="tabs" aria-label="App">
           <button type="button" data-tab="home" aria-current="page"><span data-ic="trips"></span>Trips</button>
           <button type="button" data-tab="wallet"><span data-ic="wallet"></span>Wallet</button>
-          <button type="button" data-tab="you"><span data-ic="you"></span>You</button>
+          <button type="button" data-tab="savings"><span data-ic="savings"></span>Savings</button>
+      <button type="button" data-tab="you"><span data-ic="you"></span>You</button>
         </nav>
       </div>
       <p class="s-demo-cap">Live demo. Works best on your phone, too.</p>
@@ -1698,6 +1727,7 @@ const FEED_ALIAS={dl:'rules',aa:'rules',wn:'rules',dashboard:'dot'};
 const feedChips=list=>UI.founder&&list?.length?`<div>${[...new Set(list.map(k=>FEED_ALIAS[k]||k))].filter(k=>FEEDS[k]).map(k=>`<span class="feed" title="${esc(FEEDS[k].src)}">${esc(FEEDS[k].name)}</span>`).join('')}</div>`:'';
 const icon={trips:'<svg viewBox="0 0 24 24"><path d="M3 17c4 0 4-10 9-10s5 10 9 10"/><circle cx="3" cy="17" r="1.6"/><circle cx="21" cy="17" r="1.6"/></svg>',
   wallet:'<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18M15 15h3"/></svg>',
+  savings:'<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>',
   you:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>'};
 const appIcon='<span class="appicon" aria-hidden="true"><svg viewBox="0 0 46 30"><path d="M5 22 L41 22" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/><path d="M5 22 C14 22 14 6 23 6 S32 22 41 22" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/><circle cx="5" cy="22" r="3.4" fill="#fff"/><circle cx="41" cy="22" r="3.4" fill="#fff"/></svg></span>';
 const notifBody=(t,b,time)=>`${appIcon}<span><div class="app"><span>REROUTED</span><span>${esc(time||'now')}</span></div><b>${esc(t)}</b><p>${esc(b)}</p></span>`;
@@ -1709,10 +1739,10 @@ function go(view,o={}){
   Object.assign(UI,{view},o);
   const tabs=document.getElementById('tabs');
   tabs.hidden=['lock','agent'].includes(view);
-  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===({home:'home',step:'home',own:'home',add:'home',check:'home',wallet:'wallet',you:'you',feeds:'you'}[view])?'page':'false'));
+  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===({home:'home',step:'home',own:'home',add:'home',check:'home',wallet:'wallet',savings:'savings',you:'you',feeds:'you'}[view])?'page':'false'));
   $s().onscroll=null;
   const sc=$s();sc.className='screen'+(view==='lock'||view==='agent'?' dark':'');
-  ({home:viewHome,lock:viewLock,step:viewStep,agent:viewAgent,wallet:viewWallet,you:viewYou,feeds:viewFeeds,add:viewAdd,check:viewCheck,own:viewOwn})[view]();
+  ({home:viewHome,lock:viewLock,step:viewStep,agent:viewAgent,wallet:viewWallet,savings:viewSavings,you:viewYou,feeds:viewFeeds,add:viewAdd,check:viewCheck,own:viewOwn})[view]();
   sc.scrollTop=0;
 }
 function logTime(){UI.timings.push([UI.step,Math.round((Date.now()-UI.stepAt)/1000)]);UI.stepAt=0}
@@ -1821,13 +1851,23 @@ function routeSvg(rt){
   const key=tm?`<div class="tkey"><div class="tk old"><i></i><span>Booked<small>${oStops}</small></span><b class="${tm.ot}">${tm.oldDep?esc(tm.oldDep)+(/^\d/.test(tm.old)?' → ':' · '):(/^\d/.test(tm.old)?'Lands ':'')}${esc(tm.old)}</b></div><div class="tk neu"><i></i><span>${tm.sbDep?'Confirmed':'Suggested'}<small>${nStops}</small></span><b>${esc(tm.dep)} → ${esc(tm.arr)}</b></div>${tm.sbDep?`<div class="tk sb"><i></i><span>Standby<small>${sStops}</small></span><b>${esc(tm.sbDep)} → ${esc(tm.sbArr)}</b></div>`:''}</div>`:`<div class="legend"><span class="old">Booked</span><span>Suggested</span></div>`;
   return `<div class="routeviz"><svg viewBox="0 0 600 ${!mids.length&&P[last]?178:236}" role="img" aria-label="Booked route compared with the suggested route">${g}</svg>${key}</div>`;
 }
-function moveHtml(m,key){
+/* Get help, folded into the move card's action items. Phone rows get a tap-to-call button. */
+const AL_PHONE={UA:['United','1-800-864-8331'],DL:['Delta','1-800-221-1212'],AA:['American','1-800-433-7300'],WN:['Southwest','1-800-435-9792']};
+function curAl(){const b=SCN[UI.scn]?.steps[UI.step]?.board?.rows?.[0]?.[0]||'';const m=String(b).match(/^(UA|DL|AA|WN)\b/);if(m)return m[1];try{return S.booked?.[0]?.al||null}catch(e){return null}}
+function helpInHtml(ln){
+  if(!ln)return '';
+  const al=curAl(),ph=al&&AL_PHONE[al];
+  return `<div class="stepshd">Fastest way to get help</div>${ln.tip?`<p class="tipbar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/></svg>${esc(ln.tip)}</p>`:''}
+  <div class="chs">${ln.rows.map(([c,w,n,best])=>{const k=chKind(c),call=k==="phone"&&ph&&!/Expedia|Priceline|Booking|Orbitz|Chase|Amex|card/i.test(c);
+    return `<div class="ch ${best?'go':'skip'}"><span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24">${CH_ICON[k]}</svg></span><span class="chn"><b>${esc(c)}</b>${call?`<small>${esc(ph[1])}</small>`:''}</span>${call?`<a class="callbtn" href="tel:${ph[1].replace(/-/g,'')}">Call</a>`:best?'<em>Do this</em>':''}</div>`}).join('')}</div>`;
+}
+function moveHtml(m,key,ln){
   if(!m)return '';
   const th=UI.thumbs[key];
   return `<section class="move ${m.tone==='warn'?'warn':m.tone==='neutral'?'neutral':''}" aria-label="Your move">
     <div class="label">${esc(m.label)}</div><h3>${esc(m.title)}</h3>${m.route?.t?.gain||m.route?.t?.sbGain?`<div class="gains">${m.route.t.gain?`<em class="gain">${esc(m.route.t.gain)}</em>`:''}${m.route.t.sbGain?`<em class="gain sbg">${esc(m.route.t.sbGain)}</em>`:''}</div>`:''}<p class="sub">${esc(m.sub)}</p>
     ${routeSvg(m.route)}
-    ${m.steps?.length?`<div class="stepshd">Action items</div><ol>${m.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`:''}
+    ${m.steps?.length?`<div class="stepshd">Action items</div><ol>${m.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`:''}${helpInHtml(ln)}
     ${(m.scripts||[]).map((sc,i)=>`<div class="script"><div class="who"><span>What to say to ${esc(sc.who)}</span></div><p>${esc(sc.text)}</p>
       <div class="row"><button class="btn small" type="button" data-copy="${i}">Copy</button><button class="btn small" type="button" data-show="${i}">Show to the agent</button></div></div>`).join('')}
     ${m.note?`<p class="note">${esc(m.note)}</p>`:''}
@@ -2060,8 +2100,7 @@ function viewStep(){
       ${riskHtml(st.risk)}
       ${boardHtml(st.board,st.feeds)}
       ${st.end?endHtml(s,st):''}
-      ${moveHtml(st.move,key)}
-      ${linesHtml(st.lines)}
+      ${moveHtml(st.move,key,st.lines)}${st.move?'':linesHtml(st.lines)}
       ${rightsHtml(st.rights)}
       ${moneyHtml(st.money,kitKey)}
       ${st.end?feedbackHtml():''}
@@ -2158,6 +2197,26 @@ function viewWallet(){
   $s().querySelectorAll('[data-card]').forEach(c=>c.onchange=()=>{const k=c.dataset.card;S.profile.cards=c.checked?[...new Set([...S.profile.cards,k])]:S.profile.cards.filter(x=>x!==k);store('rr4-profile',S.profile);viewWallet()});
 }
 
+/* ---------- Savings: lifetime time saved, money back and credits ---------- */
+function viewSavings(){
+  const r=recapStats(),shared=!!load('rr4-shared');
+  const trips=Object.entries(UI.played).map(([k,id])=>[k,SCN[k]?.steps[id]?.end]).filter(x=>x[1]);
+  const kits=Object.keys(localStorage).filter(k=>k.startsWith('rr4-kit-')).map(k=>load(k)).filter(v=>v?.items?.length);
+  const logged=kits.reduce((s,v)=>s+v.items.reduce((a,x)=>a+x.a,0),0);
+  $s().innerHTML=`<header class="pagehead"><h1>Your savings</h1><p>Everything Rerouted has won back for you.</p></header><div class="pad">
+    <div class="svgrid">
+      <div class="sv big"><small>Time saved</small><b>${r.saved?dur(r.saved):'0 min'}</b><span>${r.n} trip${r.n===1?'':'s'}</span></div>
+      <div class="sv"><small>Money back</small><b>${money2(r.back)}</b><span>Cards and airlines</span></div>
+      <div class="sv"><small>Credits</small><b>${shared?1:0}</b><span>${shared?'From sharing':'Share a recap to earn one'}</span></div>
+    </div>
+    <h2>By trip</h2>
+    ${trips.length?`<ul class="svlist">${trips.map(([k,e])=>`<li><span class="svt"><span class="svr">${esc(SCN[k].route)}</span><b>${esc(SCN[k].title)}</b><small>${esc(e.big)}</small></span><span class="svv">${e.saved?`<em>${dur(e.saved)}</em>`:''}${e.back?`<em class="m">${money2(e.back)}</em>`:''}${!e.saved&&!e.back?'<em class="z">—</em>':''}</span></li>`).join('')}</ul>`
+      :`<p class="hint">Play a bad travel day and your time and money saved add up here.</p>`}
+    ${logged?`<h2>Receipts logged</h2><p class="hint">${money2(logged)} in claim kits, ready to file with your card.</p>`:''}
+    <h2>Credits</h2>
+    <ul class="svlist">${shared?`<li><span class="svt"><span class="svr ok">✓ Credit</span><b>Shared your recap</b><small>Credit added to your account</small></span></li>`:`<li><span class="svt"><span class="svr">+1 Credit</span><b>Share your recap</b><small>From Trips, tap Share on your recap</small></span></li>`}</ul>
+  </div>`;
+}
 /* ---------- You ---------- */
 function viewYou(){
   const o=(arr,v)=>arr.map(([k,t])=>`<option value="${esc(k)}"${String(k)===String(v)?' selected':''}>${esc(t)}</option>`).join('');
@@ -2275,8 +2334,7 @@ function viewOwn(){
       <div class="opts" style="margin-bottom:16px">${kinds.map(([k,l])=>`<button type="button" data-kind="${k}" aria-pressed="${UI.own===k}">${l}</button>`).join('')}</div>
       ${UI.own==='none'?riskHtml(ownRisk()):''}
       ${boardHtml(st.board)}
-      ${moveHtml(st.move,key)}
-      ${linesHtml(st.lines)}
+      ${moveHtml(st.move,key,st.lines)}${st.move?'':linesHtml(st.lines)}
       ${rightsHtml(st.rights)}
       ${moneyHtml(st.money,kitKey)}
       <p class="note">On your own trip, alternative flights and seat counts are simulated. In the live product they come from the airline’s schedule and a seat feed.</p>
