@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style><!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -136,6 +136,31 @@ textarea{min-height:120px;resize:vertical;font-size:14px;line-height:1.45}
   .lock .notif{animation:drop .6s .5s cubic-bezier(.2,.8,.2,1) both}
   @keyframes drop{from{opacity:0;transform:translateY(-18px) scale(.97)}to{opacity:1;transform:none}}
 }
+
+
+.rts{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:4px 14px 6px;margin:16px 0 8px}
+.rts-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0 6px}
+.rts-h h2{margin:0;font-size:19px}
+.rts-h > span:not(.pill){font-size:12px;color:var(--muted)}
+.rt{border-top:1px solid var(--line)}
+.rt summary{list-style:none;display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;min-height:48px;cursor:pointer}
+.rt summary::-webkit-details-marker{display:none}
+.ri{width:32px;height:32px;border-radius:50%;display:grid;place-items:center}
+.ri svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.rl{font-weight:700;font-size:15px;line-height:1.25}
+.rv{font-weight:700;font-size:13px;line-height:1.2;border-radius:12px;padding:4px 10px;text-align:right;max-width:9.5em}
+.rt.yes .ri,.rt.yes .rv{background:var(--center-soft);color:var(--center)}
+.rt.no .ri,.rt.no .rv{background:var(--stop-soft);color:var(--stop)}
+.rt.warn .ri,.rt.warn .rv{background:var(--hold-soft);color:var(--ink)}
+.rt.pend .ri,.rt.pend .rv{background:var(--field);color:var(--muted)}
+.rt.pend .rv{color:var(--ink)}
+.rt p{margin:-2px 0 12px 42px;font-size:14px;line-height:1.5;color:var(--muted)}
+.rt .feed{margin-left:42px}
+.rt[open] .rl{color:var(--edge)}
+details.payer{display:block}
+details.payer summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
+details.payer summary::-webkit-details-marker{display:none}
+details.payer p{margin:6px 0 0}
 
 /* Toast (in-app notification) */
 #toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
@@ -1441,17 +1466,11 @@ function bindMove(root,m,key){
   root.querySelectorAll('[data-show]').forEach(b=>b.onclick=()=>{UI.agentScript=m.scripts[+b.dataset.show];UI.back=UI.view;go('agent')});
   root.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>{UI.thumbs[key]=b.dataset.th;store('rr4-thumbs',UI.thumbs);root.querySelectorAll('[data-th]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
 }
-function riskHtml(rk){
-  if(!rk)return '';
-  const hi=rk.items.filter(x=>x[1]==='high').length,lv={high:['High','bad'],med:['Watch','warn'],low:['Low','ok']};
-  return `<section class="card" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><b style="font-size:17px">${esc(rk.title||'Risk check')}</b><span class="pill ${hi?'bad':'ok'}">${hi?`${hi} high risk${hi>1?'s':''}`:'Looking good'}</span></div>
-    <ul class="rights" style="margin-top:10px">${rk.items.map(([t,l,b,f])=>`<li class="${l==='high'?'no':l==='med'?'warn':'yes'}"><b>${esc(t)} <span class="pill ${lv[l][1]}" style="margin-left:4px">${lv[l][0]}</span></b><span>${esc(b)}</span>${feedChips(f?[f]:[])}</li>`).join('')}</ul></section>`;
-}
 function linesHtml(ln){
   if(!ln)return '';
   return `<section class="card" style="margin:8px 0 4px"><b style="font-size:16px">Best way to get help right now</b>
     <ul class="explist" style="margin:8px 0 6px">${ln.rows.map(([c,w,n,best])=>`<li style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:15px">${esc(c)}${best?' <span class="pill ok">Do this</span>':''}</b>${w?`<span style="white-space:nowrap;font-weight:600">${esc(w)}</span>`:''}</div><small style="display:block">${esc(n)}</small></li>`).join('')}</ul>
-    ${ln.tip?`<p class="note" style="margin:0">${esc(ln.tip)}</p>`:''}<p class="note" style="margin:6px 0 0;font-size:12px">Ranked from your airline’s rules and how you booked. No live feed has wait times, so Rerouted doesn’t guess them.</p>${feedChips(['waits'])}</section>`;
+    ${ln.tip?`<p class="note" style="margin:0">${esc(ln.tip)}</p>`:''}${UI.founder?'<p class="note" style="margin:6px 0 0;font-size:12px">Ranked from airline rules and how you booked; no feed has wait times.</p>':''}${feedChips(['waits'])}</section>`;
 }
 function recapLine(r){const parts=[];if(r.saved)parts.push(`${dur(r.saved)} saved`);if(r.back)parts.push(`${money2(r.back)} back`);return parts.join(', ')||'Every option, mapped'}
 function recapStats(){
@@ -1459,7 +1478,45 @@ function recapStats(){
   for(const [k,id] of Object.entries(UI.played)){const e=SCN[k]?.steps[id]?.end;if(!e)continue;n++;saved+=e.saved||0;back+=e.back||0}
   return {n,saved,back};
 }
-const rightsHtml=r=>r?.length?`<h2>What you’re entitled to</h2><ul class="rights">${r.map(([c,t,b,f])=>`<li class="${c}"><b>${esc(t)}</b><span>${esc(b)}</span>${feedChips(f?[f]:[])}</li>`).join('')}</ul>`:'';
+/* Rights and risks as a scannable checklist: icon + a few words + a status. Detail is one tap away. */
+const R_ICON={yes:'<path d="M6 12.5l4 4L18 8"/>',no:'<path d="M7.5 7.5l9 9M16.5 7.5l-9 9"/>',warn:'<path d="M12 6.5v7M12 17v.4"/>',pend:'<circle cx="12" cy="12" r="7"/><path d="M12 8.5V12l2.5 1.6"/>'};
+const capFirst=x=>x?x[0].toUpperCase()+x.slice(1):x;
+function shortRight(c,t){
+  let m;const yes=c==='yes',no=c==='no';
+  if(m=t.match(/^Free (?:rebooking|change) (?:on|to) any (\w+) flight/))return [`Rebook on any ${m[1]} flight`,'Free'];
+  if(/^Free rebooking if/.test(t))return ['Free rebooking','If you miss it'];
+  if(/^Free change, even on a Basic/.test(t))return ['Change flights','Free, even Basic'];
+  if(m=t.match(/^(?:Same-day|Confirmed) change: (.+)$/)){const v=m[1];return ['Same-day change',/^free/i.test(v)?'Free':(v.match(/^\$\d+/)||[v])[0]]}
+  if(/^Same-day standby/.test(t))return ['Standby','Free'];
+  if(/^No same-day changes on a Basic/.test(t))return ['Same-day change','Not on Basic'];
+  if(/^No switching to the nonstop/.test(t))return ['Switch to the nonstop','Not allowed'];
+  if(/meal|hotel/i.test(t))return no?['Meals and hotel','Not owed']:yes?['Meal voucher','Owed']:['Meal voucher','At 3 hr'];
+  if(/^Thunderstorms count as weather/.test(t))return ['Meals and hotel','Not for weather'];
+  if(/^Refund/.test(t))return yes?['Refund if you skip the trip','Available']:['Refund','At 3 hr late'];
+  if(m=t.match(/^(.+?) covers (?:expenses|essentials) after (\d+) hours/))return [m[1],yes?'Covered':`After ${m[2]} hr`];
+  if(/^No rebooking on other airlines/.test(t))return ['Other airlines','Not offered'];
+  if(/separate tickets|isn’t protected/.test(t))return ['Missed connection','Not covered'];
+  if(/^A report is required/.test(t))return ['Delayed-bag report','Required'];
+  if(m=t.match(/^(?:Changes go through|You booked through) (.+)$/))return ['Changes go through',m[1]];
+  if(m=t.match(/^Your (\w{3}) connection is down to (.+)$/))return [`${m[1]} connection`,m[2]];
+  if(/^Travel credit/.test(t))return ['Travel credit',yes?'Owed':'If you stay'];
+  if(/^Your bag fee back/.test(t))return ['Bag fee refund','At 12 hr'];
+  if(/^No delay posted yet/.test(t))return ['Delay rebooking','Not yet'];
+  if(/^No delay, so no free rebooking/.test(t))return ['Free rebooking','No delay'];
+  if(/^No free change for weather/.test(t))return ['Weather waiver','Not yet'];
+  if(m=t.match(/^Ask (\w+) about (.+)$/))return [capFirst(m[2]),`Ask ${m[1]}`];
+  const i=t.indexOf(': ');if(i>0)return [t.slice(0,i),capFirst(t.slice(i+2))];
+  return [t,yes?'Yes':no?'No':c==='warn'?'Heads up':'Not yet'];
+}
+function rightRow(k,label,val,body,f){
+  return `<details class="rt ${k}"><summary><span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24">${R_ICON[k]}</svg></span><span class="rl">${esc(label)}</span>${val?`<span class="rv">${esc(val)}</span>`:''}</summary><p>${esc(body)}</p>${feedChips(f?[f]:[])}</details>`;
+}
+const rightsHtml=r=>r?.length?`<section class="rts" aria-label="Your rights"><div class="rts-h"><h2>Your rights</h2><span>Tap for details</span></div>${r.map(([c,t,b,f])=>{const k=c||'pend',[l,v]=shortRight(c,t);return rightRow(k,l,v,b,f)}).join('')}</section>`:'';
+function riskHtml(rk){
+  if(!rk)return '';
+  const hi=rk.items.filter(x=>x[1]==='high').length,map={high:['no','High'],med:['warn','Watch'],low:['yes','Low']};
+  return `<section class="rts" aria-label="${esc(rk.title||'Risk check')}"><div class="rts-h"><h2>${esc(rk.title||'Risk check')}</h2><span class="pill ${hi?'bad':'ok'}">${hi?`${hi} high risk${hi>1?'s':''}`:'Looking good'}</span></div>${rk.items.map(([t,l,b,f])=>rightRow(map[l][0],t,map[l][1],b,f)).join('')}</section>`;
+}
 
 /* Claim kit: who pays, expenses against the card's cap, documents, and how to file */
 // How each issuer's trip delay claims are filed. Checked Nov 11, 2026; "check" marks conflicting or unofficial sources.
@@ -1483,7 +1540,7 @@ function moneyHtml(m,key){
   if(!m)return '';
   const kit=m.kit?Object.assign(newKit(m),load(key)||{}):null;
   const total=kit?kit.items.reduce((s,x)=>s+x.a,0):0;
-  return `<h2>Your delay money</h2><div class="payers">${m.payers.map(([w,a,on,p])=>`<div class="payer${on?' on':''}"><b>${esc(w)}</b><span class="amt">${esc(a)}</span><p>${esc(p)}</p></div>`).join('')}</div>
+  return `<h2>Your delay money</h2><div class="payers">${m.payers.map(([w,a,on,p])=>`<details class="payer${on?' on':''}"><summary><b>${esc(w)}</b><span class="amt">${esc(a)}</span></summary><p>${esc(p)}</p></details>`).join('')}</div>
     ${feedChips(['cards','rules'])}
     ${kit?`<h2>Claim kit</h2><p class="hint">Log what you spend as you go. Rerouted turns it into a claim you can submit.</p>
       <ul class="explist">${kit.items.map((x,i)=>`<li><span>${esc(x.d)} <small>${esc(x.c)}</small></span><span>${money2(x.a)} <button type="button" data-rm="${i}">Remove</button></span></li>`).join('')||'<li><small>No expenses yet.</small></li>'}</ul>
@@ -1907,4 +1964,5 @@ function engineStep(kind){
 
 </script>
 </body>
+</html>
 </html>
