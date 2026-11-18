@@ -2029,8 +2029,8 @@ function bindMoney(root,m,key,rerender){
 /* Section shortcuts: a sticky chip row under the header that jumps to each card and lights up as you scroll. */
 function addJump(){
   const sc=$s(),tb=sc.querySelector('.topbar');if(!tb)return;
-  const secs=[['Flight',sc.querySelector('.board')],['Move',sc.querySelector('.move')],['Get help',sc.querySelector('.rts.help')],
-    ['Rights',sc.querySelector('.rts[aria-label="Your rights"]')],['Money',[...sc.querySelectorAll('h2')].find(h=>/delay money/i.test(h.textContent))]].filter(x=>x[1]);
+  const secs=[['Flight',sc.querySelector('.board')],['Your Best Move',sc.querySelector('.move')],['Get Help',sc.querySelector('.rts.help')],
+    ['Your Rights',sc.querySelector('.rts[aria-label="Your rights"]')],['Your Money',[...sc.querySelectorAll('h2')].find(h=>/delay money/i.test(h.textContent))]].filter(x=>x[1]);
   if(secs.length<3)return;
   const wrap=document.createElement('div');wrap.className='stickhd';tb.replaceWith(wrap);wrap.appendChild(tb);
   const nav=document.createElement('nav');nav.className='jump';nav.setAttribute('aria-label','Jump to section');
