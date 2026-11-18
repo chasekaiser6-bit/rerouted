@@ -354,7 +354,7 @@ details.earlier summary{cursor:pointer;font-weight:700;font-size:15px}
 <div class="stage">
   <aside class="brandside">
     <a class="mark" href="#" aria-label="Rerouted"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word">Rerouted</span></a>
-    <h1>Your plan B, ready before the gate agent is.</h1>
+    <h1>Ready before the gate agent.</h1>
     <p>When your flight slips on United, Delta, American or Southwest, Rerouted tells you exactly what you’re owed, the best flight to move to, and what to say to get it.</p>
     <p>It also tracks what your credit card will pay back, so a bad night in an airport hotel doesn’t come out of your pocket.</p>
     <p class="proto">You’re testing an early prototype. Nothing here touches a real booking. Works best on your phone.</p>
@@ -1395,7 +1395,7 @@ function toast(n,time){
 function viewHome(){
   const own=S.trip&&S.booked;
   $s().innerHTML=`<header class="homehero"><a class="mark" href="#" aria-label="Rerouted"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word">Rerouted</span></a>
-    <p class="hello">Your plan B, ready before the gate agent is.</p></header><div class="pad">
+    <p class="hello">Ready before the gate agent.</p></header><div class="pad">
     ${UI.introSeen?'':`<div class="intro"><b>Thanks for testing Rerouted</b>This is a prototype. Nothing here touches a real booking. Play a bad travel day below, make the calls you’d really make, and tell us what you thought at the end. <div style="margin-top:8px"><button class="btn small" id="gotIt" type="button">Got it</button></div></div>`}
     ${(()=>{const r=recapStats();return r.n?`<section class="outcome" style="margin:18px 0 0"><div style="color:var(--tarmac-muted);font-size:13px">Your Rerouted recap</div><div class="big" style="font-size:26px;margin-bottom:6px">${recapLine(r)}</div><div style="font-size:14px;color:var(--tarmac-muted)">Across ${r.n} practice trip${r.n>1?'s':''}, counting time saved and money recovered or avoided.</div><button class="btn small" type="button" id="shareRecap" style="margin-top:10px;background:transparent;color:var(--tarmac-ink);border-color:rgba(255,255,255,.25)">Copy to share</button></section>`:''})()}
     <h2 style="margin-top:22px">Practice a bad travel day</h2>

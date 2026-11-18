@@ -1,6 +1,6 @@
 # Rerouted
 
-Your plan B, ready before the gate agent is.
+Ready before the gate agent.
 
 - `index.html`: the website, with the live app demo
 - `app/`: the tester prototype
