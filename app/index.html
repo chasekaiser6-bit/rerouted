@@ -201,10 +201,12 @@ details.payer p{margin:6px 0 0}
 .causebtns{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px 42px}
 .causebtns .btn{min-height:40px;border-color:var(--edge);color:var(--edge)}
 .tkey{display:grid;gap:6px;margin:0 0 6px}
-.tk{display:grid;grid-template-columns:18px auto minmax(0,1fr) auto;align-items:center;gap:8px;font-size:14px}
+.tk{display:grid;grid-template-columns:18px 5.9em minmax(0,1fr) auto;align-items:center;gap:8px;font-size:14px}
 .tk i{display:block;width:18px;border-top:3px solid var(--center)}
 .tk.old i{border-top:3px dashed var(--hold)}
-.tk span{color:var(--muted)}
+.tk span{color:var(--muted);line-height:1.15}
+.tk span small{display:block;font-size:11px;font-weight:600;letter-spacing:.02em}
+.tk i{align-self:center}
 .tk b{font-weight:700;color:var(--ink);white-space:nowrap}
 .tk.old b{color:var(--muted);font-weight:600}
 .tk.old b.late{color:#B07A00}.tk.old b.bad{color:var(--stop)}
@@ -1512,8 +1514,9 @@ function routeSvg(rt){
   if(rt.sb&&P[rt.sb[0]]&&P[rt.sb[rt.sb.length-1]]){const a=P[rt.sb[0]],b=P[rt.sb[rt.sb.length-1]];g+=`<path d="M${a[0]} ${a[1]} Q${(a[0]+b[0])/2} ${Math.max(a[1],b[1])+62} ${b[0]} ${b[1]}" fill="none" stroke="var(--center)" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 13"/>`}
   const oldCodes=Object.keys(P);
   g+=oldCodes.map(c=>N(P[c],c,-22)).join('')+extra+(P[last]?'':N(end,last,46,'var(--center)'));
-  const tm=rt.t;
-  const key=tm?`<div class="tkey"><div class="tk old"><i></i><span>Booked</span><b class="${tm.ot}">${tm.oldDep?esc(tm.oldDep)+(/^\d/.test(tm.old)?' → ':' · '):(/^\d/.test(tm.old)?'Lands ':'')}${esc(tm.old)}</b></div><div class="tk neu"><i></i><span>${tm.sbDep?'Confirmed':'Suggested'}</span><b>${esc(tm.dep)} → ${esc(tm.arr)}</b></div>${tm.sbDep?`<div class="tk sb"><i></i><span>Standby</span><b>${esc(tm.sbDep)} → ${esc(tm.sbArr)}</b></div>`:''}</div>`:`<div class="legend"><span class="old">Booked</span><span>Suggested</span></div>`;
+  const tm=rt.t,stp=n=>n<=0?'Nonstop':n===1?'1 stop':n+' stops';
+  const oi=o.findIndex(x=>x[0]===n[0]),oStops=stp((oi<0?o.length:o.length-oi)-1),nStops=stp(n.length-2),sStops=rt.sb?stp(rt.sb.length-2):'';
+  const key=tm?`<div class="tkey"><div class="tk old"><i></i><span>Booked<small>${oStops}</small></span><b class="${tm.ot}">${tm.oldDep?esc(tm.oldDep)+(/^\d/.test(tm.old)?' → ':' · '):(/^\d/.test(tm.old)?'Lands ':'')}${esc(tm.old)}</b></div><div class="tk neu"><i></i><span>${tm.sbDep?'Confirmed':'Suggested'}<small>${nStops}</small></span><b>${esc(tm.dep)} → ${esc(tm.arr)}</b></div>${tm.sbDep?`<div class="tk sb"><i></i><span>Standby<small>${sStops}</small></span><b>${esc(tm.sbDep)} → ${esc(tm.sbArr)}</b></div>`:''}</div>`:`<div class="legend"><span class="old">Booked</span><span>Suggested</span></div>`;
   return `<div class="routeviz"><svg viewBox="0 0 600 ${!mids.length&&P[last]?178:236}" role="img" aria-label="Booked route compared with the suggested route">${g}</svg>${key}</div>`;
 }
 function moveHtml(m,key){
