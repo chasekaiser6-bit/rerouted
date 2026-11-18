@@ -207,7 +207,9 @@ details.payer p{margin:6px 0 0}
 .tk b{font-weight:700;color:var(--ink);white-space:nowrap}
 .tk.old b{color:var(--muted);font-weight:600}
 .tk.old b.late{color:#B07A00}.tk.old b.bad{color:var(--stop)}
-.tk.neu b{color:var(--center)}
+.tk.neu b,.tk.sb b{color:var(--center)}
+.tk.sb i{border-top:4px dotted var(--center)}
+.move .gain.sbg{background:transparent;border:1.5px dashed var(--center)}
 .move .gain{font-style:normal;font-weight:700;font-size:13px;color:var(--center);background:var(--center-soft);border-radius:10px;padding:3px 9px;margin-right:8px;white-space:nowrap;display:inline-block}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tk.old b.late{color:var(--hold)}}
 :root[data-theme="dark"] .tk.old b.late{color:var(--hold)}
@@ -803,7 +805,15 @@ function classify(o,c){
     :{kind:'paid',label:`Confirmed, $${cf}${need>1?' each':''}`,fee:cf*need,why:`Same-day confirmed change fee at ${c.tierName}`};
   return {kind:'standby',label:sf===0?'Standby, free':`Standby, $${sf}`,why:`${seatTxt}; standby is free, and higher status clears first`};
 }
-function recommend(r){
+function recommend(r){return withStandby(r,pickBest(r))}
+/* Confirmed seat plus standby: hold the best confirmed option, and stand by for a better flight that leaves earlier. */
+function withStandby(r,best){
+  if(!best||!['free','paid','ota'].includes(best.method.kind))return best;
+  const o=best.it,dep0=o[0].dep,from=o[0].f.from,to=o[o.length-1].f.to;
+  const sb=r.opts.filter(x=>x!==best&&x.method.kind==='standby'&&!/unlikely/.test(x.method.why||'')&&!x.alt&&x.it[0].f.from===from&&x.it[x.it.length-1].f.to===to&&x.it[0].dep<=dep0-40&&x.arr<=best.arr-30).sort((a,b)=>a.arr-b.arr)[0];
+  if(sb)best.sb=sb;return best;
+}
+function pickBest(r){
   const o=r.opts,ref=r.projArr??r.schedArr,gain=x=>ref-x.arr;
   const free=o.filter(x=>x.method.kind==='free');
   if(free.length){const f=free[0];if(f.alt){const n=free.find(x=>!x.alt);if(n&&n.arr-f.arr<=90)return n}return f}
@@ -862,6 +872,9 @@ function plan(r,best){
       :k==='free'?(r.P.fareBased?'My fare includes free same-day changes.':'I believe same-day confirmed changes are complimentary at my status.'):k==='paid'?'I’m happy to pay the same-day change fee.':'';
     script=`Hi, I’m booked on ${fls(r.eff)} to ${AP[to][0]} today, confirmation ${confs}${r.tier?`, and I’m ${A.name} ${r.tierName}`:''}. ${R}. ${ask} ${close}`.trim();
   }
+  if(best.sb){const so=best.sb.it,sf=`${fls(so)}, the ${fmt(so[0].dep,so[0].f.from)} ${via(so)}`;
+    steps.push(`Ask for standby on ${sf} too. It leaves first, so you’ll know before your confirmed flight boards. If you clear, your confirmed seats are released.`);
+    script+=` Could you also add me to the standby list for ${sf}${need}? It leaves earlier.`;}
   if(best.alt)steps.unshift(`This flight lands at ${AP[o[o.length-1].f.to][0]} instead of ${AP[to][0]}. Airlines usually allow this during disruptions, but only an agent can approve it.`);
   return {steps,script,who};
 }
@@ -953,8 +966,8 @@ denver:{
         ['UA 1543','BOS → DEN','7:05 AM','7:05 AM','ON TIME','ok','9:30 AM','9:30 AM'],
         ['UA 2216','DEN → LAX','11:20 AM','3:05 PM','DELAYED 3 HR 45 MIN','late','12:40 PM','4:25 PM']]},
       move:{tone:'go',label:'Your best move',title:'Take UA 532 + UA 1971 via San Francisco, and stand by for the nonstop',
-        sub:'Confirmed seats. As Premier Gold you’re near the top of the nonstop’s standby list.',
-        route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','SFO','LAX'],t:{old:'4:25 PM',ot:'late',dep:'9:10 AM',arr:'2:05 PM',gain:'2 hr 20 min sooner'}},
+        sub:'Confirmed seats, plus standby on the nonstop. Premier Gold clears early.',
+        route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','SFO','LAX'],sb:['BOS','LAX'],t:{old:'4:25 PM',ot:'late',dep:'9:10 AM',arr:'2:05 PM',gain:'2 hr 20 min sooner',sbDep:'8:15 AM',sbArr:'11:40 AM',sbGain:'3 hr 30 min if you clear'}},
         steps:['Don’t board UA 1543 to Denver yet. Once you fly the first leg, most of your options disappear.',
           'Go to the United desk in Terminal B, or call, and use the script.',
           'Ask for standby on UA 1288 at the same time. You keep the confirmed San Francisco seat as a backup.'],
@@ -1495,17 +1508,18 @@ function routeSvg(rt){
     for(let i=0;i<pts.length-1;i++)g+=L(pts[i],pts[i+1],'var(--center)');
     mids.forEach((c,i)=>extra+=N(pts[i+1],c,46,'var(--center)'));
   }
+  if(rt.sb&&P[rt.sb[0]]&&P[rt.sb[rt.sb.length-1]]){const a=P[rt.sb[0]],b=P[rt.sb[rt.sb.length-1]];g+=`<path d="M${a[0]} ${a[1]} Q${(a[0]+b[0])/2} ${Math.max(a[1],b[1])+62} ${b[0]} ${b[1]}" fill="none" stroke="var(--center)" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 13"/>`}
   const oldCodes=Object.keys(P);
   g+=oldCodes.map(c=>N(P[c],c,-22)).join('')+extra+(P[last]?'':N(end,last,46,'var(--center)'));
   const tm=rt.t;
-  const key=tm?`<div class="tkey"><div class="tk old"><i></i><span>Booked</span><b class="${tm.ot}">${/^\d/.test(tm.old)?'Lands '+esc(tm.old):esc(tm.old)}</b></div><div class="tk neu"><i></i><span>Suggested</span><b>${esc(tm.dep)} → ${esc(tm.arr)}</b></div></div>`:`<div class="legend"><span class="old">Booked</span><span>Suggested</span></div>`;
+  const key=tm?`<div class="tkey"><div class="tk old"><i></i><span>Booked</span><b class="${tm.ot}">${/^\d/.test(tm.old)?'Lands '+esc(tm.old):esc(tm.old)}</b></div><div class="tk neu"><i></i><span>${tm.sbDep?'Confirmed':'Suggested'}</span><b>${esc(tm.dep)} → ${esc(tm.arr)}</b></div>${tm.sbDep?`<div class="tk sb"><i></i><span>Standby</span><b>${esc(tm.sbDep)} → ${esc(tm.sbArr)}</b></div>`:''}</div>`:`<div class="legend"><span class="old">Booked</span><span>Suggested</span></div>`;
   return `<div class="routeviz"><svg viewBox="0 0 600 ${!mids.length&&P[last]?178:236}" role="img" aria-label="Booked route compared with the suggested route">${g}</svg>${key}</div>`;
 }
 function moveHtml(m,key){
   if(!m)return '';
   const th=UI.thumbs[key];
   return `<section class="move ${m.tone==='warn'?'warn':m.tone==='neutral'?'neutral':''}" aria-label="Your move">
-    <div class="label">${esc(m.label)}</div><h3>${esc(m.title)}</h3><p class="sub">${m.route?.t?.gain?`<em class="gain">${esc(m.route.t.gain)}</em>`:''}${esc(m.sub)}</p>
+    <div class="label">${esc(m.label)}</div><h3>${esc(m.title)}</h3><p class="sub">${m.route?.t?.gain?`<em class="gain">${esc(m.route.t.gain)}</em>`:''}${m.route?.t?.sbGain?`<em class="gain sbg">${esc(m.route.t.sbGain)}</em>`:''}${esc(m.sub)}</p>
     ${routeSvg(m.route)}
     ${m.steps?.length?`<ol>${m.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`:''}
     ${(m.scripts||[]).map((sc,i)=>`<div class="script"><div class="who"><span>What to say to ${esc(sc.who)}</span></div><p>${esc(sc.text)}</p>
@@ -1972,9 +1986,13 @@ function engineStep(kind){
     const what=`${fls(o)}, the ${fmt(o[0].dep,o[0].f.from)} ${via(o)}`;
     const title=k==='standby'?`Stand by for ${what}`:k==='ota'?`Call ${r.viaName} about ${what}`:k==='ask'?`Ask ${AN} for ${what}`:`Switch to ${what}`;
     const cost=k==='paid'?`for $${best.method.fee}`:k==='standby'?'free, on standby':k==='ota'?`for whatever ${r.viaName} charges`:k==='ask'?`if ${AN} agrees`:'at no cost';
-    const sub=`You’d land at ${fmt(best.arr,dest)}${best.alt?` in ${AP[dest][0]}`:''}, ${r.projArr!==null?`${dur(g)} earlier`:rel(g)}, ${cost}. ${best.seats>=(S.trip.travelers||1)?'Seats are for sale on it.':'No seats for sale right now.'}`;
+    const lead={free:'Free',paid:`$${best.method.fee}`,standby:'Free on standby',ota:`Whatever ${r.viaName} charges`,ask:`Only if ${AN} agrees`}[k]||'Free';
+    const sub=`${best.alt?`Lands in ${AP[dest][0]}. `:''}${lead}${best.seats>=(S.trip.travelers||1)?', and seats available.':'. No seats for sale right now.'}${best.sb?' Plus standby on an earlier flight.':''}`;
+    const sbo=best.sb?.it;
+    const tt={old:r.status==='canceled'?'Canceled':r.status==='misconnect'?'Missed':fmt(ref,r.to),ot:r.status==='canceled'||r.status==='misconnect'?'bad':'late',dep:fmt(o[0].dep,o[0].f.from),arr:fmt(best.arr,dest),gain:r.projArr!==null&&g>0?`${dur(g)} sooner`:null,
+      ...(sbo?{sbDep:fmt(sbo[0].dep,sbo[0].f.from),sbArr:fmt(best.sb.arr,dest),sbGain:`${dur(ref-best.sb.arr)} if you clear`}:{})};
     move={tone:['free','paid'].includes(k)?'go':'warn',label:k==='ask'?'Not guaranteed':k==='standby'?'Worth a try':'Your best move',title,sub,
-      route:{old:eff.map((e,i)=>[e.f.from,e.f.to,tone(e,i)]),neu:[o[0].f.from,...o.map(x=>x.f.to)]},
+      route:{old:eff.map((e,i)=>[e.f.from,e.f.to,tone(e,i)]),neu:[o[0].f.from,...o.map(x=>x.f.to)],t:tt,...(sbo?{sb:[sbo[0].f.from,...sbo.map(x=>x.f.to)]}:{})},
       steps:pl.steps,scripts:[{who:pl.who,text:pl.script}],feeds:['sched','seats','rules']};
   } else move={tone:'neutral',label:r.status==='ontime'?'All good':'No better option right now',title:r.status==='ontime'?'Nothing to do. Rerouted is watching.':'Keep your current booking',
     sub:r.status==='ontime'?'You’ll hear from Rerouted the moment something changes.':'Rerouted will alert you if seats open on an earlier flight.',feeds:['status']};
