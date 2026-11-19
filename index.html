@@ -288,6 +288,12 @@ details.payer p{margin:6px 0 0}
 .event .evlab{color:var(--edge)}
 .fwd{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 12px;border-radius:10px;border:1px solid var(--edge);background:var(--surface);color:var(--edge);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
 .fwd svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.disc{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;align-items:start;margin:0 0 14px;padding:10px 12px;border-radius:12px;background:var(--hold-soft)}
+.disc svg{width:20px;height:20px;fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;margin-top:1px}
+.disc b{display:block;font-size:14px}
+.disc span{display:block;font-size:13px;line-height:1.4;color:var(--ink);opacity:.85;margin-top:2px}
+.disc a{display:inline-block;margin-top:6px;font-size:13px;font-weight:700;color:var(--edge)}
+.polink{display:inline-block;margin-top:6px;font-size:13px;font-weight:700;color:var(--edge)}
 /* Toast (in-app notification) */
 #toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
 #toast .notif{background:rgba(26,34,48,.94);box-shadow:0 16px 30px -18px rgba(0,0,0,.7)}
@@ -800,17 +806,20 @@ const src=(k,label)=>`<a class="src" href="${RULES[k].src}" target="_blank" rel=
 
 /* Card trip delay benefits. per: 'ticket' = cap per covered traveler; 'trip' = one cap per trip */
 const CARDS={
-  csr:{name:'Chase Sapphire Reserve',hrs:6,overnight:true,cap:500,per:'ticket',src:'https://www.cnbc.com/select/best-credit-cards-trip-delay-insurance/',conf:'check'},
-  csp:{name:'Chase Sapphire Preferred',hrs:12,overnight:true,cap:500,per:'ticket',src:'https://10xtravel.com/cards-with-trip-delay-insurance/',conf:'check'},
-  uacard:{name:'United Explorer, Quest, Club Infinite, or Business',hrs:12,overnight:true,cap:500,per:'ticket',src:'https://www.chase.com/personal/credit-cards/united/united-explorer-card/travel-protection',conf:'ok'},
-  vx:{name:'Capital One Venture X',hrs:6,overnight:true,cap:500,per:'ticket',src:'https://yourmileagemayvary.com/2026/08/09/credit-cards-trip-delay-insurance/',conf:'check'},
-  amexp:{name:'American Express Platinum',hrs:6,overnight:false,cap:500,per:'trip',claims:2,rt:true,src:'https://www.cardsandpoints.com/trip-delay-insurance/',conf:'check'},
-  amexg:{name:'American Express Gold',hrs:12,overnight:false,cap:300,per:'trip',claims:2,rt:true,src:'https://www.cardsandpoints.com/trip-delay-insurance/',conf:'check'},
-  citisp:{name:'Citi Strata Premier',hrs:6,overnight:false,cap:500,per:'trip',src:'https://yourmileagemayvary.com/2026/08/09/credit-cards-trip-delay-insurance/',conf:'check'},
-  dlres:{name:'Delta SkyMiles Reserve (Amex)',hrs:6,overnight:false,cap:500,per:'trip',claims:2,rt:true,src:'https://yourmileagemayvary.com/2026/08/09/credit-cards-trip-delay-insurance/',conf:'check'},
-  dlplat:{name:'Delta SkyMiles Platinum (Amex)',hrs:12,overnight:false,cap:300,per:'trip',claims:2,rt:true,src:'https://yourmileagemayvary.com/2026/08/09/credit-cards-trip-delay-insurance/',conf:'check'},
-  bofapr:{name:'Bank of America Premium Rewards',hrs:12,overnight:false,cap:500,per:'ticket',src:'https://yourmileagemayvary.com/?p=148770',conf:'check'}
+  csr:{name:'Chase Sapphire Reserve',hrs:6,overnight:true,cap:500,per:'ticket',src:'https://www.cnbc.com/select/best-credit-cards-trip-delay-insurance/',conf:'check',policy:'https://asset.chase.com/content/services/structured-document/document.en.pdf/card/benefits-center/product-benefits-guide-pdf/BGC11388_v2.pdf'},
+  csp:{name:'Chase Sapphire Preferred',hrs:12,overnight:true,cap:500,per:'ticket',src:'https://10xtravel.com/cards-with-trip-delay-insurance/',conf:'check',policy:'https://asset.chase.com/content/services/structured-document/document.en.pdf/card/benefits-center/product-benefits-guide-pdf/BGC11387_v2.pdf'},
+  uacard:{name:'United Explorer, Quest, Club Infinite, or Business',hrs:12,overnight:true,cap:500,per:'ticket',src:'https://www.chase.com/personal/credit-cards/united/united-explorer-card/travel-protection',conf:'ok',policy:'https://www.chase.com/personal/credit-cards/united/united-explorer-card/travel-protection'},
+  vx:{name:'Capital One Venture X',hrs:6,overnight:true,cap:500,per:'ticket',src:'https://yourmileagemayvary.com/2026/08/09/credit-cards-trip-delay-insurance/',conf:'check',policy:'https://ecm.capitalone.com/WCM/card/benefits-guide/20211109-venture-x/jb34520_build-it_dm_final_eng-proof_v1.pdf'},
+  amexp:{name:'American Express Platinum',hrs:6,overnight:false,cap:500,per:'trip',claims:2,rt:true,src:'https://www.cardsandpoints.com/trip-delay-insurance/',conf:'check',policy:'https://www.americanexpress.com/us/credit-cards/features-benefits/policies/trip-delay.html'},
+  amexg:{name:'American Express Gold',hrs:12,overnight:false,cap:300,per:'trip',claims:2,rt:true,src:'https://www.cardsandpoints.com/trip-delay-insurance/',conf:'check',policy:'https://global.americanexpress.com/card-benefits/detail/trip-delay-insurance/gold'},
+  citisp:{name:'Citi Strata Premier',hrs:6,overnight:false,cap:500,per:'trip',src:'https://yourmileagemayvary.com/2026/08/09/credit-cards-trip-delay-insurance/',conf:'check',policy:'https://www.cardbenefits.citi.com/-/media/CPP/Files/LegalDocs/SOAPI/PID89_Strata_Premier_CRE131_GTPB_0524_tagged.ashx'},
+  dlres:{name:'Delta SkyMiles Reserve (Amex)',hrs:6,overnight:false,cap:500,per:'trip',claims:2,rt:true,src:'https://yourmileagemayvary.com/2026/08/09/credit-cards-trip-delay-insurance/',conf:'check',policy:'https://global.americanexpress.com/card-benefits/terms/delta-reserve'},
+  dlplat:{name:'Delta SkyMiles Platinum (Amex)',hrs:12,overnight:false,cap:300,per:'trip',claims:2,rt:true,src:'https://yourmileagemayvary.com/2026/08/09/credit-cards-trip-delay-insurance/',conf:'check',policy:'https://global.americanexpress.com/card-benefits/detail/trip-delay-insurance/delta-platinum'},
+  bofapr:{name:'Bank of America Premium Rewards',hrs:12,overnight:false,cap:500,per:'ticket',src:'https://yourmileagemayvary.com/?p=148770',conf:'check',policy:'https://www.bankofamerica.com/credit-cards/products/premium-rewards-credit-card/'}
 };
+function disclaimHtml(card){
+  return `<div class="disc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.4"/></svg><div><b>Eligible, not guaranteed</b><span>The card’s benefits administrator reviews every claim and makes the final call. Read the terms and decide for yourself.</span>${card?.policy?`<a href="${card.policy}" target="_blank" rel="noopener">Read the ${esc(card.name)} benefit terms ↗</a>`:''}</div></div>`;
+}
 function cardTerms(c){return `${c.overnight?`More than ${c.hrs} hours or an overnight stay`:`More than ${c.hrs} hours`}; up to $${c.cap} per ${c.per==='ticket'?'traveler':'trip'}${c.claims?`, ${c.claims} claims a year`:''}${c.rt?', round trip must be on the card':''}`}
 
 /* ---------- Sample emails ---------- */
@@ -2010,6 +2019,7 @@ function moneyHtml(m,key){
   const kit=m.kit?Object.assign(newKit(m),load(key)||{}):null;
   const total=kit?kit.items.reduce((s,x)=>s+x.a,0):0;
   return `<h2>Your delay money</h2><div class="payers">${m.payers.map(x=>payerHtml(x,UI.scn+'|'+x[0])).join('')}</div>
+    <p class="note" style="margin:-2px 0 10px;font-size:13px">Card amounts are what you may be eligible for, not a guarantee. The card’s benefits administrator decides each claim.</p>
     ${feedChips(['cards','rules'])}
     ${kit?`<h2>Claim kit</h2><p class="hint">Log what you spend as you go. Rerouted turns it into a claim you can submit.</p>
       <ul class="explist">${kit.items.map((x,i)=>`<li><span>${esc(x.d)} <small>${esc(x.c)}</small></span><span>${money2(x.a)} <button type="button" data-rm="${i}">Remove</button></span></li>`).join('')||'<li><small>No expenses yet.</small></li>'}</ul>
@@ -2038,7 +2048,8 @@ function claimHtml(m,kit,total){
   const status={ready:['Ready to file',''],filed:['Filed, waiting for a decision','warn'],paid:['Paid','ok']}[kit.status]||['Ready to file',''];
   return `<section class="card" style="margin-top:4px;border-color:var(--center)">
     <div class="row" style="justify-content:space-between"><b style="font-size:17px">File your claim</b><span class="pill ${status[1]||'warn'}">${status[0]}</span></div>
-    <p class="hint" style="margin:6px 0 12px">You’re eligible with your ${esc(card.name)}: ${esc(c.why)}. It covers up to ${money(m.kit.cap)}${c.extra?`, ${esc(c.extra)}`:''}.</p>
+    <p class="hint" style="margin:6px 0 10px">You look eligible with your ${esc(card.name)}: ${esc(c.why)}. It covers up to ${money(m.kit.cap)}${c.extra?`, ${esc(c.extra)}`:''}.</p>
+    ${disclaimHtml(card)}
     <div class="payers">
       ${bag?`<div class="payer on"><b>Start the claim</b><span class="amt" style="font-size:19px;text-align:right">As soon as you can</span><p>Rerouted is still confirming this card’s baggage-delay deadlines. Filing early is always safe.</p></div>`:''}
       ${how.notify&&!bag?`<div class="payer on"><b>Start the claim by</b><span class="amt" style="font-size:19px;text-align:right;white-space:nowrap">${addDays(c.date,how.notify)}</span><p>${how.notify} days from the delay. Starting sooner is better.</p></div>`:''}
@@ -2199,7 +2210,7 @@ function viewWallet(){
   const kits=Object.keys(localStorage).filter(k=>k.startsWith('rr4-kit-')).map(k=>[k,load(k)]).filter(([,v])=>v?.items?.length);
   const mine=Object.keys(CARDS).filter(k=>S.profile.cards.includes(k));
   $s().innerHTML=`<header class="pagehead"><h1>Your wallet</h1><p>When each card’s delay coverage starts, and what it pays. Terms checked ${CHECKED}.</p></header><div class="pad">
-    ${mine.length?`<div class="cardrail" aria-label="Cards in your wallet">${mine.map(k=>`<div class="railitem">${cardFace(k,CARDS[k],true)}<b>${esc(CARDS[k].name)}</b><small>${esc(cardTerms(CARDS[k]))}</small></div>`).join('')}</div>`:`<div class="emptywallet">Turn on the cards you carry below and they’ll appear here.</div>`}
+    ${mine.length?`<div class="cardrail" aria-label="Cards in your wallet">${mine.map(k=>`<div class="railitem">${cardFace(k,CARDS[k],true)}<b>${esc(CARDS[k].name)}</b><small>${esc(cardTerms(CARDS[k]))}</small>${CARDS[k].policy?`<a class="polink" href="${CARDS[k].policy}" target="_blank" rel="noopener">Read the benefit terms ↗</a>`:''}</div>`).join('')}</div>`:`<div class="emptywallet">Turn on the cards you carry below and they’ll appear here.</div>`}
     <h2>All cards</h2>
     ${Object.entries(CARDS).map(([k,c])=>`<label class="cardrow${S.profile.cards.includes(k)?' on':''}"><span class="thumb" aria-hidden="true">${cardFace(k,c,false)}</span><span style="flex:1"><b>${esc(c.name)}</b><small>${esc(cardTerms(c))}</small>${c.conf!=='ok'&&UI.founder?'<small>From a published comparison; we confirm against the official terms before launch.</small>':''}</span><input type="checkbox" data-card="${k}"${S.profile.cards.includes(k)?' checked':''} aria-label="I have ${esc(c.name)}" style="width:22px;height:22px;accent-color:var(--edge)"></label>`).join('')}
     ${feedChips(['cards'])}
