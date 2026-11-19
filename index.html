@@ -1535,7 +1535,7 @@ bag:{
         steps:['Before you leave the airport, find United’s baggage office by the carousel.',
           'Show your bag tag sticker and ask them to file a delayed-bag report.',
           'Save the file number they give you. You need it to track the bag and claim.',
-          'Give your hotel address so United delivers the bag. Keep receipts for anything you buy tonight.'],
+          'Tell them where you’re staying. United will deliver your bag there when it arrives.','Buy what you need for tonight and keep the receipts. Your card can pay you back.'],
         scripts:[{who:'the baggage agent',text:'Hi, my checked bag from UA 1100 from Boston didn’t arrive. Could you file a delayed-bag report and give me the file reference number? I’m staying at a hotel in Union Square tonight, so please deliver it there. Do you know which flight it’s on, and what United covers for essentials while I wait?'}],
         feeds:['bags','rules']},
       lines:{rows:[['Baggage office at the carousel','','Files the report and takes your delivery address. Do this first.','best'],['United app','','Good for tracking the bag afterward.',''],['Phone','','Only if the office is closed.','']],tip:'Don’t leave the airport until you have a file reference number.'},
