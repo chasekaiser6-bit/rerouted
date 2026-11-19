@@ -840,7 +840,7 @@ const ALLIANCES = {none:['None',null], star:['Star Alliance Gold through another
 const CHECKED='Nov 11, 2026';
 const UA_CHANGE='https://www.united.com/en/us/fly/travel/trip-planning/flight-change.html';
 const RULES={
-  sdc:{name:'Same-day confirmed change',text:'Free for Premier members when the same fare class is open on the new flight; up to $75 for other travelers; not available on Basic Economy. Same origin and destination, within 24 hours of the original flight, United-operated.',src:UA_CHANGE,conf:'check',note:'United’s page renders with JavaScript and couldn’t be read directly. Secondary sources disagree on whether Premier Silver is included.'},
+  sdc:{name:'Same-day confirmed change',text:'Free for every Premier level when the same fare class is open on the new flight; otherwise the fare difference may apply. Non-Premier travelers may pay the fare difference even if the cabin is open; not available on Basic Economy. Same origin and destination, within 24 hours of the original flight, United-operated.',src:UA_CHANGE,conf:'ok'},
   standby:{name:'Same-day standby',text:'Free for every fare except Basic Economy. Officially limited to the same routing; agents sometimes allow more.',src:UA_CHANGE,conf:'check',note:'Same page as above.'},
   commit:{name:'Customer Commitment',text:'For delays and cancellations within United’s control: rebooking at no extra cost, including on partner airlines; a meal voucher once the wait reaches 3 hours; hotel and transportation for an overnight delay.',src:'https://www.united.com/en/us/fly/customer-commitment.html',conf:'ok'},
   dashboard:{name:'DOT customer service dashboard',text:'For delays and cancellations they cause, United, Delta, American and Southwest commit to free rebooking, meals at 3+ hours, hotels and ground transportation. United, Delta and American also rebook on partner airlines; Southwest doesn’t, but gives a travel credit for 3+ hour delays.',src:'https://www.transportation.gov/resources/individuals/aviation-consumer-protection/airline-customer-service-dashboard-html',conf:'ok'},
@@ -1480,7 +1480,7 @@ newark:{
         feeds:['inbound','sched','seats','rules']},
       rights:[
         ['no','Your connection isn’t protected','Separate bookings mean United doesn’t have to rebook your Miami flight if a late Boston flight makes you miss it.','intake'],
-        ['yes','Same-day change: free with Premier Silver','When the same fare class is open on the new flight. Published sources disagree on Silver, so Rerouted shows the check.','rules'],
+        ['yes','Same-day change: free with Premier Silver','Free for every Premier level when the same fare class is open on the new flight, with the same origin and destination. If it isn’t open, you may pay the fare difference.','rules'],
         ['','No delay posted yet','Free rebooking for a delay only applies once United posts it. Acting now uses your status instead.','status']],
       feeds:['inbound','push'],
       choices:[{label:'Move the Miami flight now',next:'n2'},{label:'Risk the tight connection',next:'n3'}]},
@@ -1966,7 +1966,7 @@ function shortRight(c,t){
   if(m=t.match(/^Free (?:rebooking|change) (?:on|to) any (\w+) flight/))return [`Rebook on any ${m[1]} flight`,'Free'];
   if(/^Free rebooking if/.test(t))return ['Free rebooking','If you miss it'];
   if(/^Free change, even on a Basic/.test(t))return ['Change flights','Free, even Basic'];
-  if(m=t.match(/^(?:Same-day|Confirmed) change: (.+)$/)){const v=m[1];return ['Same-day change',/^free/i.test(v)?'Free':(v.match(/^\$\d+/)||[v])[0]]}
+  if(m=t.match(/^(?:Same-day|Confirmed) change: (.+)$/)){const v=m[1];return ['Same-day change',/^free/i.test(v)?'Free, same fare':(v.match(/^\$\d+/)||[v])[0]]}
   if(/^Same-day standby/.test(t))return ['Standby','Free'];
   if(/^No same-day changes on a Basic/.test(t))return ['Same-day change','Not on Basic'];
   if(/^No switching to the nonstop/.test(t))return ['Switch to the nonstop','Not allowed'];
