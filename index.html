@@ -1359,7 +1359,7 @@ ohare:{
       choices:[{label:'Continue',next:'o2'}]},
     o2:{clock:'9:20 AM',where:'O’Hare, gate C18',
       notif:{t:'UA 2054 to Seattle is canceled',b:'Ask for the 12:30 PM through Denver. It lands in Seattle at 5:58 PM today and has seats for both of you. Call Expedia and line up at the desk at once.'},
-      evLabel:'You check the United app',forward:true,event:'It shows you’ve both been moved to tomorrow at 7:00 AM.',
+      evLabel:'Check the United app',forward:{done:'Rerouted read your rebooking email: United moved you both to tomorrow at 7:00 AM.'},event:'United usually rebooks you automatically after a cancellation. Forward the email so Rerouted can track the new flight.',
       board:{dl:{min:1345,label:'Arriving 22 hr 25 min late'},hl:'UA 2054 to Seattle canceled',rows:[
         ['UA 1287','BOS → ORD','6:00 AM','6:45 AM','ARRIVED','ok','7:55 AM','8:40 AM'],
         ['UA 2054','ORD → SEA','9:05 AM','—','CANCELED','bad','11:40 AM','—']]},
@@ -2118,7 +2118,7 @@ function viewStep(){
     ${st.choices?`<div class="choices${st.choices.length===2?' two':''}"><span class="ask">What do you do?</span>${st.choices.map((c,i)=>`<button class="btn ${i===0?'primary':''}" type="button" data-next="${c.next}">${esc(c.label)}${c.sub?`<small>${esc(c.sub)}</small>`:''}</button>`).join('')}</div>`:''}`;
   $('bk').onclick=()=>go('home');
   bindMove($s(),st.move,key);addJump();
-  if($('fwdMail'))$('fwdMail').onclick=()=>toast({t:'Forward it to Rerouted',b:'In the live app, forward United’s rebooking email and Rerouted tracks the new flight automatically.'});
+  if($('fwdMail'))$('fwdMail').onclick=e=>{const ev=e.target.closest('.event');ev.querySelector('.evlab').textContent='Rebooking email received';ev.childNodes[1].textContent=st.forward.done||'';e.target.closest('.fwd').remove();toast({t:'Rebooking email received',b:st.forward.done||'Rerouted is tracking your new flight.'})};
   bindMoney($s(),st.money,kitKey,()=>{const y=$s().scrollTop;viewStep();$s().scrollTop=y});
   $s().querySelectorAll('[data-next]').forEach(b=>b.onclick=()=>enterStep(b.dataset.next));
   if(st.end)bindFeedback();
