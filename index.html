@@ -1328,12 +1328,12 @@ denver:{
   confirmation:'K7XQ2M', start:'d1',
   steps:{
     d1:{clock:'5:40 AM',where:'At home in Boston',
-      notif:{t:'Denver connection 2.5 hr late',b:'Ask to switch to the 8:15 AM nonstop. It lands at 11:40 AM, instead of 3:10 PM, and has seats. Under 3 hours late, a free change isn’t guaranteed.'},
+      notif:{t:'Denver connection 2.5 hr late',b:'Ask to switch to the 8:15 AM nonstop. It lands at 11:40 AM, instead of 3:10 PM, and has seats. Often free under 3 hours late, so check the United app first.'},
       board:{hl:'Landing in LAX, 2 hr 30 min late',rows:[
         ['UA 1543','BOS → DEN','7:05 AM','7:05 AM','ON TIME','ok','9:30 AM','9:30 AM'],
         ['UA 2216','DEN → LAX','11:20 AM','1:50 PM','DELAYED 2 HR 30 MIN','late','12:40 PM','3:10 PM']]},
       move:{tone:'go',label:'Your best move',title:'Switch to UA 1288, the 8:15 AM nonstop',
-        sub:'Seats available. Ask if the change is free.',
+        sub:'Seats available. Often free, check the app.',
         route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','LAX'],t:{oldDep:'7:05 AM',old:'3:10 PM',ot:'late',dep:'8:15 AM',arr:'11:40 AM',gain:'3 hr 30 min sooner'}},
         steps:['United app: My Trips → Change flight.',
           'Pick UA 1288. If it shows a charge, don’t pay yet.',
@@ -1341,7 +1341,7 @@ denver:{
         scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M. I’m a Premier Gold member. UA 2216 is running about two and a half hours late, which would get me into LA at 3:10 PM. I saw UA 1288, the 8:15 AM nonstop from Boston, still has seats. Would you be able to move me onto it at no charge?'}],
         feeds:['sched','seats','rules']},
       rights:[
-        ['warn','Free change: ask','Under 3 hours late, United doesn’t guarantee a free change. Ask, and check the app for a charge before you pay. At 3 hours, it’s guaranteed.','rules'],
+        ['warn','Free change: often free','Under 3 hours late, a change is often free but not guaranteed. Check the United app for a charge before you pay. At 3 hours, it’s guaranteed.','rules'],
         ['','Meal voucher once your wait reaches 3 hours','United commits to one for delays it causes. You’re at 2 hr 30 min.','rules'],
         ['','Refund if you decide not to go','Owed once you’re 3 or more hours late. You’re not there yet.','dot'],
         ['','Sapphire Reserve covers expenses after 6 hours','Not likely needed today.','cards']],
@@ -1361,7 +1361,7 @@ denver:{
         scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M. I’m a Premier Gold member. UA 2216 is running about two and a half hours late, and the app is only offering a later Denver connection. I noticed UA 1288, the 8:15 AM nonstop from Boston, still has seats. Is there any chance you could move me onto that one at no charge?'}],
         feeds:['sched','seats']},
       lines:{rows:[['United app','','Often shows only the automatic rebooking.',''],['Phone, Premier line','','Can see and book the nonstop.','best'],['Logan check-in desk','','Slower, and you’re not at the airport yet.','']],tip:'Call while you finish getting ready.'},
-      rights:[['warn','Free change: ask','Under 3 hours late, a free change isn’t guaranteed. Agents can often waive it, so ask before you pay.','rules']],
+      rights:[['warn','Free change: often free','Under 3 hours late, a change is often free but not guaranteed. Check the United app for a charge before you pay. At 3 hours, it’s guaranteed.','rules']],
       choices:[{label:'Call and use the script',next:'d4'},{label:'Accept the app’s offer',next:'d5'}]},
     d4:{clock:'6:02 AM',where:'On the phone with United',
       notif:{t:'Now tracking UA 1288',b:'You told Rerouted the agent moved you. It leaves Boston at 8:15 AM and lands in LA at 11:40 AM, on time so far.'},
@@ -1985,6 +1985,7 @@ function shortRight(c,t){
   if(/^Free change, even on a Basic/.test(t))return ['Change flights','Free, even Basic'];
   if(m=t.match(/^(?:Same-day|Confirmed) change: (.+)$/)){const v=m[1];return ['Same-day change',/^free/i.test(v)?'Free, same fare':(v.match(/^\$\d+/)||[v])[0]]}
   if(/^Same-day standby/.test(t))return ['Standby','Free'];
+  if(/^Free change: often free/.test(t))return ['Free change','Often free'];
   if(/^No same-day changes on a Basic/.test(t))return ['Same-day change','Not on Basic'];
   if(/^Switch to the nonstop/.test(t))return ['Switch to the nonstop','Depends on delay'];
   if(/meal|hotel/i.test(t))return no?['Meals and hotel','Not owed']:yes?['Meal voucher','Owed']:['Meal voucher','At 3 hr'];
@@ -2514,7 +2515,7 @@ function engineStep(kind){
   const R=[];
   const why={major:`a ${dur(r.maxDelay)} delay`,misconnect:'a missed connection',canceled:'a cancellation'}[r.status];
   if(r.covered)R.push(['yes',`Free rebooking on any ${AN} flight to ${to} today`,`Triggered by ${why}. No change fee or fare difference, including onto a nonstop, when seats are open.`,'rules']);
-  else if(!r.disrupted&&r.maxDelay>=60)R.push(['warn','Free change: ask',`Under 3 hours late, ${AN} doesn’t guarantee a free change. Agents can often waive it, so ask before you pay. At 3 hours, it’s guaranteed.`,'rules']);
+  else if(!r.disrupted&&r.maxDelay>=60)R.push(['warn','Free change: often free',`Under 3 hours late, a change is often free but not guaranteed. Check the ${AN} app for a charge before you pay. At 3 hours, it’s guaranteed.`,'rules']);
   else if(r.disrupted)R.push(['no','Your connection isn’t protected',`Your flights are on separate tickets, so ${AN} only has to protect each ticket on its own.`,'intake']);
   if(!r.direct)R.push(['warn',`Changes go through ${r.viaName}`,r.disrupted?`You’re still owed free rebooking, but ${AN} may send you to ${r.viaName}. Call them and ${AN} at the same time.`:`${AN} usually can’t make voluntary changes to tickets sold by ${r.viaName}.`,'intake']);
   if(r.tight)R.push(['warn',`Your ${eff[0].f.to} connection is down to ${dur(r.margin)}`,'Moving now, before it becomes a missed connection, gives you the most choices.','status']);
