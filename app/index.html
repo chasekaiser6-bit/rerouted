@@ -331,6 +331,20 @@ details.payer p{margin:6px 0 0}
 .proto summary::after{content:"Show";float:right;margin-top:-30px;font-size:13px;font-weight:700;color:var(--edge)}
 .proto[open] summary::after{content:"Hide"}
 .btn.danger{background:var(--stop);border-color:var(--stop);color:#fff}
+.emptywallet{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.emptywallet svg{width:34px;height:34px;fill:none;stroke:var(--edge);stroke-width:1.8;margin-bottom:4px}
+.emptywallet b{color:var(--ink);font-size:16px}
+.wiss .alh{grid-template-columns:40px minmax(0,1fr)}
+.wrow{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0 6px;border-top:1px solid var(--line);margin-top:10px}
+.wrow .thumb{width:64px}
+.wrow:not(.on) .thumb{opacity:.5;filter:saturate(.3)}
+.wtx b{display:block;font-size:15px;line-height:1.25}
+.wtx small{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+.wst{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.wst em{font-style:normal;font-weight:700;font-size:12px;color:var(--center);background:var(--center-soft);border-radius:9px;padding:2px 8px;white-space:nowrap}
+.wst em.m{color:var(--edge);background:var(--edge-soft)}
+.wst em.z{color:var(--muted);background:var(--field)}
+.railitem .wst{margin-top:6px}
 /* Toast (in-app notification) */
 #toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
 #toast .notif{background:rgba(26,34,48,.94);box-shadow:0 16px 30px -18px rgba(0,0,0,.7)}
@@ -1975,13 +1989,18 @@ function cardFace(k,c,big){
 function viewWallet(){
   const kits=Object.keys(localStorage).filter(k=>k.startsWith('rr4-kit-')).map(k=>[k,load(k)]).filter(([,v])=>v?.items?.length);
   const mine=Object.keys(CARDS).filter(k=>S.profile.cards.includes(k));
-  $s().innerHTML=`<header class="pagehead"><h1>Your wallet</h1><p>When each card’s delay coverage starts, and what it pays. Terms checked ${CHECKED}.</p></header><div class="pad">
-    ${mine.length?`<div class="cardrail" aria-label="Cards in your wallet">${mine.map(k=>`<div class="railitem">${cardFace(k,CARDS[k],true)}<b>${esc(CARDS[k].name)}</b><small>${esc(cardTerms(CARDS[k]))}</small>${CARDS[k].policy?`<a class="polink" href="${CARDS[k].policy}" target="_blank" rel="noopener">Read the benefit terms ↗</a>`:''}</div>`).join('')}</div>`:`<div class="emptywallet">Turn on the cards you carry below and they’ll appear here.</div>`}
-    <h2>All cards</h2>
-    ${Object.entries(CARDS).map(([k,c])=>`<label class="cardrow${S.profile.cards.includes(k)?' on':''}"><span class="thumb" aria-hidden="true">${cardFace(k,c,false)}</span><span style="flex:1"><b>${esc(c.name)}</b><small>${esc(cardTerms(c))}</small>${c.conf!=='ok'&&UI.founder?'<small>From a published comparison; we confirm against the official terms before launch.</small>':''}</span><input type="checkbox" data-card="${k}"${S.profile.cards.includes(k)?' checked':''} aria-label="I have ${esc(c.name)}" style="width:22px;height:22px;accent-color:var(--edge)"></label>`).join('')}
+  const ISS=[['Chase','CH','#1A5FB4',['csr','csp','uacard']],['American Express','AX','#2B6CB0',['amexp','amexg','dlres','dlplat']],['Capital One','C1','#C2410C',['vx']],['Citi','CI','#0E7490',['citisp']],['Bank of America','BA','#B91C1C',['bofapr']]];
+  const nm=c=>c.name.replace(/^Chase |^American Express |^Capital One |^Citi |^Bank of America /,'');
+  const stats=c=>`<span class="wst"><em>${c.hrs} hr${c.overnight?' · overnight':''}</em><em class="m">$${c.cap}${c.per==='ticket'?' each':' a trip'}</em>${c.rt?'<em class="z">Round trip</em>':''}</span>`;
+  $s().innerHTML=`<header class="pagehead"><h1>Your wallet</h1><p>When delay coverage starts, and what it pays.</p></header><div class="pad">
+    ${mine.length?`<div class="cardrail" aria-label="Cards in your wallet">${mine.map(k=>`<div class="railitem">${cardFace(k,CARDS[k],true)}<b>${esc(CARDS[k].name)}</b>${stats(CARDS[k])}${CARDS[k].policy?`<a class="polink" href="${CARDS[k].policy}" target="_blank" rel="noopener">Read the benefit terms ↗</a>`:''}</div>`).join('')}</div>`
+      :`<div class="emptywallet"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18M15 15h3"/></svg><b>No cards yet</b><span>Turn on the cards you carry and Rerouted checks every delay against them.</span></div>`}
+    <div class="rts-h" style="padding:6px 0 4px"><h2 style="margin:0">Add your cards</h2><span>Terms checked ${CHECKED}</span></div>
+    ${ISS.map(([iss,ab,col,ks])=>`<section class="alcard wiss" style="--ac:${col}"><div class="alh"><span class="altile">${ab}</span><div><b>${esc(iss)}</b><small>${ks.filter(k=>S.profile.cards.includes(k)).length} of ${ks.length} on</small></div></div>
+      ${ks.map(k=>{const c=CARDS[k],on=S.profile.cards.includes(k);return `<label class="wrow tog${on?' on':''}"><span class="thumb" aria-hidden="true">${cardFace(k,c,false)}</span><span class="wtx"><b>${esc(nm(c))}</b>${stats(c)}${c.conf!=='ok'&&UI.founder?'<small>From a published comparison; confirm before launch.</small>':''}</span><input type="checkbox" data-card="${k}"${on?' checked':''} aria-label="I have ${esc(c.name)}"><i aria-hidden="true"></i></label>`}).join('')}</section>`).join('')}
     ${feedChips(['cards'])}
-    <h2>Claim kits</h2>${kits.length?`<ul class="explist">${kits.map(([k,v])=>`<li><span>${esc(k.replace('rr4-kit-','').replace(/-/g,' '))}</span><span>${money2(v.items.reduce((s,x)=>s+x.a,0))}</span></li>`).join('')}</ul>`:'<p class="hint">Claim kits appear here when a delay makes you eligible for reimbursement.</p>'}</div>`;
-  $s().querySelectorAll('[data-card]').forEach(c=>c.onchange=()=>{const k=c.dataset.card;S.profile.cards=c.checked?[...new Set([...S.profile.cards,k])]:S.profile.cards.filter(x=>x!==k);store('rr4-profile',S.profile);viewWallet()});
+    <h2>Claim kits</h2>${kits.length?`<ul class="svlist">${kits.map(([k,v])=>`<li><span class="svt"><b>${esc(k.replace('rr4-kit-','').replace(/-/g,' '))}</b><small>${v.items.length} receipt${v.items.length>1?'s':''} logged</small></span><span class="svv"><em class="m">${money2(v.items.reduce((s,x)=>s+x.a,0))}</em></span></li>`).join('')}</ul>`:'<p class="hint">Claim kits appear here when a delay makes you eligible for reimbursement.</p>'}</div>`;
+  $s().querySelectorAll('[data-card]').forEach(c=>c.onchange=()=>{const k=c.dataset.card;S.profile.cards=c.checked?[...new Set([...S.profile.cards,k])]:S.profile.cards.filter(x=>x!==k);store('rr4-profile',S.profile);const y=$s().scrollTop;viewWallet();$s().scrollTop=y});
 }
 
 /* ---------- Savings: lifetime time saved, money back and credits ---------- */
