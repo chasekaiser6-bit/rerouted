@@ -279,6 +279,16 @@ details.payer p{margin:6px 0 0}
 .svv{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
 .svv em{font-style:normal;font-weight:800;font-size:13px;color:var(--center);background:var(--center-soft);border-radius:10px;padding:2px 8px;white-space:nowrap}
 .svv em.m{color:var(--edge);background:var(--edge-soft)}.svv em.z{color:var(--muted);background:var(--field)}
+.boardmini{background:var(--tarmac);color:var(--tarmac-ink);border-radius:16px;margin-bottom:16px;overflow:hidden}
+.boardmini summary{list-style:none;cursor:pointer;padding:12px 16px;display:flex;flex-direction:column;gap:2px}
+.boardmini summary::-webkit-details-marker{display:none}
+.boardmini summary span{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tarmac-muted)}
+.boardmini summary span::after{content:" · Tap to see";text-transform:none;letter-spacing:0;font-weight:600}
+.boardmini[open] summary span::after{content:" · Tap to hide"}
+.boardmini summary b{font-weight:800;font-stretch:87.5%;font-size:19px}
+.boardmini .board{margin:0;border-radius:0}
+.event{font-size:17px!important;font-weight:600;line-height:1.45;background:var(--edge-soft)!important;border-left:5px solid var(--edge)!important;padding:14px 16px!important}
+.event .evlab{color:var(--edge)}
 /* Toast (in-app notification) */
 #toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
 #toast .notif{background:rgba(26,34,48,.94);box-shadow:0 16px 30px -18px rgba(0,0,0,.7)}
@@ -1807,7 +1817,7 @@ function bindMoney(root,m,key,rerender){
 /* Section shortcuts: a sticky chip row under the header that jumps to each card and lights up as you scroll. */
 function addJump(){
   const sc=$s(),tb=sc.querySelector('.topbar');if(!tb)return;
-  const secs=[['Your Flight',sc.querySelector('.board')],['Your Best Move',sc.querySelector('.move')],['Get Help',sc.querySelector('.rts.help')],
+  const secs=[['Your Flight',sc.querySelector('.boardmini')||sc.querySelector('.board')],['Your Best Move',sc.querySelector('.move')],['Get Help',sc.querySelector('.rts.help')],
     ['Your Rights',sc.querySelector('.rts[aria-label="Your rights"]')],['Your Money',[...sc.querySelectorAll('h2')].find(h=>/delay money/i.test(h.textContent))]].filter(x=>x[1]);
   if(secs.length<3)return;
   const wrap=document.createElement('div');wrap.className='stickhd';tb.replaceWith(wrap);wrap.appendChild(tb);
@@ -1825,9 +1835,9 @@ function viewStep(){
   $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk">‹ Trips</button><div><div class="ttl">${esc(s.route)}</div><div class="sub">${esc(s.title)}</div></div></div>
     <div class="pad" style="padding-bottom:${st.choices?'8px':'28px'}">
       <div class="row" style="margin-bottom:12px"><span class="clock"><i></i>${esc(st.clock)}</span><span class="note" style="margin:0">${esc(st.where)}</span></div>
-      ${st.event?`<div class="event"><b class="evlab">In this scenario</b>${esc(st.event)}</div>`:''}
+      ${st.event?`<div class="event"><b class="evlab">${UI.path.length>1?'What just happened':'In this scenario'}</b>${esc(st.event)}</div>`:''}
       ${riskHtml(st.risk)}
-      ${boardHtml(st.board,st.feeds)}
+      ${(()=>{const pv=s.steps[UI.path[UI.path.length-2]];const same=pv&&pv.board&&JSON.stringify(pv.board.rows)===JSON.stringify(st.board?.rows);const bh=boardHtml(st.board,st.feeds);return same?`<details class="boardmini"><summary><span>Flight status unchanged</span><b>${esc(st.board.hl)}</b></summary>${bh}</details>`:bh})()}
       ${st.end?endHtml(s,st):''}
       ${moveHtml(st.move,key,st.lines)}${st.move?'':linesHtml(st.lines)}
       ${rightsHtml(st.rights)}
