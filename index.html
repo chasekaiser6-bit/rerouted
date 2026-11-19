@@ -303,7 +303,11 @@ details.payer p{margin:6px 0 0}
 .alh b{display:block;font-size:16px}.alh small{display:block;font-size:13px;color:var(--muted)}
 .alperk{font-size:12px;font-weight:700;border-radius:10px;padding:4px 9px;background:var(--field);color:var(--ink);white-space:nowrap}
 .alperk.free{background:var(--center-soft);color:var(--center)}
-.tiers{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tiers{display:flex;gap:4px;margin-top:10px}
+.alcard .tiers button{flex:1 1 auto;min-width:0;padding:7px 5px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tiers button.inv{border-style:dashed;border-color:var(--hold)}
+.tiers button.inv[aria-checked="true"]{border-style:solid;background:var(--tarmac);border-color:var(--hold);color:var(--hold)}
+.invnote{margin:6px 2px 0;font-size:11px;color:var(--muted)}
 .tiers::-webkit-scrollbar{display:none}
 .tiers button{flex:none;font:inherit;font-size:13px;font-weight:700;padding:7px 12px;border-radius:16px;border:1px solid var(--line);background:var(--field);color:var(--muted);cursor:pointer;min-height:34px}
 .tiers button[aria-checked="true"]{background:var(--edge);border-color:var(--edge);color:var(--on-accent)}
@@ -801,19 +805,19 @@ const VIA = {airline:'The airline’s website or app', points:'The airline, paid
 const AL = {
   UA:{name:'United', app:'United app', path:'My Trips, select the trip, then Change flight', alliance:'star',
       hubs:['DEN','ORD','SFO','EWR','IAH'], extra:['BOS-LAX','BOS-SFO','BOS-SEA'],
-      tiers:['MileagePlus member','Premier Silver','Premier Gold','Premier Platinum','Premier 1K'],
-      policy:{disruptDelay:60, mct:40, confirmedFee:[75,0,0,0,0], standbyFee:[0,0,0,0,0], basicSameDay:false, mealAt:180, partnerRebook:true, sameRoute:false, fareBased:false, voucher:false}},
+      tiers:['MileagePlus member','Premier Silver','Premier Gold','Premier Platinum','Premier 1K','Global Services'],short:['Member','Silver','Gold','Plat','1K','GS'],invite:5,
+      policy:{disruptDelay:60, mct:40, confirmedFee:[75,0,0,0,0,0], standbyFee:[0,0,0,0,0,0], basicSameDay:false, mealAt:180, partnerRebook:true, sameRoute:false, fareBased:false, voucher:false}},
   DL:{name:'Delta', app:'Fly Delta app', path:'My Trips, select the trip, then Change flight', alliance:'skyteam',
       hubs:['ATL','MSP','DTW','SLC','LAX','JFK','SEA','BOS'], extra:[],
-      tiers:['SkyMiles member','Silver Medallion','Gold Medallion','Platinum Medallion','Diamond Medallion'],
-      policy:{disruptDelay:60, mct:40, confirmedFee:[75,75,0,0,0], standbyFee:[0,0,0,0,0], basicSameDay:false, mealAt:180, partnerRebook:true, sameRoute:true, noNonstop:true, fareBased:false, voucher:false}},
+      tiers:['SkyMiles member','Silver Medallion','Gold Medallion','Platinum Medallion','Diamond Medallion','Delta 360°'],short:['Member','Silver','Gold','Plat','Diam','360°'],invite:5,
+      policy:{disruptDelay:60, mct:40, confirmedFee:[75,75,0,0,0,0], standbyFee:[0,0,0,0,0,0], basicSameDay:false, mealAt:180, partnerRebook:true, sameRoute:true, noNonstop:true, fareBased:false, voucher:false}},
   AA:{name:'American', app:'American app', path:'Trips, select the trip, then Change trip', alliance:'oneworld',
       hubs:['DFW','CLT','ORD','PHX','MIA'], extra:['BOS-LAX','JFK-LAX','JFK-SFO','BOS-SFO'],
-      tiers:['AAdvantage member','Gold','Platinum','Platinum Pro','Executive Platinum'],
-      policy:{disruptDelay:60, mct:40, confirmedFee:[60,60,60,0,0], standbyFee:[0,0,0,0,0], basicSameDay:false, mealAt:180, partnerRebook:true, sameRoute:true, fareBased:false, premiumFreeFrom:2, voucher:false}},
+      tiers:['AAdvantage member','Gold','Platinum','Platinum Pro','Executive Platinum','ConciergeKey'],short:['Member','Gold','Plat','Pro','Exec','CK'],invite:5,
+      policy:{disruptDelay:60, mct:40, confirmedFee:[60,60,60,0,0,0], standbyFee:[0,0,0,0,0,0], basicSameDay:false, mealAt:180, partnerRebook:true, sameRoute:true, fareBased:false, premiumFreeFrom:2, voucher:false}},
   WN:{name:'Southwest', app:'Southwest app', path:'Trips, select the trip, then Change flight', alliance:null,
       hubs:['DEN','MDW','DAL','HOU','PHX','OAK'], extra:['BOS-FLL'],
-      tiers:['Rapid Rewards member','A-List','A-List Preferred'],
+      tiers:['Rapid Rewards member','A-List','A-List Preferred'],short:['Member','A-List','A-List Pref'],
       policy:{disruptDelay:60, mct:40, confirmedFee:[0,0,0], standbyFee:[0,0,0], basicSameDay:false, mealAt:180, partnerRebook:false, sameRoute:true, fareBased:true, voucher:true}}
 };
 const ALLIANCES = {none:['None',null], star:['Star Alliance Gold through another airline','star'], skyteam:['SkyTeam Elite Plus through another airline','skyteam'], oneworld:['oneworld Sapphire or Emerald through another airline','oneworld']};
@@ -2277,12 +2281,12 @@ function viewYou(){
   const AC={UA:'#3564F0',DL:'#D7352B',AA:'#5A6B85',WN:'#F2A900'};
   const perk=(k,i)=>{const P=AL[k].policy;if(P.fareBased)return 'Depends on fare';const f=P.confirmedFee[i];return f?`Same-day: $${f}`:'Same-day: free'};
   const short=t=>t.replace(/^(MileagePlus|SkyMiles|AAdvantage|Rapid Rewards) member$/,'Member').replace(/ Medallion$/,'').replace(/^Premier /,'');
-  const elite=Object.entries(AL).filter(([k])=>(S.profile.status[k]||0)>0).map(([k,A])=>`${A.name} ${A.tiers[S.profile.status[k]]}`);
+  const elite=Object.entries(AL).filter(([k])=>(S.profile.status[k]||0)>0).map(([k,A])=>{const t=A.tiers[S.profile.status[k]];return t.startsWith(A.name)?t:`${A.name} ${t}`});
   $s().innerHTML=`<header class="pagehead youhead"><div class="avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div><div><h1>You</h1><p>${elite.length?esc(elite.join(' · ')):'Add your status to unlock free changes'}</p></div></header><div class="pad">
     <h2>Airline status</h2><p class="hint">Your status sets what changes cost you. Tap your level.</p>
     ${Object.entries(AL).map(([k,A])=>{const cur=S.profile.status[k]||0;return `<section class="alcard" style="--ac:${AC[k]}">
       <div class="alh"><span class="altile">${k}</span><div><b>${esc(A.name)}</b><small>${esc(A.tiers[cur])}</small></div><span class="alperk${A.policy.confirmedFee[cur]&&!A.policy.fareBased?'':' free'}">${esc(perk(k,cur))}</span></div>
-      <div class="tiers" role="radiogroup" aria-label="${esc(A.name)} status">${A.tiers.map((t,i)=>`<button type="button" role="radio" aria-checked="${i===cur}" data-al="${k}" data-tier="${i}">${esc(short(t))}</button>`).join('')}</div></section>`}).join('')}
+      <div class="tiers" role="radiogroup" aria-label="${esc(A.name)} status">${A.tiers.map((t,i)=>`<button type="button" role="radio" aria-checked="${i===cur}" aria-label="${esc(t)}" data-al="${k}" data-tier="${i}"${i===A.invite?' class="inv"':''}>${esc(A.short?A.short[i]:short(t))}</button>`).join('')}</div>${A.invite!=null?`<p class="invnote">${esc(A.short[A.invite])} = ${esc(A.tiers[A.invite])}, invite only</p>`:''}</section>`}).join('')}
     <h2>Alerts</h2>
     <div class="setcard"><div class="setrow"><span><b>Alert me when a delay reaches</b></span></div>
       <div class="tiers" role="radiogroup" aria-label="Alert threshold">${[[15,'15 min'],[30,'30 min'],[60,'1 hr'],[120,'2 hr']].map(([v,l])=>`<button type="button" role="radio" aria-checked="${S.profile.alertMin===v}" data-alert="${v}">${l}</button>`).join('')}</div>
