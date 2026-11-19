@@ -62,8 +62,40 @@ button{font:inherit;color:inherit}
 .mark .ghost{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:2 4;stroke-linecap:round;opacity:.7}
 .mark .dot{fill:currentColor}
 .word{font-weight:800;font-stretch:125%;font-size:24px;letter-spacing:-.01em;line-height:1}
-.brandside h1{font-weight:800;font-stretch:87.5%;font-size:44px;line-height:1.02;letter-spacing:-.015em;margin:28px 0 16px}
+.brandside h1{font-weight:800;font-stretch:87.5%;font-size:44px;line-height:1.02;letter-spacing:-.015em;margin:28px 0 14px;text-wrap:balance}
 .brandside p{color:var(--muted);font-size:17px;margin:0 0 14px;max-width:40ch}
+.brandside .bs-lede{font-size:18px;color:var(--ink);opacity:.82}
+.bs-scene{margin:22px 0 0;display:grid;gap:10px}
+.bs-board{background:var(--tarmac);color:var(--tarmac-ink);border-radius:16px;padding:12px 16px 14px;box-shadow:0 18px 40px -24px rgba(22,36,90,.7)}
+.bs-clock{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--tarmac-muted);margin-bottom:6px}
+.bs-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;font-variant-numeric:tabular-nums}
+.bs-row b{font-weight:800;font-size:18px}
+.bs-row span{color:var(--tarmac-muted)}
+.bs-t{color:var(--tarmac-ink)!important;font-weight:700}
+.bs-row s{color:var(--tarmac-muted);font-weight:400;text-decoration-thickness:2px;margin-right:4px}
+.bs-row em{font-style:normal;font-weight:800;color:#111;background:var(--hold);border-radius:999px;padding:2px 10px;font-size:14px;margin-left:auto}
+.bs-vs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bs-vs>div{border-radius:14px;padding:12px 14px;min-width:0}
+.bs-vs small{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.bs-vs b{display:block;font-size:15px;line-height:1.3}
+.bs-them{background:var(--field);color:var(--muted);border:1px dashed var(--line)}
+.bs-them b{font-weight:600}
+.bs-you{background:var(--brand);color:var(--on-brand)}
+.bs-you small{color:var(--brand-muted)}
+.bs-gains{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bs-gains li{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0}
+.bs-gains b{display:block;font-weight:800;font-stretch:87.5%;font-size:22px;line-height:1.1;color:var(--center)}
+.bs-gains li:nth-child(2) b{color:var(--edge)}
+.bs-gains li:nth-child(3) b{color:var(--ink)}
+.bs-gains span{display:block;font-size:13px;color:var(--muted);line-height:1.3;margin-top:2px}
+@media (prefers-reduced-motion:no-preference){
+  .bs-board,.bs-vs>div,.bs-gains li{opacity:0;transform:translateY(8px);animation:bsIn .5s cubic-bezier(.2,.7,.2,1) forwards}
+  .bs-board{animation-delay:.3s}.bs-them{animation-delay:.7s}.bs-you{animation-delay:1s}
+  .bs-gains li:nth-child(1){animation-delay:1.3s}.bs-gains li:nth-child(2){animation-delay:1.42s}.bs-gains li:nth-child(3){animation-delay:1.54s}
+  .bs-row em{animation:bsPulse 2.4s 1.2s ease-in-out infinite}
+  @keyframes bsIn{to{opacity:1;transform:none}}
+  @keyframes bsPulse{0%,100%{box-shadow:0 0 0 0 rgba(242,169,0,.55)}50%{box-shadow:0 0 0 6px rgba(242,169,0,0)}}
+}
 .brandside .proto{font-size:14px;border-left:3px solid var(--hold);padding:6px 0 6px 12px;margin-top:26px}
 @media (prefers-reduced-motion:no-preference){
   .mark .path{stroke-dasharray:90;stroke-dashoffset:90;animation:draw 1.1s .2s cubic-bezier(.6,0,.2,1) forwards}
@@ -506,8 +538,19 @@ details.earlier summary{cursor:pointer;font-weight:700;font-size:15px}
   <aside class="brandside">
     <a class="mark" href="#" aria-label="Rerouted"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word">Rerouted</span></a>
     <h1>Ready before the gate agent.</h1>
-    <p>When your flight slips on United, Delta, American or Southwest, Rerouted tells you exactly what you’re owed, the best flight to move to, and what to say to get it.</p>
-    <p>It also tracks what your credit card will pay back, so a bad night in an airport hotel doesn’t come out of your pocket.</p>
+    <p class="bs-lede">Your flight slips. The line at the desk grows. You already have the better flight, the words to ask for it, and what your card pays back.</p>
+    <div class="bs-scene" aria-label="Example: a delayed connection in Denver">
+      <div class="bs-board"><span class="bs-clock">6:42 AM · Still at home in Boston</span><div class="bs-row"><b>UA 2216</b><span>Denver connection</span><span class="bs-t">Lands <s>12:40 PM</s> 3:10 PM</span><em>2 hr 30 min late</em></div></div>
+      <div class="bs-vs">
+        <div class="bs-them"><small>Most travelers</small><b>Find out in Denver, 40th in line at the desk</b></div>
+        <div class="bs-you"><small>You, with Rerouted</small><b>Ask for the 8:15 AM nonstop before leaving home</b></div>
+      </div>
+      <ul class="bs-gains">
+        <li><b>3 hr 30 min</b><span>sooner to LAX</span></li>
+        <li><b>1 tap</b><span>to call United</span></li>
+        <li><b>$500</b><span>card coverage tracked</span></li>
+      </ul>
+    </div>
     <p class="proto">You’re testing an early prototype. Nothing here touches a real booking. Works best on your phone.</p>
   </aside>
   <div class="device">
