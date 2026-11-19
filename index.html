@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style><title>Rerouted</title>
+<title>Rerouted</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Rerouted tells United, Delta, American and Southwest travelers what they're owed when a flight slips, the best flight to move to, and what to say to get it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -857,7 +857,7 @@ const CARDS={
   csr:{name:'Chase Sapphire Reserve',hrs:6,overnight:true,cap:500,per:'ticket',src:'https://www.cnbc.com/select/best-credit-cards-trip-delay-insurance/',conf:'check',policy:'https://asset.chase.com/content/services/structured-document/document.en.pdf/card/benefits-center/product-benefits-guide-pdf/BGC11388_v2.pdf'},
   csp:{name:'Chase Sapphire Preferred',hrs:12,overnight:true,cap:500,per:'ticket',src:'https://10xtravel.com/cards-with-trip-delay-insurance/',conf:'check',policy:'https://asset.chase.com/content/services/structured-document/document.en.pdf/card/benefits-center/product-benefits-guide-pdf/BGC11387_v2.pdf'},
   uacard:{name:'United Explorer, Quest, Club Infinite, or Business',hrs:12,overnight:true,cap:500,per:'ticket',src:'https://www.chase.com/personal/credit-cards/united/united-explorer-card/travel-protection',conf:'ok',policy:'https://www.chase.com/personal/credit-cards/united/united-explorer-card/travel-protection'},
-  vx:{name:'Capital One Venture X',hrs:6,overnight:true,cap:500,per:'ticket',src:'https://yourmileagemayvary.com/2026/08/09/credit-cards-trip-delay-insurance/',conf:'check',policy:'https://ecm.capitalone.com/WCM/card/benefits-guide/20211109-venture-x/jb34520_build-it_dm_final_eng-proof_v1.pdf'},
+  vx:{name:'Capital One Venture X',hrs:6,overnight:true,cap:500,per:'ticket',src:'Capital One Visa Infinite Guide to Benefits (uploaded Nov 19, 2026)',conf:'ok',causes:'vx',claimsPer:'trip',partial:true,policy:'https://ecm.capitalone.com/WCM/card/benefits-guide/20211109-venture-x/jb34520_build-it_dm_final_eng-proof_v1.pdf'},
   amexp:{name:'American Express Platinum',hrs:6,overnight:false,cap:500,per:'trip',claims:2,rt:true,src:'https://www.cardsandpoints.com/trip-delay-insurance/',conf:'ok',policy:'https://www.americanexpress.com/us/credit-cards/features-benefits/policies/trip-delay.html',causes:'amex'},
   amexg:{name:'American Express Gold',hrs:12,overnight:false,cap:300,per:'trip',claims:2,rt:true,src:'https://www.cardsandpoints.com/trip-delay-insurance/',conf:'ok',policy:'https://global.americanexpress.com/card-benefits/detail/trip-delay-insurance/gold',causes:'amex'},
   citisp:{name:'Citi Strata Premier',hrs:6,overnight:false,cap:500,per:'trip',src:'https://yourmileagemayvary.com/2026/08/09/credit-cards-trip-delay-insurance/',conf:'check',policy:'https://www.cardbenefits.citi.com/-/media/CPP/Files/LegalDocs/SOAPI/PID89_Strata_Premier_CRE131_GTPB_0524_tagged.ashx'},
@@ -872,9 +872,9 @@ const CARDS={
   bofapr:{name:'Bank of America Premium Rewards',hrs:12,overnight:false,cap:500,per:'ticket',src:'https://yourmileagemayvary.com/?p=148770',conf:'check',policy:'https://www.bankofamerica.com/credit-cards/products/premium-rewards-credit-card/'}
 };
 function disclaimHtml(card){
-  return `<div class="disc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.4"/></svg><div><b>Eligible, not guaranteed</b><span>The card’s benefits administrator reviews every claim and makes the final call. Read the terms and decide for yourself.</span>${card?.causes==='amex'?'<span><b>Amex covers delays caused by</b> bad weather, a carrier’s equipment failure, terrorism or lost passports. Crew or staffing delays may not qualify.</span>':''}${card?.policy?`<a href="${card.policy}" target="_blank" rel="noopener">Read the ${esc(card.name)} benefit terms ↗</a>`:''}</div></div>`;
+  return `<div class="disc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.4"/></svg><div><b>Eligible, not guaranteed</b><span>The card’s benefits administrator reviews every claim and makes the final call. Read the terms and decide for yourself.</span>${card?.causes==='amex'?'<span><b>Amex covers delays caused by</b> bad weather, a carrier’s equipment failure, terrorism or lost passports. Crew or staffing delays may not qualify.</span>':''}${card?.causes==='vx'?'<span><b>Capital One covers delays caused by</b> bad weather, equipment failure, a strike or hijacking. Crew or staffing delays may not qualify, and delays announced before you left don’t count. It pays after the airline covers what it owes.</span>':''}${card?.policy?`<a href="${card.policy}" target="_blank" rel="noopener">Read the ${esc(card.name)} benefit terms ↗</a>`:''}</div></div>`;
 }
-function cardTerms(c){return `${c.overnight?`More than ${c.hrs} hours or an overnight stay`:`More than ${c.hrs} hours`}; up to $${c.cap} per ${c.per==='ticket'?'traveler':'trip'}${c.claims?`, ${c.claims} claims a year`:''}${c.rt?', round trip must be on the card':''}`}
+function cardTerms(c){return `${c.overnight?`More than ${c.hrs} hours or an overnight stay`:`More than ${c.hrs} hours`}; up to $${c.cap} per ${c.per==='ticket'?'traveler':'trip'}${c.claims?`, ${c.claims} claims a year`:''}${c.rt?', round trip must be on the card':''}${c.partial?', paying part of the fare with the card counts':''}`}
 
 /* ---------- Sample emails ---------- */
 const SAMPLES = {
@@ -2057,14 +2057,14 @@ const CLAIMS={
     note:'Deadlines from published guides; confirm in your card’s Guide to Benefits.'},
   amex:{admin:'AIG, American Express’s benefits administrator',site:'aig.claimnotify.com/americanexpress',url:'https://aig.claimnotify.com/americanexpress',call:'1-844-933-0648',notify:60,docs:180,conf:'ok',
     note:'Notice deadline and contact details are from American Express’s own policy document.'},
-  capone:{admin:'Card Benefit Services, Capital One’s benefits administrator',site:'eclaimsline.com',url:'https://www.eclaimsline.com',call:'the number on the back of your card',notify:30,docs:null,conf:'check',
-    note:'Published guides disagree on 30 or 60 days, so Rerouted shows the earlier date.'},
+  capone:{admin:'Card Benefit Services, Capital One’s benefits administrator',site:'eclaimsline.com',url:'https://www.eclaimsline.com',call:'1-800-825-4062',notify:30,docs:90,conf:'ok',
+    note:'Deadlines and contact details are from Capital One’s Guide to Benefits: call within 30 days, send the claim form within 90.'},
   other:{admin:'your card’s benefits administrator',site:null,url:null,call:'the number on the back of your card',notify:null,docs:null,conf:'check',
     note:'Rerouted doesn’t have this card’s claim deadline yet. Check its Guide to Benefits.'}
 };
 // Per-day baggage delay coverage. Amex Platinum and Venture X cover lost or damaged bags, not per-day delays.
 const BAG={csr:{hrs:6,perDay:100,days:5},csp:{hrs:6,perDay:100,days:5},uacard:{hrs:6,perDay:100,days:3}};
-const CARD_CLAIM={dlres:'amex',dlplat:'amex',csr:'chase',csp:'chase',uacard:'chase',amexp:'amex',amexg:'amex',vx:'capone',citisp:'other',bofapr:'other'};
+const CARD_CLAIM={dlres:'amex',dlplat:'amex',csr:'chase',csp:'chase',uacard:'chase',amexp:'amex',amexg:'amex',amexgreen:'amex',centurion:'amex',schwabplat:'amex',hiltonasp:'amex',brilliant:'amex',bevy:'amex',vx:'capone',citisp:'other',bofapr:'other'};
 const addDays=(iso,n)=>{const d=new Date(iso+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric',timeZone:'UTC'})};
 const newKit=m=>({items:m.kit.items.map(([d,c,a])=>({d,c,a})),docs:{},status:'ready',claimNo:'',paid:''});
 
@@ -2265,7 +2265,7 @@ function viewWallet(){
   const mine=Object.keys(CARDS).filter(k=>S.profile.cards.includes(k));
   const ISS=[['Chase','CH','#1A5FB4',['csr','csp','uacard']],['American Express','AX','#2B6CB0',['amexp','schwabplat','centurion','amexg','amexgreen','dlres','dlplat','hiltonasp','brilliant','bevy']],['Capital One','C1','#C2410C',['vx']],['Citi','CI','#0E7490',['citisp']],['Bank of America','BA','#B91C1C',['bofapr']]];
   const nm=c=>c.name.replace(/^Chase |^American Express |^Capital One |^Citi |^Bank of America /,'').replace(/ \(Amex\)$/,'');
-  const stats=c=>`<span class="wst"><em>${c.hrs} hr${c.overnight?' · overnight':''}</em><em class="m">$${c.cap}${c.per==='ticket'?' each':' a trip'}</em>${c.rt?'<em class="z">Round trip</em>':''}${c.causes==='amex'?'<em class="z">Weather &amp; equipment</em>':''}</span>`;
+  const stats=c=>`<span class="wst"><em>${c.hrs} hr${c.overnight?' · overnight':''}</em><em class="m">$${c.cap}${c.per==='ticket'?' each':' a trip'}</em>${c.rt?'<em class="z">Round trip</em>':''}${c.causes==='amex'||c.causes==='vx'?'<em class="z">Weather &amp; equipment</em>':''}</span>`;
   $s().innerHTML=`<header class="pagehead"><h1>Your wallet</h1><p>When delay coverage starts, and what it pays.</p></header><div class="pad">
     ${mine.length?`<div class="cardrail" aria-label="Cards in your wallet">${mine.map(k=>`<div class="railitem">${cardFace(k,CARDS[k],true)}<b>${esc(CARDS[k].name)}</b>${stats(CARDS[k])}${CARDS[k].policy?`<a class="polink" href="${CARDS[k].policy}" target="_blank" rel="noopener">Read the benefit terms ↗</a>`:''}</div>`).join('')}</div>`
       :`<div class="emptywallet"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18M15 15h3"/></svg><b>No cards yet</b><span>Turn on the cards you carry and Rerouted checks every delay against them.</span></div>`}
@@ -2575,4 +2575,3 @@ function engineStep(kind){
 })();
 
 </script>
-</html>
