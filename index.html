@@ -294,6 +294,36 @@ details.payer p{margin:6px 0 0}
 .disc span{display:block;font-size:13px;line-height:1.4;color:var(--ink);opacity:.85;margin-top:2px}
 .disc a{display:inline-block;margin-top:6px;font-size:13px;font-weight:700;color:var(--edge)}
 .polink{display:inline-block;margin-top:6px;font-size:13px;font-weight:700;color:var(--edge)}
+.youhead{display:flex;align-items:center;gap:14px}
+.avatar{flex:none;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center}
+.avatar svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
+.alcard{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--ac);border-radius:16px;padding:12px 12px 12px;margin:0 0 10px}
+.alh{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center}
+.altile{width:40px;height:40px;border-radius:10px;background:var(--ac);color:#fff;font-weight:800;font-stretch:112.5%;font-size:14px;display:grid;place-items:center}
+.alh b{display:block;font-size:16px}.alh small{display:block;font-size:13px;color:var(--muted)}
+.alperk{font-size:12px;font-weight:700;border-radius:10px;padding:4px 9px;background:var(--field);color:var(--ink);white-space:nowrap}
+.alperk.free{background:var(--center-soft);color:var(--center)}
+.tiers{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tiers::-webkit-scrollbar{display:none}
+.tiers button{flex:none;font:inherit;font-size:13px;font-weight:700;padding:7px 12px;border-radius:16px;border:1px solid var(--line);background:var(--field);color:var(--muted);cursor:pointer;min-height:34px}
+.tiers button[aria-checked="true"]{background:var(--edge);border-color:var(--edge);color:var(--on-accent)}
+.setcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;margin:0 0 12px}
+.setrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0}
+.setcard .setrow+.setrow,.setcard .tiers+.setrow{border-top:1px solid var(--line)}
+.setrow b{display:block;font-size:15px;color:var(--ink)}.setrow small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.tog{cursor:pointer;position:relative;padding-bottom:4px}
+.tog input{position:absolute;opacity:0;width:1px;height:1px}
+.tog i{flex:none;width:46px;height:28px;border-radius:14px;background:var(--line);position:relative;transition:background .2s}
+.tog i::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s}
+.tog input:checked+i{background:var(--center)}
+.tog input:checked+i::after{left:21px}
+.tog input:focus-visible+i{outline:2px solid var(--edge);outline-offset:2px}
+.proto summary{list-style:none;cursor:pointer}
+.proto summary::-webkit-details-marker{display:none}
+.proto summary b{display:block;font-size:15px}.proto summary small{display:block;font-size:13px;color:var(--muted)}
+.proto summary::after{content:"Show";float:right;margin-top:-30px;font-size:13px;font-weight:700;color:var(--edge)}
+.proto[open] summary::after{content:"Hide"}
+.btn.danger{background:var(--stop);border-color:var(--stop);color:#fff}
 /* Toast (in-app notification) */
 #toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
 #toast .notif{background:rgba(26,34,48,.94);box-shadow:0 16px 30px -18px rgba(0,0,0,.7)}
@@ -2244,24 +2274,32 @@ function viewSavings(){
 }
 /* ---------- You ---------- */
 function viewYou(){
-  const o=(arr,v)=>arr.map(([k,t])=>`<option value="${esc(k)}"${String(k)===String(v)?' selected':''}>${esc(t)}</option>`).join('');
-  $s().innerHTML=`<header class="pagehead"><h1>You</h1><p>Your status sets what changes cost you.</p></header><div class="pad"><h2>Airline status</h2>
-    ${Object.entries(AL).map(([k,A])=>`<label>${esc(A.name)} status<select class="pStatusSel" data-al="${k}">${o(A.tiers.map((t,i)=>[i,t]),S.profile.status[k]||0)}</select></label>`).join('')}
-    <label>Alert me when a delay reaches<select id="pAlert">${o([[15,'15 minutes'],[30,'30 minutes'],[60,'1 hour'],[120,'2 hours']],S.profile.alertMin)}</select></label>
-    <label class="chk"><input type="checkbox" id="pAlt"${S.profile.alt?' checked':''}> Show flights to nearby airports during disruptions</label>
-    <h2>Your test answers</h2><p class="hint">${UI.fb.length?`${UI.fb.length} saved on this device.`:'None yet. Play a scenario to the end.'}</p>
-    ${UI.fb.length?`<button class="btn" type="button" id="copyAll">Copy all answers</button><p class="status" id="yStatus"></p>`:''}
-    <h2>Prototype settings</h2>
-    <div class="switch"><span>Founder view<small>Shows which real data feed would power each part of the app.</small></span><input type="checkbox" id="pFounder"${UI.founder?' checked':''}></div>
-    <div class="switch"><span>Launch feeds<small>Every feed this mock stands in for, and when you need it.</small></span><button class="btn small" type="button" id="openFeeds">Open</button></div>
-    <div class="switch"><span>Start over<small>Clears trips, answers, and claim kits on this device.</small></span><button class="btn small" type="button" id="reset">Reset</button></div></div>`;
-  $s().querySelectorAll('.pStatusSel').forEach(el=>el.onchange=()=>{S.profile.status[el.dataset.al]=+el.value;store('rr4-profile',S.profile)});
-  $('pAlert').onchange=e=>{S.profile.alertMin=+e.target.value;store('rr4-profile',S.profile)};
+  const AC={UA:'#3564F0',DL:'#D7352B',AA:'#5A6B85',WN:'#F2A900'};
+  const perk=(k,i)=>{const P=AL[k].policy;if(P.fareBased)return 'Depends on fare';const f=P.confirmedFee[i];return f?`Same-day: $${f}`:'Same-day: free'};
+  const short=t=>t.replace(/^(MileagePlus|SkyMiles|AAdvantage|Rapid Rewards) member$/,'Member').replace(/ Medallion$/,'').replace(/^Premier /,'');
+  const elite=Object.entries(AL).filter(([k])=>(S.profile.status[k]||0)>0).map(([k,A])=>`${A.name} ${A.tiers[S.profile.status[k]]}`);
+  $s().innerHTML=`<header class="pagehead youhead"><div class="avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div><div><h1>You</h1><p>${elite.length?esc(elite.join(' · ')):'Add your status to unlock free changes'}</p></div></header><div class="pad">
+    <h2>Airline status</h2><p class="hint">Your status sets what changes cost you. Tap your level.</p>
+    ${Object.entries(AL).map(([k,A])=>{const cur=S.profile.status[k]||0;return `<section class="alcard" style="--ac:${AC[k]}">
+      <div class="alh"><span class="altile">${k}</span><div><b>${esc(A.name)}</b><small>${esc(A.tiers[cur])}</small></div><span class="alperk${A.policy.confirmedFee[cur]&&!A.policy.fareBased?'':' free'}">${esc(perk(k,cur))}</span></div>
+      <div class="tiers" role="radiogroup" aria-label="${esc(A.name)} status">${A.tiers.map((t,i)=>`<button type="button" role="radio" aria-checked="${i===cur}" data-al="${k}" data-tier="${i}">${esc(short(t))}</button>`).join('')}</div></section>`}).join('')}
+    <h2>Alerts</h2>
+    <div class="setcard"><div class="setrow"><span><b>Alert me when a delay reaches</b></span></div>
+      <div class="tiers" role="radiogroup" aria-label="Alert threshold">${[[15,'15 min'],[30,'30 min'],[60,'1 hr'],[120,'2 hr']].map(([v,l])=>`<button type="button" role="radio" aria-checked="${S.profile.alertMin===v}" data-alert="${v}">${l}</button>`).join('')}</div>
+      <label class="setrow tog"><span><b>Nearby airports</b><small>Show flights to nearby airports during disruptions</small></span><input type="checkbox" id="pAlt"${S.profile.alt?' checked':''}><i aria-hidden="true"></i></label></div>
+    <details class="setcard proto"><summary><b>Prototype and testing</b><small>Test answers, founder view, reset</small></summary>
+      <div class="setrow"><span><b>Your test answers</b><small>${UI.fb.length?`${UI.fb.length} saved on this device`:'None yet. Play a scenario to the end.'}</small></span>${UI.fb.length?'<button class="btn small" type="button" id="copyAll">Copy</button>':''}</div><p class="status" id="yStatus"></p>
+      <label class="setrow tog"><span><b>Founder view</b><small>Shows which real data feed would power each part of the app</small></span><input type="checkbox" id="pFounder"${UI.founder?' checked':''}><i aria-hidden="true"></i></label>
+      <div class="setrow"><span><b>Launch feeds</b><small>Every feed this mock stands in for</small></span><button class="btn small" type="button" id="openFeeds">Open</button></div>
+      <div class="setrow"><span><b>Start over</b><small>Clears trips, answers and claim kits on this device</small></span><button class="btn small" type="button" id="reset">Reset</button></div>
+    </details></div>`;
+  $s().querySelectorAll('[data-tier]').forEach(b=>b.onclick=()=>{S.profile.status[b.dataset.al]=+b.dataset.tier;store('rr4-profile',S.profile);const y=$s().scrollTop;viewYou();$s().scrollTop=y});
+  $s().querySelectorAll('[data-alert]').forEach(b=>b.onclick=()=>{S.profile.alertMin=+b.dataset.alert;store('rr4-profile',S.profile);const y=$s().scrollTop;viewYou();$s().scrollTop=y});
   $('pAlt').onchange=e=>{S.profile.alt=e.target.checked;store('rr4-profile',S.profile)};
   $('pFounder').onchange=e=>{UI.founder=e.target.checked;store('rr4-founder',UI.founder)};
   $('openFeeds').onclick=()=>go('feeds');
   if($('copyAll'))$('copyAll').onclick=async()=>{try{await navigator.clipboard.writeText(UI.fb.map(fbSummary).join('\n\n'));$('yStatus').textContent='Copied.'}catch(e){$('yStatus').textContent='Copy didn’t work here.'}};
-  $('reset').onclick=()=>{if(!confirm('Clear everything Rerouted saved on this device?'))return;Object.keys(localStorage).filter(k=>k.startsWith('rr4-')).forEach(k=>localStorage.removeItem(k));location.reload()};
+  $('reset').onclick=e=>{const b=e.target;if(b.dataset.armed){Object.keys(localStorage).filter(k=>k.startsWith('rr4-')).forEach(k=>localStorage.removeItem(k));location.reload();return}b.dataset.armed='1';b.textContent='Tap again to clear';b.classList.add('danger');setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='Reset';b.classList.remove('danger')}},4000)};
 }
 function viewFeeds(){
   const order=['Launch','Recommended','Later','Gap'],label={Launch:'Needed at launch',Recommended:'Strongly recommended at launch',Later:'After launch',Gap:'No feed exists'};
