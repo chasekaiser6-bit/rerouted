@@ -1341,7 +1341,7 @@ denver:{
         scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M. I’m a Premier Gold member. UA 2216 is running about two and a half hours late, which would get me into LA at 3:10 PM. I saw UA 1288, the 8:15 AM nonstop from Boston, still has seats. Would you be able to move me onto it at no charge?'}],
         feeds:['sched','seats','rules']},
       rights:[
-        ['warn','Free change: often free','Under 3 hours late, a change is often free but not guaranteed. Check the United app for a charge before you pay. At 3 hours, it’s guaranteed.','rules'],
+        ['warn','Free change: often free','Under 3 hours late, a change is often free but not guaranteed. Check the United app. At 3 hours, it’s guaranteed.','rules'],
         ['','Meal voucher once your wait reaches 3 hours','United commits to one for delays it causes. You’re at 2 hr 30 min.','rules'],
         ['','Refund if you decide not to go','Owed once you’re 3 or more hours late. You’re not there yet.','dot'],
         ['','Sapphire Reserve covers expenses after 6 hours','Not likely needed today.','cards']],
@@ -1361,7 +1361,7 @@ denver:{
         scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M. I’m a Premier Gold member. UA 2216 is running about two and a half hours late, and the app is only offering a later Denver connection. I noticed UA 1288, the 8:15 AM nonstop from Boston, still has seats. Is there any chance you could move me onto that one at no charge?'}],
         feeds:['sched','seats']},
       lines:{rows:[['United app','','Often shows only the automatic rebooking.',''],['Phone, Premier line','','Can see and book the nonstop.','best'],['Logan check-in desk','','Slower, and you’re not at the airport yet.','']],tip:'Call while you finish getting ready.'},
-      rights:[['warn','Free change: often free','Under 3 hours late, a change is often free but not guaranteed. Check the United app for a charge before you pay. At 3 hours, it’s guaranteed.','rules']],
+      rights:[['warn','Free change: often free','Under 3 hours late, a change is often free but not guaranteed. Check the United app. At 3 hours, it’s guaranteed.','rules']],
       choices:[{label:'Call and use the script',next:'d4'},{label:'Accept the app’s offer',next:'d5'}]},
     d4:{clock:'6:02 AM',where:'On the phone with United',
       notif:{t:'Now tracking UA 1288',b:'You told Rerouted the agent moved you. It leaves Boston at 8:15 AM and lands in LA at 11:40 AM, on time so far.'},
@@ -2515,7 +2515,7 @@ function engineStep(kind){
   const R=[];
   const why={major:`a ${dur(r.maxDelay)} delay`,misconnect:'a missed connection',canceled:'a cancellation'}[r.status];
   if(r.covered)R.push(['yes',`Free rebooking on any ${AN} flight to ${to} today`,`Triggered by ${why}. No change fee or fare difference, including onto a nonstop, when seats are open.`,'rules']);
-  else if(!r.disrupted&&r.maxDelay>=60)R.push(['warn','Free change: often free',`Under 3 hours late, a change is often free but not guaranteed. Check the ${AN} app for a charge before you pay. At 3 hours, it’s guaranteed.`,'rules']);
+  else if(!r.disrupted&&r.maxDelay>=60)R.push(['warn','Free change: often free',`Under 3 hours late, a change is often free but not guaranteed. Check the ${AN} app. At 3 hours, it’s guaranteed.`,'rules']);
   else if(r.disrupted)R.push(['no','Your connection isn’t protected',`Your flights are on separate tickets, so ${AN} only has to protect each ticket on its own.`,'intake']);
   if(!r.direct)R.push(['warn',`Changes go through ${r.viaName}`,r.disrupted?`You’re still owed free rebooking, but ${AN} may send you to ${r.viaName}. Call them and ${AN} at the same time.`:`${AN} usually can’t make voluntary changes to tickets sold by ${r.viaName}.`,'intake']);
   if(r.tight)R.push(['warn',`Your ${eff[0].f.to} connection is down to ${dur(r.margin)}`,'Moving now, before it becomes a missed connection, gives you the most choices.','status']);
