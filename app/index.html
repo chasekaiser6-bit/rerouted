@@ -552,19 +552,19 @@ const AL = {
   UA:{name:'United', app:'United app', path:'My Trips, select the trip, then Change flight', alliance:'star',
       hubs:['DEN','ORD','SFO','EWR','IAH'], extra:['BOS-LAX','BOS-SFO','BOS-SEA'],
       tiers:['MileagePlus member','Premier Silver','Premier Gold','Premier Platinum','Premier 1K','Global Services'],short:['Member','Silver','Gold','Plat','1K','GS'],invite:5,
-      policy:{disruptDelay:60, mct:40, confirmedFee:[75,0,0,0,0,0], standbyFee:[0,0,0,0,0,0], basicSameDay:false, mealAt:180, partnerRebook:true, sameRoute:false, fareBased:false, voucher:false}},
+      policy:{disruptDelay:180, mct:40, confirmedFee:[75,0,0,0,0,0], standbyFee:[0,0,0,0,0,0], basicSameDay:false, mealAt:180, partnerRebook:true, sameRoute:false, fareBased:false, voucher:false}},
   DL:{name:'Delta', app:'Fly Delta app', path:'My Trips, select the trip, then Change flight', alliance:'skyteam',
       hubs:['ATL','MSP','DTW','SLC','LAX','JFK','SEA','BOS'], extra:[],
       tiers:['SkyMiles member','Silver Medallion','Gold Medallion','Platinum Medallion','Diamond Medallion','Delta 360°'],short:['Member','Silver','Gold','Plat','Diam','360°'],invite:5,
-      policy:{disruptDelay:60, mct:40, confirmedFee:[75,75,0,0,0,0], standbyFee:[0,0,0,0,0,0], basicSameDay:false, mealAt:180, partnerRebook:true, sameRoute:true, noNonstop:true, fareBased:false, voucher:false}},
+      policy:{disruptDelay:180, mct:40, confirmedFee:[75,75,0,0,0,0], standbyFee:[0,0,0,0,0,0], basicSameDay:false, mealAt:180, partnerRebook:true, sameRoute:true, noNonstop:true, fareBased:false, voucher:false}},
   AA:{name:'American', app:'American app', path:'Trips, select the trip, then Change trip', alliance:'oneworld',
       hubs:['DFW','CLT','ORD','PHX','MIA'], extra:['BOS-LAX','JFK-LAX','JFK-SFO','BOS-SFO'],
       tiers:['AAdvantage member','Gold','Platinum','Platinum Pro','Executive Platinum','ConciergeKey'],short:['Member','Gold','Plat','Pro','Exec','CK'],invite:5,
-      policy:{disruptDelay:60, mct:40, confirmedFee:[60,60,60,0,0,0], standbyFee:[0,0,0,0,0,0], basicSameDay:false, mealAt:180, partnerRebook:true, sameRoute:true, fareBased:false, premiumFreeFrom:2, voucher:false}},
+      policy:{disruptDelay:180, mct:40, confirmedFee:[60,60,60,0,0,0], standbyFee:[0,0,0,0,0,0], basicSameDay:false, mealAt:180, partnerRebook:true, sameRoute:true, fareBased:false, premiumFreeFrom:2, voucher:false}},
   WN:{name:'Southwest', app:'Southwest app', path:'Trips, select the trip, then Change flight', alliance:null,
       hubs:['DEN','MDW','DAL','HOU','PHX','OAK'], extra:['BOS-FLL'],
       tiers:['Rapid Rewards member','A-List','A-List Preferred'],short:['Member','A-List','A-List Pref'],
-      policy:{disruptDelay:60, mct:40, confirmedFee:[0,0,0], standbyFee:[0,0,0], basicSameDay:false, mealAt:180, partnerRebook:false, sameRoute:true, fareBased:true, voucher:true}}
+      policy:{disruptDelay:180, mct:40, confirmedFee:[0,0,0], standbyFee:[0,0,0], basicSameDay:false, mealAt:180, partnerRebook:false, sameRoute:true, fareBased:true, voucher:true}}
 };
 const ALLIANCES = {none:['None',null], star:['Star Alliance Gold through another airline','star'], skyteam:['SkyTeam Elite Plus through another airline','skyteam'], oneworld:['oneworld Sapphire or Emerald through another airline','oneworld']};
 
@@ -1043,20 +1043,20 @@ denver:{
   confirmation:'K7XQ2M', start:'d1',
   steps:{
     d1:{clock:'5:40 AM',where:'At home in Boston',
-      notif:{t:'Denver connection 2.5 hr late',b:'Switch free to the 8:15 AM nonstop. It lands at 11:40 AM, instead of 3:10 PM, and has seats.'},
+      notif:{t:'Denver connection 2.5 hr late',b:'Ask to switch to the 8:15 AM nonstop. It lands at 11:40 AM, instead of 3:10 PM, and has seats. Under 3 hours late, a free change isn’t guaranteed.'},
       board:{hl:'Landing in LAX, 2 hr 30 min late',rows:[
         ['UA 1543','BOS → DEN','7:05 AM','7:05 AM','ON TIME','ok','9:30 AM','9:30 AM'],
         ['UA 2216','DEN → LAX','11:20 AM','1:50 PM','DELAYED 2 HR 30 MIN','late','12:40 PM','3:10 PM']]},
       move:{tone:'go',label:'Your best move',title:'Switch to UA 1288, the 8:15 AM nonstop',
-        sub:'Free, and seats available.',
+        sub:'Seats available. Ask if the change is free.',
         route:{old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','LAX'],t:{oldDep:'7:05 AM',old:'3:10 PM',ot:'late',dep:'8:15 AM',arr:'11:40 AM',gain:'3 hr 30 min sooner'}},
         steps:['United app: My Trips → Change flight.',
-          'Pick UA 1288. Skip the app’s suggested reroute.',
+          'Pick UA 1288. If it shows a charge, don’t pay yet.',
           'Not offered? Call or visit the Logan desk with the script.'],
-        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M. I’m a Premier Gold member. UA 2216 is running about two and a half hours late, which would get me into LA at 3:10 PM. I saw UA 1288, the 8:15 AM nonstop from Boston, still has seats. Would you be able to move me onto it?'}],
+        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M. I’m a Premier Gold member. UA 2216 is running about two and a half hours late, which would get me into LA at 3:10 PM. I saw UA 1288, the 8:15 AM nonstop from Boston, still has seats. Would you be able to move me onto it at no charge?'}],
         feeds:['sched','seats','rules']},
       rights:[
-        ['yes','Free change to any United flight to LA today','The delay is over an hour, so the change fee and fare difference are waived, including onto a nonstop.','rules'],
+        ['warn','Free change: ask','Under 3 hours late, United doesn’t guarantee a free change. Ask, and check the app for a charge before you pay. At 3 hours, it’s guaranteed.','rules'],
         ['','Meal voucher once your wait reaches 3 hours','United commits to one for delays it causes. You’re at 2 hr 30 min.','rules'],
         ['','Refund if you decide not to go','Owed once you’re 3 or more hours late. You’re not there yet.','dot'],
         ['','Sapphire Reserve covers expenses after 6 hours','Not likely needed today.','cards']],
@@ -1073,10 +1073,10 @@ denver:{
         steps:['Tap Back, not Accept. Accept locks in 3:55 PM.',
           'Call United. Premier lines are shorter.',
           'Nonstop full? Ask for standby plus the best confirmed backup.'],
-        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M. I’m a Premier Gold member. UA 2216 is running about two and a half hours late, and the app is only offering a later Denver connection. I noticed UA 1288, the 8:15 AM nonstop from Boston, still has seats. Is there any chance you could move me onto that one?'}],
+        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M. I’m a Premier Gold member. UA 2216 is running about two and a half hours late, and the app is only offering a later Denver connection. I noticed UA 1288, the 8:15 AM nonstop from Boston, still has seats. Is there any chance you could move me onto that one at no charge?'}],
         feeds:['sched','seats']},
       lines:{rows:[['United app','','Often shows only the automatic rebooking.',''],['Phone, Premier line','','Can see and book the nonstop.','best'],['Logan check-in desk','','Slower, and you’re not at the airport yet.','']],tip:'Call while you finish getting ready.'},
-      rights:[['yes','Free change to any United flight to LA today','You don’t have to take the first option offered. Any United flight with seats qualifies.','rules']],
+      rights:[['warn','Free change: ask','Under 3 hours late, a free change isn’t guaranteed. Agents can often waive it, so ask before you pay.','rules']],
       choices:[{label:'Call and use the script',next:'d4'},{label:'Accept the app’s offer',next:'d5'}]},
     d4:{clock:'6:02 AM',where:'On the phone with United',
       notif:{t:'Now tracking UA 1288',b:'You told Rerouted the agent moved you. It leaves Boston at 8:15 AM and lands in LA at 11:40 AM, on time so far.'},
@@ -1758,9 +1758,9 @@ function delayTimeline(r){
     let h=null,name=l;
     const m=String(v).match(/(\d+) hr/)||String(t).match(/(?:after|reaches) (\d+) hours|(\d+)\+ hours/i);if(m)h=+(m[1]||m[2]);
     else if(/^Refund/.test(l))h=3;
-    else if(c==='yes'&&/^(Rebook|Free rebooking|Change flights|Same-day change)/.test(l))h=1;
+    else if((c==='yes'||c==='warn')&&/^(Rebook|Free rebooking|Free change|Change flights|Same-day change)/.test(l))h=3;
     if(h==null)return;
-    name=/Meal/i.test(l)?'Meal':/^Refund/i.test(l)?'Refund':/Bag fee/i.test(l)?'Bag fee':/^(Rebook|Free rebooking|Change flights|Same-day)/.test(l)?'Rebook':(w=>/^(United|Delta|Capital|Citi|Bank|American)$/.test(w[0])&&w[1]?w[1]:w[0])(l.split(' '));
+    name=/Meal/i.test(l)?'Meal':/^Refund/i.test(l)?'Refund':/Bag fee/i.test(l)?'Bag fee':/^(Rebook|Free rebooking|Free change|Change flights|Same-day)/.test(l)?'Rebook':(w=>/^(United|Delta|Capital|Citi|Bank|American)$/.test(w[0])&&w[1]?w[1]:w[0])(l.split(' '));
     (ms[h]=ms[h]||[]).includes(name)||(ms[h]=ms[h]||[]).push(name);body[h]=(body[h]?body[h]+' ':'')+b;if(!c)UI.tlHide.add(idx)});
   const hs=Object.keys(ms).map(Number).sort((a,b)=>a-b);if(!hs.length)return '';
   const L=hs[hs.length-1]*60,max=Math.max(L*1.1,Math.min(d*1.1,L*1.6)),pct=x=>Math.min(100,x/max*100);
@@ -2225,6 +2225,7 @@ function engineStep(kind){
   const R=[];
   const why={major:`a ${dur(r.maxDelay)} delay`,misconnect:'a missed connection',canceled:'a cancellation'}[r.status];
   if(r.covered)R.push(['yes',`Free rebooking on any ${AN} flight to ${to} today`,`Triggered by ${why}. No change fee or fare difference, including onto a nonstop, when seats are open.`,'rules']);
+  else if(!r.disrupted&&r.maxDelay>=60)R.push(['warn','Free change: ask',`Under 3 hours late, ${AN} doesn’t guarantee a free change. Agents can often waive it, so ask before you pay. At 3 hours, it’s guaranteed.`,'rules']);
   else if(r.disrupted)R.push(['no','Your connection isn’t protected',`Your flights are on separate tickets, so ${AN} only has to protect each ticket on its own.`,'intake']);
   if(!r.direct)R.push(['warn',`Changes go through ${r.viaName}`,r.disrupted?`You’re still owed free rebooking, but ${AN} may send you to ${r.viaName}. Call them and ${AN} at the same time.`:`${AN} usually can’t make voluntary changes to tickets sold by ${r.viaName}.`,'intake']);
   if(r.tight)R.push(['warn',`Your ${eff[0].f.to} connection is down to ${dur(r.margin)}`,'Moving now, before it becomes a missed connection, gives you the most choices.','status']);
