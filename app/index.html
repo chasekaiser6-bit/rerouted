@@ -925,12 +925,12 @@ function classify(o,c){
     return m;
   }
   const fn=fareName(c.al,c.T.fare);
-  if(P.fareBased&&c.T.fare===0)return {kind:'no',label:'Not eligible',why:`${fn} fares can’t change the same day, even with status`};
-  if(!P.fareBased&&c.T.fare===0&&!P.basicSameDay)return {kind:'no',label:'Not eligible',why:'Basic Economy can’t make same-day changes'};
+  if(P.fareBased&&c.T.fare===0){if(c.tier>=1)return {kind:'standby',label:'Standby, free',why:`${fn} fares can’t make confirmed changes, but ${c.tierName} members can stand by free`};return {kind:'no',label:'Not eligible',why:`${fn} fares can’t make same-day changes without A-List status`}}
+  if(!P.fareBased&&c.T.fare===0&&!P.basicSameDay)return {kind:'no',label:'Not eligible',why:'Basic Economy can’t make same-day confirmed or standby changes'};
   const oRoute=[o.it[0].f.from,...o.it.map(x=>x.f.to)].join('-');
   if(P.sameRoute&&c.route&&oRoute!==c.route){
     const fewer=o.it.length<c.route.split('-').length-1;
-    return {kind:'no',label:'Different routing',why:fewer&&P.noNonstop?`${c.A.name}’s same-day changes can’t turn a connection into a nonstop`:`${c.A.name}’s same-day changes must keep your routing`};
+    return {kind:'no',label:'Different routing',why:fewer&&P.noNonstop?`${c.A.name}’s same-day changes can’t turn a connection into a nonstop. In a longer delay an agent may allow it, so ask`:`${c.A.name}’s same-day changes must keep your routing. In a longer delay an agent may allow a different route, so ask`};
   }
   if(!c.direct)return {kind:'ota',label:`Through ${c.viaName}`,why:'Voluntary changes on third-party tickets go through them, often with a fee and fare difference'};
   let cf=P.confirmedFee[c.tier]??P.confirmedFee[0];const sf=P.standbyFee[c.tier]??0,base=P.confirmedFee[0];
@@ -1386,7 +1386,7 @@ delta:{al:'DL',
       lines:{rows:[['Fly Delta app','','Shows same-day changes on your routing.','best'],['Phone, Medallion line','','Backup if the app shows a charge.',''],['Logan check-in desk','','You’re not at the airport yet.','']],tip:'Use the app now. Every minute matters for the 6:00 AM.'},
       rights:[
         ['yes','Same-day change: free with Gold Medallion','Silver Medallion and SkyMiles members pay $75. Basic fares can’t change.','dl'],
-        ['no','No switching to the nonstop on a voluntary change','Delta’s same-day changes must keep your routing, so the nonstop isn’t allowed unless Delta’s delay breaks your trip.','dl'],
+        ['warn','Switch to the nonstop: depends on delay','A same-day change can’t turn a connection into a nonstop. If the delay gets long enough to disrupt your trip, an agent may move you to the nonstop, so ask.','dl'],
         ['','Free rebooking if the connection breaks','If Delta’s delay makes you miss Detroit, you can be rebooked on any Delta flight, including the nonstop, or a partner airline.','dashboard']],
       feeds:['inbound','push'],
       choices:[{label:'Move to the 6:00 AM',next:'dl2'},{label:'Ask for the nonstop instead',sub:'It lands earlier',next:'dl3'}]},
@@ -1701,7 +1701,7 @@ function shortRight(c,t){
   if(m=t.match(/^(?:Same-day|Confirmed) change: (.+)$/)){const v=m[1];return ['Same-day change',/^free/i.test(v)?'Free, same fare':(v.match(/^\$\d+/)||[v])[0]]}
   if(/^Same-day standby/.test(t))return ['Standby','Free'];
   if(/^No same-day changes on a Basic/.test(t))return ['Same-day change','Not on Basic'];
-  if(/^No switching to the nonstop/.test(t))return ['Switch to the nonstop','Not allowed'];
+  if(/^Switch to the nonstop/.test(t))return ['Switch to the nonstop','Depends on delay'];
   if(/meal|hotel/i.test(t))return no?['Meals and hotel','Not owed']:yes?['Meal voucher','Owed']:['Meal voucher','At 3 hr'];
   if(/^Thunderstorms count as weather/.test(t))return ['Meals and hotel','Not for weather'];
   if(/^Refund/.test(t))return yes?['Refund if you skip the trip','Available']:['Refund','At 3 hr late'];
@@ -2237,7 +2237,7 @@ function engineStep(kind){
     const fn=fareName(S.trip.airline,S.trip.fare);
     if(AP_.fareBased)R.push(S.trip.fare===0?['no','No same-day changes on a Basic fare',`${AN} Basic fares can’t change the same day, even with status. A disruption ${AN} causes still gets you free rebooking.`,'wn']:['yes',`Same-day change and standby: included with ${fn}`,'Same route, when seats are open.','wn']);
     else{let cf=AP_.confirmedFee[r.tier];if(AP_.premiumFreeFrom!=null&&S.trip.fare>=AP_.premiumFreeFrom)cf=0;
-      R.push([cf===0?'yes':'',cf===0?'Same-day change: free':`Same-day change: $${cf} at ${r.tierName}`,AP_.sameRoute?`${AN} only allows same-day changes on the same routing. Free standby is the cheaper option.`:'When the same fare class is open on the new flight.',{DL:'dl',AA:'aa'}[S.trip.airline]||'rules'])}
+      R.push([cf===0?'yes':'',cf===0?'Same-day change: free':`Same-day change: $${cf} at ${r.tierName}`,AP_.sameRoute?`${AN} only allows same-day changes on the same routing. In a longer delay an agent may allow a different route or a nonstop, so ask. Free standby is the cheaper option.`:'When the same fare class is open on the new flight.',{DL:'dl',AA:'aa'}[S.trip.airline]||'rules'])}
   }
   if(r.disrupted&&!AP_.partnerRebook)R.push(['no','No rebooking on other airlines',`${AN} doesn’t commit to moving you to another airline, so options are ${AN} flights only.`,'dashboard']);
   if(r.disrupted&&AP_.voucher&&ae.ctrl&&late>=180)R.push(['yes','Travel credit for the delay',`${AN} commits to a credit voucher once a delay it causes reaches 3 hours.`,'dashboard']);
