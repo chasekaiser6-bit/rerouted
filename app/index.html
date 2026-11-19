@@ -2015,7 +2015,7 @@ function viewYou(){
   const short=t=>t.replace(/^(MileagePlus|SkyMiles|AAdvantage|Rapid Rewards) member$/,'Member').replace(/ Medallion$/,'').replace(/^Premier /,'');
   const elite=Object.entries(AL).filter(([k])=>(S.profile.status[k]||0)>0).map(([k,A])=>{const t=A.tiers[S.profile.status[k]];return t.startsWith(A.name)?t:`${A.name} ${t}`});
   $s().innerHTML=`<header class="pagehead youhead"><div class="avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div><div><h1>You</h1><p>${elite.length?esc(elite.join(' · ')):'Add your status to unlock free changes'}</p></div></header><div class="pad">
-    <h2>Airline status</h2><p class="hint">Your status sets what changes cost you. Tap your level.</p>
+    <h2>Airline status</h2><p class="hint">Tap your level to see what changes cost.</p>
     ${Object.entries(AL).map(([k,A])=>{const cur=S.profile.status[k]||0;return `<section class="alcard" style="--ac:${AC[k]}">
       <div class="alh"><span class="altile">${k}</span><div><b>${esc(A.name)}</b><small>${esc(A.tiers[cur])}</small></div><span class="alperk${A.policy.confirmedFee[cur]&&!A.policy.fareBased?'':' free'}">${esc(perk(k,cur))}</span></div>
       <div class="tiers" role="radiogroup" aria-label="${esc(A.name)} status">${A.tiers.map((t,i)=>`<button type="button" role="radio" aria-checked="${i===cur}" aria-label="${esc(t)}" data-al="${k}" data-tier="${i}"${i===A.invite?' class="inv"':''}>${esc(A.short?A.short[i]:short(t))}</button>`).join('')}</div>${A.invite!=null?`<p class="invnote">${esc(A.short[A.invite])} = ${esc(A.tiers[A.invite])}, invite only</p>`:''}</section>`}).join('')}
