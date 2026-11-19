@@ -1194,14 +1194,14 @@ function plan(r,best){
   const R=reason.charAt(0).toUpperCase()+reason.slice(1);
   const standby=k==='standby';
   const ask=standby?`Could you add me to the standby list for ${flight}${need}, and keep my current booking as a backup?`
-    :`Could you move me to ${flight}${need}? It shows seats available.`;
+    :`I saw ${flight}, has seats. Would you be able to move ${T.travelers>1?'us':'me'} onto it?`;
   let steps=[],script='',who='an agent';
   const bagStep=T.bags?['Ask the agent to reroute your checked bag.']:[];
   if(k==='ask'){
     who=`a ${A.name} agent`;
     steps=[`Go to the ${A.name} service desk or call ${A.name}. Because your flights are on separate tickets, they don’t have to rebook you, but they sometimes will as a courtesy.`,
       `If they won’t, compare the price of a new one-way ticket for ${flight} against waiting for the next flight on your second ticket.`,...bagStep];
-    script=`Hi, I’m booked on ${fls(r.eff)} to ${AP[to][0]} today on confirmations ${confs}. ${R}. I know these are separate tickets, but ${best.seats>0?`could you move me to ${flight}${need} as a courtesy? It shows seats available.`:`could you add me to standby for ${flight}${need} as a courtesy?`}`;
+    script=`Hi, I’m booked on ${fls(r.eff)} to ${AP[to][0]} today on confirmations ${confs}. ${R}. I know these are separate tickets. ${best.seats>0?`I saw ${flight}, has seats. Is there any way you could move ${T.travelers>1?'us':'me'} onto it?`:`Is there any way you could add me to standby for ${flight}${need}?`}`;
   } else if(!r.direct){
     who=r.viaName;
     const ref=T.viaRef?`, itinerary number ${T.viaRef}`:'';
@@ -1213,19 +1213,19 @@ function plan(r,best){
       steps=[`Call ${r.viaName}. ${A.name} usually can’t make voluntary changes to tickets bought through them.`,
         `Ask what the change will cost in total, including their fee and any fare difference, before you agree.`,...bagStep];
     }
-    script=`Hi, I’m calling about my ${r.viaName} booking${ref}, ${A.name} confirmation ${confs}. ${R}. ${standby?`Could you ask ${A.name} to add me to the standby list for ${flight}${need}?`:`Could you move me to ${flight}${need}? ${A.name} shows seats available.`} ${r.disrupted?`Since this is ${what} caused by ${A.name}, the change fee and fare difference should be waived.`:'What would the total cost be?'}`;
+    script=`Hi, I’m calling about my ${r.viaName} booking${ref}, ${A.name} confirmation ${confs}. ${R}. ${standby?`Could you ask ${A.name} to add me to the standby list for ${flight}${need}?`:r.disrupted?`I saw ${flight}, has seats on ${A.name}. Would you be able to move ${T.travelers>1?'us':'me'} onto it?`:`I saw ${flight}, has seats on ${A.name}. Could you move ${T.travelers>1?'us':'me'} onto it, and what would the total cost be?`}`;
   } else {
     who=`a ${A.name} agent`;
     if(standby)steps=[`${A.app}: request standby for ${fls(o)}.`,`Not listed? Ask the gate agent or call ${A.name}.`,...bagStep];
     else if(r.disrupted)steps=[`${A.app}: open your trip → Change flight.`,`Pick ${fls(o)}. Skip the app’s suggested reroute.`,`Not offered? Ask an agent with the script.`,...bagStep];
     else steps=[`${A.app}: ${A.path}.`,`Pick ${fls(o)}. It should show ${k==='paid'?'$'+best.method.fee:'$0'}.`,`Not there? An agent can do it with the script.`,...bagStep];
     const close=r.disrupted?''
-      :k==='free'?(r.P.fareBased?'My fare includes free same-day changes.':'I believe same-day confirmed changes are complimentary at my status.'):k==='paid'?'I’m happy to pay the same-day change fee.':'';
-    script=`Hi, I’m booked on ${fls(r.eff)} to ${AP[to][0]} today, confirmation ${confs}${r.tier?`, and I’m ${A.name} ${r.tierName}`:''}. ${R}. ${ask} ${close}`.trim();
+      :'';
+    script=`Hi, I’m booked on ${fls(r.eff)} to ${AP[to][0]} today, confirmation ${confs}${r.tier?`, and I’m ${A.name} ${r.tierName}`:''}. ${R}. ${k==='paid'?ask.replace(/\?$/,', and what would the same-day change fee be?'):ask}`.trim();
   }
   if(best.sb){const so=best.sb.it,sf=`${fls(so)}, the ${fmt(so[0].dep,so[0].f.from)} ${via(so)}`;
     steps.push(`Ask for standby on ${fls(so)} too. It leaves first.`);
-    script+=` Could you also add me to the standby list for ${sf}${need}? It leaves earlier.`;}
+    script=script.replace(/\?$/,`, and also add me to the standby list for ${sf}${need}, which leaves earlier?`);}
   if(best.alt)steps.unshift(`This flight lands at ${AP[o[o.length-1].f.to][0]} instead of ${AP[to][0]}. Airlines usually allow this during disruptions, but only an agent can approve it.`);
   return {steps,script,who};
 }
@@ -1273,7 +1273,7 @@ denver:{
         steps:['United app: My Trips → Change flight.',
           'Pick UA 1288. Skip the app’s suggested reroute.',
           'Not offered? Call or visit the Logan desk with the script.'],
-        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M, and I’m a Premier Gold member. UA 2216 is delayed two and a half hours, which gets me into LA at 3:10 PM. Could you move me to UA 1288, the 8:15 AM nonstop from Boston? It shows seats available.'}],
+        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M. I’m a Premier Gold member. UA 2216 is running about two and a half hours late, which would get me into LA at 3:10 PM. I saw UA 1288, the 8:15 AM nonstop from Boston, still has seats. Would you be able to move me onto it?'}],
         feeds:['sched','seats','rules']},
       rights:[
         ['yes','Free change to any United flight to LA today','The delay is over an hour, so the change fee and fare difference are waived, including onto a nonstop.','rules'],
@@ -1293,7 +1293,7 @@ denver:{
         steps:['Tap Back, not Accept. Accept locks in 3:55 PM.',
           'Call United. Premier lines are shorter.',
           'Nonstop full? Ask for standby plus the best confirmed backup.'],
-        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M, and I’m a Premier Gold member. UA 2216 is delayed two and a half hours. The app is only offering a later Denver connection, but UA 1288, the 8:15 AM nonstop from Boston, shows seats available. Could you move me to that flight?'}],
+        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles this morning, confirmation K7XQ2M. I’m a Premier Gold member. UA 2216 is running about two and a half hours late, and the app is only offering a later Denver connection. I noticed UA 1288, the 8:15 AM nonstop from Boston, still has seats. Is there any chance you could move me onto that one?'}],
         feeds:['sched','seats']},
       lines:{rows:[['United app','','Often shows only the automatic rebooking.',''],['Phone, Premier line','','Can see and book the nonstop.','best'],['Logan check-in desk','','Slower, and you’re not at the airport yet.','']],tip:'Call while you finish getting ready.'},
       rights:[['yes','Free change to any United flight to LA today','You don’t have to take the first option offered. Any United flight with seats qualifies.','rules']],
@@ -1322,7 +1322,7 @@ denver:{
         steps:['Don’t board UA 1543 to Denver yet.',
           'At the Terminal B desk or by phone, use the script.',
           'Ask for standby on UA 1288 too. Keep the SFO seats.'],
-        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles, confirmation K7XQ2M. UA 2216 is now delayed almost four hours. Could you move me to UA 532 and UA 1971 through San Francisco, leaving at 9:10 AM? It shows seats available. Please also add me to the standby list for UA 1288, the 8:15 AM nonstop. With a delay this long, the change should be free.'}],
+        scripts:[{who:'a United agent',text:'Hi, I’m on UA 1543 and 2216 to Los Angeles, confirmation K7XQ2M. UA 2216 is now running almost four hours late. I saw UA 532 and UA 1971 through San Francisco, leaving at 9:10 AM, have seats. Could you move me onto those, and also add me to the standby list for UA 1288, the 8:15 AM nonstop?'}],
         feeds:['sched','seats','rules']},
       lines:{rows:[['United desk, Terminal B','','Can book the San Francisco route and add you to standby.','best'],['Phone, Premier line','','A good backup while you wait in line.','best'],['Gate B9','','Gate agents focus on their own flight.','']],tip:'Get in line and call at the same time. Hang up or step out of line when one works.'},
       rights:[
@@ -1380,8 +1380,8 @@ ohare:{
           'Ask for the Denver flights by number, for both of you.',
           'Confirm seats and both bags before you hang up.'],
         scripts:[
-          {who:'Expedia',text:'Hi, I’m calling about Expedia itinerary 7294018833651, United confirmation HJ4R9T, for Jordan and Sam Lee. United canceled our Chicago to Seattle flight, UA 2054, and moved us to tomorrow. Could you put both of us on UA 1940 to Denver at 12:30 PM and UA 2290 to Seattle? United shows seats available for both of us. Since United canceled the flight, there shouldn’t be any change fee or fare difference. We also have two checked bags that need to be rerouted.'},
-          {who:'a United agent',text:'Hi, we were on UA 2054 to Seattle, confirmation HJ4R9T, and it was canceled. We booked through Expedia and they’re on hold. Could you move both of us to UA 1940 and UA 2290 through Denver this afternoon? It shows seats available for both of us. And could you reroute our two checked bags?'}],
+          {who:'Expedia',text:'Hi, I’m calling about Expedia itinerary 7294018833651, United confirmation HJ4R9T, for Jordan and Sam Lee. United canceled our Chicago to Seattle flight, UA 2054. I saw UA 1940 to Denver at 12:30 PM and UA 2290 on to Seattle have seats for both of us. Could you help move us onto those, and make sure our two checked bags come along?'},
+          {who:'a United agent',text:'Hi, we were on UA 2054 to Seattle, confirmation HJ4R9T, and it was canceled. We booked through Expedia, and we’re on hold with them now. I saw UA 1940 and UA 2290 through Denver this afternoon have seats for both of us. Would you be able to move us onto those and reroute our two checked bags?'}],
         feeds:['sched','seats','rules']},
       lines:{rows:[['Expedia phone','','They sold the ticket, so they can always change it.','best'],['United desk near C11','','In a cancellation, United often rebooks you directly.','best'],['United app','','Often shows only the automatic rebooking.',''],['United phone','','May send you back to Expedia.','']],tip:'Do the top two at once.'},
       rights:[
@@ -1428,7 +1428,7 @@ newark:{
         steps:['United app: open ZR82KD → Change flight.',
           'Pick UA 1610 at 11:15 AM. It should show $0.',
           'Charge shown? Call with the script, before seats go.'],
-        scripts:[{who:'a United agent',text:'Hi, I’m a Premier Silver member on confirmation ZR82KD, UA 2291 from Newark to Miami at 9:00 AM. My earlier flight on a separate booking, UA 1872 from Boston, is likely to be late because its plane is delayed in Chicago, so I may miss the connection. Could you do a same-day change to UA 1610 at 11:15 AM? It shows seats available, and I believe same-day changes are free at my status if my fare class is open.'}],
+        scripts:[{who:'a United agent',text:'Hi, I’m a Premier Silver member on confirmation ZR82KD, flying UA 2291 from Newark to Miami at 9:00 AM. My earlier flight from Boston, UA 1872, is on a separate booking, and its plane is running late in Chicago, so I’m worried about missing the connection. I saw UA 1610 at 11:15 AM has seats. Would you be able to do a same-day change for me?'}],
         feeds:['inbound','sched','seats','rules']},
       rights:[
         ['no','Your connection isn’t protected','Separate bookings mean United doesn’t have to rebook your Miami flight if a late Boston flight makes you miss it.','intake'],
@@ -1455,7 +1455,7 @@ newark:{
         steps:['Skip the gate. Go to a customer service desk.',
           'Be polite. Mention United’s delay caused the miss.',
           'Standby only? Ask to be listed on every Miami flight.'],
-        scripts:[{who:'a United agent',text:'Hi, my flight from Boston, UA 1872, landed 36 minutes late and I missed UA 2291 to Miami on confirmation ZR82KD. I know they’re separate bookings, but the delay was United’s. Could you put me on UA 1610 at 11:15 AM, or list me on standby, as a courtesy?'}],
+        scripts:[{who:'a United agent',text:'Hi, my flight from Boston, UA 1872, landed 36 minutes late, and I missed UA 2291 to Miami on confirmation ZR82KD. I know they’re separate bookings. Is there any way you could help me get on UA 1610 at 11:15 AM, or list me on standby for it?'}],
         feeds:['status','sched','seats']},
       lines:{rows:[['United customer service desk','','Can change your second booking.','best'],['Phone','','Backup while you walk to the desk.',''],['Gate C120','','Can’t help once the flight has left.','']],tip:'Walk to the desk and call on the way.'},
       rights:[['no','Not protected: separate tickets','Missing a connection between two bookings isn’t covered. Any help is a courtesy.','intake'],['','United Explorer covers expenses after 12 hours or overnight','Up to $500 if you end up stuck tonight.','cards']],
@@ -1491,7 +1491,7 @@ eve:{
         steps:['United app: My Trips → Change flight.',
           'Pick UA 1555. It should show $0.',
           'Charge shown? Call United with the script.'],
-        scripts:[{who:'a United agent',text:'Hi, I’m a Premier Platinum member on confirmation T4WN8C, flying UA 1802 and UA 655 from Boston to San Francisco through Chicago tomorrow morning. Snow is forecast at O’Hare during my 50-minute connection. Could you do a same-day change to UA 1555, the 8:30 AM nonstop to San Francisco? It shows seats available, and I believe same-day changes are free at my status if my fare class is open.'}],
+        scripts:[{who:'a United agent',text:'Hi, I’m a Premier Platinum member on confirmation T4WN8C, flying UA 1802 and UA 655 from Boston to San Francisco through Chicago tomorrow morning. Snow is in the forecast at O’Hare, and I only have 50 minutes to connect. I saw UA 1555, the 8:30 AM nonstop to San Francisco, has seats. Would you be able to switch me onto it?'}],
         feeds:['weather','sched','seats','rules']},
       rights:[
         ['yes','Same-day change: free with Premier Platinum','When the same fare class is open. Available from 24 hours before departure.','rules'],
@@ -1514,7 +1514,7 @@ eve:{
         sub:'Free standby. Your 1:50 PM seat stays as backup.',
         route:{old:[['BOS','ORD','late'],['ORD','SFO','bad']],neu:['ORD','SFO'],t:{oldDep:'1:50 PM',old:'4:55 PM',ot:'bad',dep:'11:15 AM',arr:'1:55 PM',gain:'3 hr sooner'}},
         steps:['Request standby for UA 1290 in the United app.','Not listed? Ask the agent at gate B6.','Stay close. Names are called ~15 min before departure.'],
-        scripts:[{who:'the gate agent',text:'Hi, I missed UA 655 to San Francisco because of the snow delay, and I’m confirmed on UA 2177 at 1:50 PM. I’m a Premier Platinum member. Could you add me to the standby list for UA 1290 at 11:15 AM, and keep my 1:50 PM seat as a backup?'}],
+        scripts:[{who:'the gate agent',text:'Hi, I missed UA 655 to San Francisco after the snow delay, and I’m now confirmed on UA 2177 at 1:50 PM. I’m a Premier Platinum member. Could you add me to the standby list for UA 1290 at 11:15 AM, while keeping my 1:50 PM seat as a backup?'}],
         feeds:['sched','seats','rules']},
       lines:{rows:[['United app','','Lets you join the standby list for many flights.','best'],['Agent at gate B6','','Can add you to standby for nearby flights too.','best'],['Phone, Premier line','','Busy during snow. Use only if the others fail.','']],tip:'Try the app first, then get in the gate line while it loads.'},
       rights:[['yes','Free rebooking on any United flight to San Francisco today','The missed connection is protected because both flights are on one booking.','rules'],['no','No meals or hotel from United for snow','Weather delays aren’t covered by United’s commitments.','rules']],
@@ -1545,7 +1545,7 @@ bag:{
           'Show your bag tag sticker and ask them to file a delayed-bag report.',
           'Save the file number they give you. You need it to track the bag and claim.',
           'Tell them where you’re staying. United will deliver your bag there when it arrives.','Buy what you need for tonight and keep the receipts. Your card can pay you back.'],
-        scripts:[{who:'the baggage agent',text:'Hi, my checked bag from UA 1100 from Boston didn’t arrive. Could you file a delayed-bag report and give me the file reference number? I’m staying at a hotel in Union Square tonight, so please deliver it there. Do you know which flight it’s on, and what United covers for essentials while I wait?'}],
+        scripts:[{who:'the baggage agent',text:'Hi, my checked bag from UA 1100 from Boston didn’t come out. Could you help me file a delayed-bag report? I’m staying at a hotel in Union Square tonight. Could it be delivered there once it turns up, and is there anything United can cover for essentials in the meantime?'}],
         feeds:['bags','rules']},
       lines:{rows:[['Baggage office at the carousel','','Files the report and takes your delivery address. Do this first.','best'],['United app','','Good for tracking the bag afterward.',''],['Phone','','Only if the office is closed.','']],tip:'Don’t leave the airport until you have a file reference number.'},
       rights:[
@@ -1600,7 +1600,7 @@ delta:{al:'DL',
         steps:['Fly Delta app: My Trips → Change flight.',
           'Pick DL 2210 at 6:00 AM. It should show $0.',
           'Leave now. It boards around 5:20.'],
-        scripts:[{who:'a Delta agent',text:'Hi, I’m a Gold Medallion member on confirmation GQ7M4R, flying DL 1129 to Detroit and DL 1440 to Seattle this morning. DL 1129 is running 30 minutes late, which leaves me 40 minutes in Detroit. Could you do a same-day change to DL 2210 at 6:00 AM, keeping DL 1440? It shows seats available, and same-day confirmed changes are free at my status if my fare class is open.'}],
+        scripts:[{who:'a Delta agent',text:'Hi, I’m a Gold Medallion member on confirmation GQ7M4R, flying DL 1129 to Detroit and DL 1440 to Seattle this morning. DL 1129 is running 30 minutes late, which only leaves me 40 minutes in Detroit. I saw DL 2210 at 6:00 AM has seats. Would you be able to move me onto it and keep DL 1440?'}],
         note:'Delta’s same-day changes can’t turn a connection into a nonstop. The Boston–Seattle nonstop only becomes an option if Delta’s delay breaks your connection.',
         feeds:['inbound','sched','seats','rules']},
       lines:{rows:[['Fly Delta app','','Shows same-day changes on your routing.','best'],['Phone, Medallion line','','Backup if the app shows a charge.',''],['Logan check-in desk','','You’re not at the airport yet.','']],tip:'Use the app now. Every minute matters for the 6:00 AM.'},
@@ -1625,7 +1625,7 @@ delta:{al:'DL',
         sub:'Free. Lands 45 min after your original time.',
         route:{old:[['BOS','DTW','late'],['DTW','SEA','bad']],neu:['BOS','SEA'],t:{oldDep:'7:55 AM',old:'Missed',ot:'bad',dep:'9:55 AM',arr:'1:05 PM'}},
         steps:['Don’t board DL 1129 to Detroit.','At the Terminal A desk or by phone, use the script.'],
-        scripts:[{who:'a Delta agent',text:'Hi, I’m a Gold Medallion member on confirmation GQ7M4R. DL 1129 is now 55 minutes late, so I’ll miss DL 1440 in Detroit. Could you rebook me on DL 353, the 9:55 AM nonstop to Seattle? It shows seats available.'}],
+        scripts:[{who:'a Delta agent',text:'Hi, I’m a Gold Medallion member on confirmation GQ7M4R. DL 1129 is now 55 minutes late, so I’m going to miss DL 1440 in Detroit. I saw DL 353, the 9:55 AM nonstop to Seattle, has seats. Would you be able to rebook me on it?'}],
         feeds:['sched','seats','rules']},
       rights:[['yes','Free rebooking on any Delta flight to Seattle','A broken connection caused by Delta is a disruption, so the routing rule no longer applies.','dashboard']],
       choices:[{label:'Ask for the nonstop',next:'dl4'}]},
@@ -1651,7 +1651,7 @@ american:{al:'AA',
         sub:'Free standby. Your 1:30 PM seat stays as backup.',
         route:{old:[['BOS','DFW','ok'],['DFW','PHX','ok']],neu:['DFW','PHX'],t:{oldDep:'1:30 PM',old:'2:45 PM',ot:'ok',dep:'10:40 AM',arr:'11:55 AM',gain:'2 hr 50 min sooner'}},
         steps:['American app: request standby for AA 2417.','Not listed? Ask at the gate before 9:55 AM.','Stay near gate C14 for the standby call.'],
-        scripts:[{who:'the gate agent',text:'Hi, I’m on AA 2160 to Phoenix at 1:30 PM, confirmation MXR4TQ, and I’m AAdvantage Gold. Could you add me to the standby list for AA 2417 at 10:40 AM, and keep my 1:30 PM seat as a backup?'}],
+        scripts:[{who:'the gate agent',text:'Hi, I’m on AA 2160 to Phoenix at 1:30 PM, confirmation MXR4TQ, and I’m AAdvantage Gold. I saw AA 2417 at 10:40 AM has open seats. Could you add me to the standby list for it, and keep my 1:30 PM seat as a backup?'}],
         note:'On American, AAdvantage Gold and Platinum members pay for confirmed same-day changes. Only Executive Platinum, Platinum Pro and premium fares get them free.',
         feeds:['sched','seats','rules']},
       lines:{rows:[['American app','','Can list you for standby on the same route.','best'],['Agent at gate C14','','Must be asked at least 45 minutes before departure.','best'],['Phone','','Too slow for this one.','']],tip:'Use the app now; if it fails, walk to the gate before 9:55 AM.'},
@@ -1689,7 +1689,7 @@ southwest:{al:'WN',
         sub:'Free, and seats available.',
         route:{old:[['BOS','MDW','ok'],['MDW','DEN','late']],neu:['MDW','DAL','DEN'],t:{oldDep:'1:00 PM',old:'2:35 PM',ot:'late',dep:'9:05 AM',arr:'12:55 PM',gain:'1 hr 40 min sooner'}},
         steps:['Southwest app: look for the rebooking option.','Not there? Ask the agent at gate B12.','Staying may earn a travel credit. Pick one.'],
-        scripts:[{who:'a Southwest agent',text:'Hi, I’m on WN 2205 to Denver, confirmation 7KQ2ZD. It’s now three and a half hours late. Could you move me to WN 1873 to Dallas Love Field at 9:05 AM and WN 642 to Denver? It shows seats available.'}],
+        scripts:[{who:'a Southwest agent',text:'Hi, I’m on WN 2205 to Denver, confirmation 7KQ2ZD, and it’s now running three and a half hours late. I saw WN 1873 to Dallas Love Field at 9:05 AM and WN 642 on to Denver have seats. Would you be able to move me onto those?'}],
         note:'Southwest doesn’t rebook on other airlines, so Rerouted only shows Southwest flights.',
         feeds:['sched','seats','rules']},
       lines:{rows:[['Southwest app','','May offer free changes during long delays.','best'],['Agent at gate B12','','Can rebook you and confirm the travel credit.','best'],['Phone','','Busy during delays.','']],tip:'Check the app while you get in the gate line.'},
