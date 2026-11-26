@@ -9,544 +9,658 @@
 <meta name="description" content="Rerouted tells United, Delta, American and Southwest travelers what they're owed when a flight slips, the best flight to move to, and what to say to get it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Atkinson+Hyperlegible+Next:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
 
+/* ---------- Tokens: airport wayfinding ----------
+   Signage yellow and near-black carry the primary action. Blue is for links and
+   selection. Green, amber and red only ever mean flight status. */
 :root{
-  --page:#E9EDF2; --surface:#FFFFFF; --field:#F4F6F9; --ink:#121A26; --muted:#566275; --line:#DCE1E8;
-  --tarmac:#1A2230; --tarmac-2:#243045; --tarmac-ink:#EEF2F7; --tarmac-muted:#9AA9C0;
-  --edge:#3564F0; --edge-soft:#E7EDFE; --center:#12A26B; --center-soft:#E2F4EC; --hold:#F2A900; --hold-soft:#FFF4D6;
-  --stop:#D7352B; --stop-soft:#FBE7E5; --on-accent:#FFFFFF; --feed:#7A4DD8; --feed-soft:#F0EAFD;
+  --page:#F3F5F7; --surface:#FFFFFF; --field:#EEF1F5; --ink:#14181F; --muted:#475264; --line:#D5DBE3; --control:#667085;
+  --tarmac:#1B2230; --tarmac-2:#243045; --tarmac-ink:#F1F4F8; --tarmac-muted:#AEBBD0;
+  --sign:#FFD21F; --sign-ink:#14181F; --cta:#14181F; --cta-ink:#FFD21F; --hero:#FFD21F; --hero-ink:#14181F;
+  --edge:#1D4FC4; --edge-soft:#E6EDFC; --center:#0B6B47; --center-soft:#E0F3EB; --hold:#9A6A00; --hold-soft:#FFF3CC;
+  --stop:#B3261E; --stop-soft:#FBE7E5; --feed:#5B32B0; --feed-soft:#F0EAFD; --focus:#1D4FC4; --bezel:#1B2230;
+  --body:'Atkinson Hyperlegible Next',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --display:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   color-scheme:light;
   box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --page:#0B1018; --surface:#141B27; --field:#101722; --ink:#E8EDF4; --muted:#9AA7BA; --line:#263043;
-    --tarmac:#1B2434; --tarmac-2:#25314A;
-    --edge:#7C9BFF; --edge-soft:#1C2647; --center:#3FD195; --center-soft:#123227; --hold:#FFC23D; --hold-soft:#3A2F12;
-    --stop:#FF6F63; --stop-soft:#3B1C1A; --on-accent:#0B1018; --feed:#B79BFF; --feed-soft:#271D45;
+    --page:#0E131B; --surface:#171E29; --field:#111823; --ink:#EDF1F7; --muted:#AFBACB; --line:#2C3749; --control:#7B889D;
+    --tarmac:#1F2939; --tarmac-2:#2A364C;
+    --cta:#FFD21F; --cta-ink:#14181F; --hero:#171E29; --hero-ink:#EDF1F7;
+    --edge:#93B2FF; --edge-soft:#1D2A4D; --center:#4FD69C; --center-soft:#12342A; --hold:#FFC23D; --hold-soft:#3A2F12;
+    --stop:#FF8F84; --stop-soft:#3D1D1B; --feed:#BFA6FF; --feed-soft:#271D45; --focus:#FFD21F; --bezel:#364258;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --page:#0B1018; --surface:#141B27; --field:#101722; --ink:#E8EDF4; --muted:#9AA7BA; --line:#263043;
-  --tarmac:#1B2434; --tarmac-2:#25314A;
-  --edge:#7C9BFF; --edge-soft:#1C2647; --center:#3FD195; --center-soft:#123227; --hold:#FFC23D; --hold-soft:#3A2F12;
-  --stop:#FF6F63; --stop-soft:#3B1C1A; --on-accent:#0B1018; --feed:#B79BFF; --feed-soft:#271D45;
+  --page:#0E131B; --surface:#171E29; --field:#111823; --ink:#EDF1F7; --muted:#AFBACB; --line:#2C3749; --control:#7B889D;
+  --tarmac:#1F2939; --tarmac-2:#2A364C;
+  --cta:#FFD21F; --cta-ink:#14181F; --hero:#171E29; --hero-ink:#EDF1F7;
+  --edge:#93B2FF; --edge-soft:#1D2A4D; --center:#4FD69C; --center-soft:#12342A; --hold:#FFC23D; --hold-soft:#3A2F12;
+  --stop:#FF8F84; --stop-soft:#3D1D1B; --feed:#BFA6FF; --feed-soft:#271D45; --focus:#FFD21F; --bezel:#364258;
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:inherit}
 [hidden]{display:none !important}
-html,body{height:100%}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--page);color:var(--ink);font:16px/1.5 'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
-button{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--edge);outline-offset:2px}
+body{margin:0;background:var(--page);color:var(--ink);font:1rem/1.55 var(--body);overflow-wrap:break-word}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--edge)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+[tabindex="-1"]:focus{outline:none}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.board,.outcome,.recap,.lock,.s-cta{--focus:#FFD21F}
 
-/* Stage: brand panel + phone on desktop, full-screen app on phones */
-.stage{height:100%;display:flex;align-items:center;justify-content:center;gap:64px;padding:24px}
-.brandside{max-width:420px}
-.device{position:relative;width:410px;height:min(860px,calc(100vh - 48px));background:var(--surface);border:10px solid var(--tarmac);border-radius:44px;overflow:hidden;box-shadow:0 30px 60px -30px rgba(18,26,38,.55);display:flex;flex-direction:column}
-@media (max-width:900px){
-  .stage{padding:0;gap:0;display:block}
-  .brandside{display:none}
-  .device{width:100%;height:100%;border:0;border-radius:0;box-shadow:none}
-}
-.screen{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative}
+/* ---------- App ---------- */
+.device{position:relative;background:var(--surface);overflow:hidden;display:flex;flex-direction:column}
+.screen{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative;scroll-padding:5rem 0 11rem}
+.screen:focus-visible{outline-offset:-3px}
 .screen.dark{background:var(--tarmac);color:var(--tarmac-ink)}
+:where(.screen) h2,:where(.screen) h3{font-family:var(--display);font-weight:700;font-stretch:87.5%;font-size:1.3125rem;margin:1.625rem 0 .625rem;line-height:1.2}
+:where(.screen) h2:first-child,:where(.screen) h3:first-child{margin-top:0}
+:where(.screen) h4{font-size:1rem;line-height:1.3;margin:0}
 
 /* Brand */
-.mark{display:inline-flex;align-items:center;gap:12px;color:inherit;text-decoration:none}
+.mark{display:inline-flex;align-items:center;gap:.75rem;color:inherit;text-decoration:none;min-height:44px}
 .mark svg{width:46px;height:30px;flex:none}
 .mark .path{fill:none;stroke:var(--edge);stroke-width:3;stroke-linecap:round}
-.mark .ghost{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:2 4;stroke-linecap:round;opacity:.7}
+.mark .ghost{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:2 4;stroke-linecap:round}
 .mark .dot{fill:currentColor}
-.word{font-weight:800;font-stretch:125%;font-size:24px;letter-spacing:-.01em;line-height:1}
-.brandside h1{font-weight:800;font-stretch:87.5%;font-size:44px;line-height:1.02;letter-spacing:-.015em;margin:28px 0 16px}
-.brandside p{color:var(--muted);font-size:17px;margin:0 0 14px;max-width:40ch}
-.brandside .proto{font-size:14px;border-left:3px solid var(--hold);padding:6px 0 6px 12px;margin-top:26px}
-@media (prefers-reduced-motion:no-preference){
-  .mark .path{stroke-dasharray:90;stroke-dashoffset:90;animation:draw 1.1s .2s cubic-bezier(.6,0,.2,1) forwards}
-  @keyframes draw{to{stroke-dashoffset:0}}
-}
+.word{font-family:var(--display);font-weight:800;font-stretch:125%;font-size:1.5rem;letter-spacing:-.01em;line-height:1}
 
 /* Tabs */
-.tabs{display:flex;border-top:1px solid var(--line);background:var(--surface);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
-.tabs button{flex:1;background:none;border:0;padding:6px 0;font-size:12px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border-radius:10px}
+.tabs{display:flex;gap:.25rem;border-top:1px solid var(--line);background:var(--surface);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabs button{flex:1;background:none;border:0;padding:6px 0;font-weight:700;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border-radius:10px}
 .tabs button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tabs button[aria-current="page"]{color:var(--edge)}
 
 /* Common blocks */
-.pad{padding:18px 18px 28px}
-.topbar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding:12px 14px 10px;display:flex;align-items:center;gap:10px}
-.topbar .back{background:none;border:0;font-size:15px;font-weight:600;color:var(--edge);padding:6px 4px;cursor:pointer}
-.topbar .ttl{font-weight:800;font-stretch:112.5%;font-size:17px;line-height:1.1}
-.topbar .sub{font-size:13px;color:var(--muted)}
-h2{font-weight:700;font-stretch:87.5%;font-size:21px;margin:26px 0 10px;line-height:1.2}
-h2:first-child{margin-top:0}
-.hint{color:var(--muted);font-size:15px;margin:-4px 0 14px}
-.note{color:var(--muted);font-size:14px;margin:8px 0 0}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
-.btn{font-weight:600;font-size:15px;border-radius:12px;padding:11px 16px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
-.btn.primary{background:var(--edge);border-color:var(--edge);color:var(--on-accent)}
+.pad{padding:1.125rem 1.125rem 1.75rem}
+.topbar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:.625rem}
+.topbar .back{background:none;border:0;font-weight:700;color:var(--edge);padding:6px;cursor:pointer;white-space:nowrap}
+.topbar .ttl{font-family:var(--display);font-weight:800;font-stretch:112.5%;line-height:1.15;margin:0}
+.topbar .sub{color:var(--muted)}
+.hint{color:var(--muted);margin:-4px 0 .875rem}
+.note{color:var(--muted);font-size:.9375rem;margin:.5rem 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:1rem}
+.btn{font-weight:700;cursor:pointer;border:1px solid var(--control);background:var(--surface);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;text-align:center}
+.btn.primary{background:var(--cta);border-color:var(--cta);color:var(--cta-ink)}
 .btn.block{width:100%}
-.btn.small{font-size:13px;padding:6px 11px;border-radius:9px}
 .btn:disabled{opacity:.55}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.pill{display:inline-block;font-weight:700;font-size:12px;border-radius:12px;padding:2px 9px;white-space:nowrap}
+.row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.pill{display:inline-block;font-family:var(--body);font-stretch:100%;font-weight:700;font-size:.8125rem;border-radius:12px;padding:2px 9px;white-space:nowrap}
 .pill.ok{background:var(--center-soft);color:var(--center)}
 .pill.warn{background:var(--hold-soft);color:var(--ink)}
 .pill.bad{background:var(--stop-soft);color:var(--stop)}
-.feed{display:inline-block;font-size:11px;font-weight:700;color:var(--feed);background:var(--feed-soft);border-radius:8px;padding:1px 7px;margin:4px 4px 0 0;letter-spacing:.01em}
-label{display:block;font-size:14px;font-weight:500;color:var(--muted);margin-bottom:12px}
-select,input[type=text],input[type=time],input[type=date],input[type=number],textarea{display:block;width:100%;margin-top:4px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);font:inherit;font-size:16px}
-textarea{min-height:120px;resize:vertical;font-size:14px;line-height:1.45}
-.chk{display:flex;align-items:flex-start;gap:10px;color:var(--ink);font-size:15px}
-.chk input{width:20px;height:20px;margin-top:1px;accent-color:var(--edge);flex:none}
-.chk small{display:block;color:var(--muted);font-size:13px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.feed{display:inline-block;font-size:.75rem;font-weight:700;color:var(--feed);background:var(--feed-soft);border-radius:8px;padding:1px 7px;margin:4px 4px 0 0}
+label{display:block;font-size:.9375rem;font-weight:700;color:var(--ink);margin-bottom:.75rem}
+select,input[type=text],input[type=time],input[type=date],input[type=number],textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--control);border-radius:10px;background:var(--surface);color:var(--ink);font-size:1rem;font-weight:400}
+textarea{min-height:120px;resize:vertical;padding:10px 12px;line-height:1.45}
+::placeholder{color:var(--muted);opacity:1}
+.chk{display:flex;align-items:flex-start;gap:.625rem;color:var(--ink);font-size:.9375rem;font-weight:400;min-height:44px}
+.chk input{width:24px;height:24px;margin:1px 0 0;accent-color:var(--edge);flex:none}
+.chk small{display:block;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));gap:0 .625rem}
 
 /* Home */
-.hello{font-weight:800;font-stretch:87.5%;font-size:30px;line-height:1.05;margin:4px 0 6px;letter-spacing:-.01em}
-.intro{background:var(--hold-soft);border-radius:14px;padding:12px 14px;font-size:14px;margin:14px 0 4px}
-.intro b{display:block;font-size:15px;margin-bottom:2px}
-.scncard{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:0;margin:0 0 12px;cursor:pointer;overflow:hidden}
-.scncard .strip{background:var(--tarmac);color:var(--tarmac-ink);padding:12px 14px;display:flex;justify-content:space-between;align-items:baseline;font-weight:800;font-stretch:112.5%;font-size:18px}
-.scncard .strip span{font-weight:500;font-stretch:100%;font-size:13px;color:var(--tarmac-muted)}
-.scncard .body{padding:12px 14px 14px}
-.scncard b{display:block;font-size:17px}
-.scncard p{margin:3px 0 8px;color:var(--muted);font-size:14px}
-.scncard .meta{font-size:13px;color:var(--muted)}
-.scncard.done .strip::after{content:"Played";font-size:12px;font-weight:700;color:var(--center);background:var(--center-soft);border-radius:10px;padding:1px 8px;font-stretch:100%}
+.hello{font-family:var(--display);font-weight:800;font-stretch:87.5%;line-height:1.1;letter-spacing:-.01em}
+.intro{background:var(--hold-soft);border-radius:14px;padding:.75rem .875rem}
+.intro b{display:block;margin-bottom:2px}
 
 /* Lock screen */
-.lock{min-height:100%;padding:56px 18px 24px;background:radial-gradient(120% 70% at 50% 0%,var(--tarmac-2),var(--tarmac));color:var(--tarmac-ink);display:flex;flex-direction:column;align-items:center}
-.lock .date{font-size:16px;font-weight:600;color:var(--tarmac-muted)}
-.lock .time{font-size:84px;font-weight:300;font-stretch:87.5%;line-height:1;letter-spacing:-.02em;margin:4px 0 6px}
-.lock .where{font-size:14px;color:var(--tarmac-muted);margin-bottom:34px}
-.notif{width:100%;text-align:left;background:rgba(255,255,255,.13);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:12px 14px;color:var(--tarmac-ink);cursor:pointer}
-.notif .app{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;color:var(--tarmac-muted);margin-bottom:4px;letter-spacing:.02em}
-.notif .app span:first-child{display:flex;align-items:center;gap:6px}
-.notif .app svg{width:20px;height:13px}
-.notif b{display:block;font-size:15px}
-.notif p{margin:2px 0 0;font-size:14px;line-height:1.4}
-.lock .open{margin-top:auto;font-size:14px;color:var(--tarmac-muted)}
-.lock .persona{width:100%;margin-top:22px;font-size:13px;color:var(--tarmac-muted);background:rgba(0,0,0,.18);border-radius:14px;padding:10px 12px}
-@media (prefers-reduced-motion:no-preference){
-  .lock .notif{animation:drop .6s .5s cubic-bezier(.2,.8,.2,1) both}
-  @keyframes drop{from{opacity:0;transform:translateY(-18px) scale(.97)}to{opacity:1;transform:none}}
-}
+.lock{min-height:100%;padding:1.5rem 1.125rem;background:radial-gradient(120% 70% at 50% 0%,var(--tarmac-2),var(--tarmac));color:var(--tarmac-ink);display:flex;flex-direction:column;align-items:center;gap:.875rem;text-align:center}
+.lock h2{margin:0;font-size:1.5rem}
+.lock .when{margin:0;color:var(--tarmac-muted)}
+.lock .time{display:block;font-family:var(--display);font-size:4rem;font-weight:300;font-stretch:87.5%;line-height:1;color:var(--tarmac-ink)}
+.lock .persona{width:100%;margin:0;text-align:left;background:rgba(0,0,0,.25);border-radius:14px;padding:.75rem .875rem}
+.lock .btn{width:100%}
+.lock .btn.primary{background:var(--sign);border-color:var(--sign);color:var(--sign-ink)}
+.lock .btn.quiet{background:transparent;color:var(--tarmac-ink);border-color:rgba(255,255,255,.5)}
+
+/* Branded notification: white card, blue app icon with the white route mark */
+.notif{width:100%;display:grid;grid-template-columns:40px minmax(0,1fr);gap:0 .75rem;align-items:start;text-align:left;background:#FFFFFF;color:#14181F;border:0;border-radius:20px;box-shadow:0 14px 30px -16px rgba(0,0,0,.55);padding:.75rem .875rem .8125rem;cursor:pointer}
+.appicon{width:40px;height:40px;border-radius:10px;background:#3564F0;display:grid;place-items:center}
+.appicon svg{width:28px;height:19px}
+.notif span{display:block}
+.notif .appicon{display:grid}
+.notif .app{display:flex;justify-content:space-between;gap:.5rem;color:#1D4FC4;margin-bottom:2px;font-size:.8125rem;font-weight:700}
+.notif .app span:last-child{color:#475264;font-weight:400}
+.notif b{display:block;color:#14181F;line-height:1.3;margin-bottom:2px;font-size:1rem}
+.notif .msg{color:#333D4E;font-size:.9375rem;line-height:1.4}
+.notif:focus-visible{outline:3px solid #1D4FC4;outline-offset:2px;box-shadow:0 0 0 8px #FFD21F}
 
 /* Toast (in-app notification) */
-#toast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
-#toast .notif{background:rgba(26,34,48,.94);box-shadow:0 16px 30px -18px rgba(0,0,0,.7)}
-@media (prefers-reduced-motion:no-preference){#toast .notif{animation:drop .45s cubic-bezier(.2,.8,.2,1) both}}
-/* Branded notification: white card, blue app icon with the white route mark */
-.notif{display:grid;grid-template-columns:40px minmax(0,1fr);gap:0 12px;align-items:start;background:#FFFFFF;color:#121A26;border:0;box-shadow:0 14px 30px -16px rgba(0,0,0,.55);backdrop-filter:none;-webkit-backdrop-filter:none;padding:12px 14px 13px}
-#toast .notif{background:#FFFFFF;box-shadow:0 18px 34px -16px rgba(0,0,0,.5);outline:1px solid #DCE1E8}
-.appicon{width:40px;height:40px;border-radius:10px;background:#3564F0;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
-.appicon svg{width:28px;height:19px}
-.notif .app{color:#3564F0;margin-bottom:2px;font-size:12px;letter-spacing:.06em}
-.notif .app span:last-child{color:#566275;font-weight:500;letter-spacing:0}
-.notif b{color:#121A26;line-height:1.3;margin-bottom:2px}
-.notif p{color:#3A4556}
-.notif:focus-visible{outline:2px solid #3564F0;outline-offset:3px}
-
+#toast{position:absolute;left:2px;right:2px;top:2px;z-index:30;max-height:calc(100% - 4px);overflow:auto;padding:8px}
+#toast:empty{padding:0}
+#toast .notif{border:1px solid #667085}
+#toast .dismiss{grid-column:2;margin-top:6px;font-size:.875rem;font-weight:700;color:#1D4FC4;text-decoration:underline}
+@media (prefers-reduced-motion:no-preference){
+  #toast .notif,.lock .notif{animation:drop .45s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes drop{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
+}
 
 /* Trip step */
-.clock{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:3px 9px;color:var(--ink)}
+.clock{display:inline-flex;align-items:center;gap:6px;font-weight:700;background:var(--field);border:1px solid var(--line);border-radius:12px;color:var(--ink)}
 .clock i{width:7px;height:7px;border-radius:50%;background:var(--hold)}
-.board{background:var(--tarmac);color:var(--tarmac-ink);border-radius:18px;padding:16px 16px 10px;position:relative;overflow:hidden;margin-bottom:16px}
-.board::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:repeating-linear-gradient(90deg,var(--hold) 0 22px,transparent 22px 38px);opacity:.85}
-.board .hl{font-size:27px;font-weight:800;font-stretch:75%;line-height:1.05;margin:0 0 12px;letter-spacing:-.005em}
-.board .cause{font-size:13px;color:var(--tarmac-muted);margin:-6px 0 10px}
-.frow{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.1);font-stretch:75%}
-.frow .fn{font-weight:700;font-size:17px}
-.frow .rt{font-size:17px;font-weight:600}
-.frow .tm{font-size:15px;text-align:right}
-.frow .tm s{color:var(--tarmac-muted);margin-right:6px}
-.frow .st{grid-column:1/-1;font-size:13px;font-weight:700;letter-spacing:.06em}
+.board{background:var(--tarmac);color:var(--tarmac-ink);position:relative;overflow:hidden;margin-bottom:1rem;font-family:var(--display)}
+.board::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:repeating-linear-gradient(90deg,var(--sign) 0 22px,transparent 22px 38px)}
+.board .hl{font-weight:800;font-stretch:75%;line-height:1.05;margin:0 0 .75rem}
+.board .cause{font-family:var(--body);color:var(--tarmac-muted);margin:-6px 0 .625rem}
+.frow{display:grid;grid-template-columns:auto 1fr auto;gap:2px .625rem;padding:9px 0;border-top:1px solid rgba(255,255,255,.16);font-stretch:75%}
+.frow .fn{font-weight:700}
+.frow .rt{font-weight:600}
+.frow .tm{text-align:right}
+.frow s,.tms s{color:var(--tarmac-muted);margin-right:6px;font-weight:500}
+.frow .st{grid-column:1/-1;font-weight:700;letter-spacing:.04em}
 .frow.f2{grid-template-columns:auto 1fr}
-.tms{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0}
-.tms small{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tarmac-muted);font-stretch:100%}
-.tms span{font-size:17px;font-weight:600}
-.tms s{color:var(--tarmac-muted);margin-right:6px;font-weight:500}
-.conn{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:2px 0 6px;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.07);font-size:14px}
+.tms{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin:2px 0}
+.tms small{display:block;font-family:var(--body);font-size:.8125rem;color:var(--tarmac-muted);font-stretch:100%}
+.tms span:not(.sr){font-size:1.0625rem;font-weight:600}
+.conn{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin:2px 0 6px;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.07);font-family:var(--body);font-size:.9375rem}
 .conn span{color:var(--tarmac-muted)}
-.conn b{font-weight:700}
-.conn.ok b{color:#6FE3B0}.conn.late b{color:#FFC23D}.conn.bad b{color:#FF8A7E}
-.st.ok{color:#6FE3B0}.st.late{color:#FFC23D}.st.bad{color:#FF8A7E}.st.new{color:#9FB7FF}
+.conn.ok b{color:#6FE3B0}.conn.late b{color:#FFC23D}.conn.bad b{color:#FF9D93}
+.st.ok{color:#6FE3B0}.st.late{color:#FFC23D}.st.bad{color:#FF9D93}.st.new{color:#AFC3FF}
 
-.evlab{display:block;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
-.event{background:var(--field);border-radius:14px;padding:12px 14px;font-size:15px;margin:0 0 16px;border-left:4px solid var(--edge)}
-.move{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--center);border-radius:18px;padding:16px;margin-bottom:8px}
+.evlab{display:block;font-size:.875rem;font-weight:700;color:var(--muted);margin-bottom:3px}
+.event{background:var(--field);margin:0 0 1rem;border-left:4px solid var(--edge)}
+.move{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--center);margin-bottom:.5rem}
 .move.warn{border-top-color:var(--hold)}
-.move.neutral{border-top-color:var(--line)}
-.move .label{font-size:13px;font-weight:700;color:var(--center);margin-bottom:2px}
+.move.neutral{border-top-color:var(--control)}
+.move .label{font-weight:700;color:var(--center);margin:0 0 .5rem}
 .move.warn .label{color:var(--ink)}
 .move.neutral .label{color:var(--muted)}
-.move h3{font-weight:800;font-stretch:87.5%;font-size:23px;line-height:1.1;margin:0 0 6px;letter-spacing:-.005em}
-.move .sub{color:var(--muted);margin:0 0 10px;font-size:15px}
-.move ol{margin:10px 0 14px;padding-left:20px}
-.move li{margin-bottom:7px;font-size:15px}
+.move h3{font-weight:800;margin:0 0 6px}
+.move .sub{color:var(--muted);margin:0 0 .625rem}
 .routeviz svg{width:100%;height:auto;display:block}
-.legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin:-2px 0 4px}
+.legend{display:flex;gap:1rem;font-size:.875rem;color:var(--muted);margin:-2px 0 4px}
 .legend span::before{content:"";display:inline-block;width:16px;border-top:3px solid var(--center);vertical-align:middle;margin-right:6px}
 .legend span.old::before{border-top:3px dashed var(--hold)}
-.script{background:var(--field);border-radius:14px;padding:12px 14px;margin:0 0 10px}
-.script .who{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px}
-.script p{margin:0 0 10px;font-size:15px;line-height:1.55}
-.thumbs{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:8px}
-.thumbs button{background:var(--field);border:1px solid var(--line);border-radius:10px;padding:4px 10px;cursor:pointer;font-size:13px}
-.thumbs button[aria-pressed="true"]{background:var(--edge-soft);border-color:var(--edge);color:var(--edge);font-weight:700}
-.rights{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.rights li{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:10px;padding:10px 12px}
-.rights li.yes{border-left-color:var(--center)}
-.rights li.no{border-left-color:var(--stop)}
-.rights li.warn{border-left-color:var(--hold)}
-.rights b{display:block;font-size:15px}
-.rights span{color:var(--muted);font-size:14px}
-.payers{display:grid;gap:8px;margin-bottom:12px}
-.payer{display:grid;grid-template-columns:1fr auto;gap:2px 10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--field)}
-.payer.on{border-color:var(--center);background:var(--center-soft)}
-.payer b{font-size:15px}
-.payer .amt{font-weight:800;font-stretch:75%;font-size:20px;text-align:right}
-.payer p{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted)}
-.explist{list-style:none;margin:0 0 10px;padding:0;font-size:15px}
-.explist li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
-.explist li small{color:var(--muted)}
-.explist button{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px}
-.meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin:8px 0 4px}
+.script{background:var(--field);border-radius:14px;padding:12px 14px;margin:0 0 .625rem}
+.script .who{font-weight:700;color:var(--muted);margin-bottom:6px}
+.script p{margin:0 0 .625rem}
+.thumbs{color:var(--muted)}
+.thumbs button{background:var(--surface);border:1px solid var(--control);cursor:pointer}
+.thumbs button[aria-pressed="true"]{background:var(--edge-soft);border:2px solid var(--edge);color:var(--edge);font-weight:700}
+.thumbs button[aria-pressed="true"]::before,.opts button[aria-pressed="true"]::before{content:"✓ ";content:"✓ " / ""}
+.rights{list-style:none;margin:0;padding:0;display:grid}
+.rights li{background:var(--surface);border:1px solid var(--line)}
+.rights b{display:block}
+.rights span:not(.pill):not(.sr):not(.feed){color:var(--muted);display:block}
+.payers{display:grid;gap:.5rem;margin-bottom:.75rem}
+.payer{display:grid;grid-template-columns:1fr auto;gap:2px .625rem;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--field)}
+.payer.on{border-color:var(--center);background:var(--center-soft);--muted:var(--ink)}
+.payer .amt{font-family:var(--display);font-weight:800;font-stretch:75%;font-size:1.25rem;text-align:right}
+.payer p{grid-column:1/-1;margin:0;font-size:.875rem;color:var(--muted)}
+.explist{list-style:none;margin:0 0 .625rem;padding:0}
+.explist li{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.625rem;padding:7px 0;border-bottom:1px solid var(--line)}
+.explist li small{color:var(--muted);font-size:.875rem}
+.explist li > span:first-child{flex:1 1 9rem}
+.explist button{background:none;border:0;color:var(--edge);text-decoration:underline;cursor:pointer;min-width:44px;min-height:44px}
+.meter{height:10px;border-radius:5px;background:var(--field);border:1px solid var(--control);overflow:hidden;margin:.5rem 0 4px}
 .meter i{display:block;height:100%;background:var(--center)}
-.exp{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
-.docs{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:8px}
-details.earlier{margin-top:22px;border-top:1px solid var(--line);padding-top:12px}
-details.earlier summary{cursor:pointer;font-weight:700;font-size:15px}
-.tl{list-style:none;margin:10px 0 0;padding:0}
-.tl li{position:relative;padding:0 0 14px 18px;font-size:14px}
-.tl li::before{content:"";position:absolute;left:3px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--muted)}
-.tl li::after{content:"";position:absolute;left:6.5px;top:16px;bottom:0;width:1px;background:var(--line)}
+.exp{display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));gap:0 .5rem}
+.docs{list-style:none;margin:0 0 .625rem;padding:0;display:grid;gap:.5rem}
+details.earlier{margin-top:1.375rem;border-top:1px solid var(--line);padding-top:.75rem}
+details.earlier summary{cursor:pointer;font-weight:700;gap:.5rem}
+details.earlier summary::before{content:"+";content:"+" / "";font-size:1.25rem}
+details.earlier[open] summary::before{content:"−";content:"−" / ""}
+.tl{list-style:none;margin:.625rem 0 0;padding:0}
+.tl li{position:relative;padding:0 0 .875rem 1.125rem;font-size:.9375rem}
+.tl li::before{content:"";position:absolute;left:3px;top:7px;width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.tl li::after{content:"";position:absolute;left:6.5px;top:17px;bottom:0;width:1px;background:var(--line)}
 .tl li:last-child::after{display:none}
 .tl b{display:block}
 .tl small{color:var(--muted)}
-.choices{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -10px 20px -14px rgba(18,26,38,.35);padding:10px 14px 12px;display:grid;gap:8px;z-index:4}
-.choices .ask{font-size:13px;font-weight:700;color:var(--muted);text-align:center}
+.choices{position:sticky;bottom:0;background:var(--surface);border-top:2px solid var(--ink);box-shadow:0 -10px 20px -14px rgba(18,26,38,.35);display:grid;z-index:4}
+.choices .ask{font-weight:700;text-align:center;margin:0}
 .choices.two{grid-template-columns:1fr 1fr}
 .choices.two .ask{grid-column:1/-1}
-.choices .btn{padding:10px 10px;font-size:14px;line-height:1.25}
-.choices .btn{flex-direction:column;align-items:stretch;text-align:center}
-.choices .btn small{font-weight:500;font-size:12px;opacity:.85}
+.choices .btn{padding:10px;line-height:1.25;flex-direction:column;align-items:stretch}
+.choices .btn small{display:block}
+@media (max-height:34rem){.choices{position:static}}
 
 /* Outcome */
-.outcome{background:var(--tarmac);color:var(--tarmac-ink);border-radius:18px;padding:18px;margin-bottom:16px}
-.outcome .big{font-size:32px;font-weight:800;font-stretch:75%;line-height:1.05;margin:2px 0 12px}
-.outcome dl{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:0;font-size:15px}
+.outcome{background:var(--tarmac);color:var(--tarmac-ink);padding:1.125rem;margin-bottom:1rem}
+.outcome .kicker{color:var(--tarmac-muted);margin:0}
+.outcome h3{font-weight:800;font-stretch:75%;font-size:2rem;line-height:1.05;margin:2px 0 .75rem}
+.outcome dl{display:grid;grid-template-columns:1fr auto;gap:6px .75rem;margin:0}
 .outcome dt{color:var(--tarmac-muted)}
 .outcome dd{margin:0;font-weight:700;text-align:right}
-.lesson{background:var(--edge-soft);border-radius:14px;padding:12px 14px;font-size:15px;margin-bottom:18px}
+.lesson{background:var(--edge-soft);margin-bottom:1.125rem}
 .lesson b{display:block;margin-bottom:2px}
-.q{margin:0 0 18px}
-.q > b{display:block;font-size:15px;margin-bottom:8px}
+.q{margin:0 0 1.125rem}
+.q > b{display:block;margin-bottom:.5rem}
 .opts{display:flex;flex-wrap:wrap;gap:6px}
-.opts button{background:var(--field);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:14px;cursor:pointer}
-.opts button[aria-pressed="true"]{background:var(--edge);border-color:var(--edge);color:var(--on-accent);font-weight:700}
+.opts button{background:var(--surface);border:1px solid var(--control);border-radius:12px;cursor:pointer}
+.opts button[aria-pressed="true"]{background:var(--cta);border-color:var(--cta);color:var(--cta-ink);font-weight:700}
 
 /* Show-the-agent view */
-.agent{min-height:100%;background:#000;color:#fff;padding:22px 20px 30px;display:flex;flex-direction:column}
-.agent .who{font-size:14px;color:#aab4c4;margin-bottom:12px}
-.agent p{font-size:26px;line-height:1.35;font-weight:600;margin:0 0 24px}
-.agent .btn{margin-top:auto;background:#fff;color:#000;border-color:#fff}
+.agent{background:#000;color:#fff;--focus:#FFD21F}
+.agent .say{overflow:auto}
 
 /* Wallet & you */
-.cardrow{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px;background:var(--surface)}
-.cardrow .thumb{width:72px;flex:none;margin-top:2px}
-.cardrow:not(.on) .thumb{opacity:.55;filter:saturate(.4)}
+.cardrow{display:flex;font-weight:400;border:1px solid var(--control);margin-bottom:.5rem;background:var(--surface)}
+.cardrow .thumb{flex:none}
+.cardrow.on{--muted:var(--ink)}
+.cardrow:not(.on) .thumb{filter:saturate(.4)}
 .cardface{display:block;width:100%;height:auto}
-.cardrail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:18px;margin:0 -18px 10px;padding:4px 18px 12px;-webkit-overflow-scrolling:touch}
+.cardrail{display:flex;gap:.75rem;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:18px;margin:0 -1.125rem .625rem;padding:4px 1.125rem .75rem;-webkit-overflow-scrolling:touch}
 .railitem{flex:0 0 80%;scroll-snap-align:start}
 .railitem .cardface{filter:drop-shadow(0 12px 14px rgba(18,26,38,.35))}
-.railitem b{display:block;font-size:15px;margin-top:10px}
-.railitem small{display:block;color:var(--muted);font-size:13px}
-.emptywallet{border:2px dashed var(--line);border-radius:16px;padding:22px 16px;text-align:center;color:var(--muted);font-size:14px;margin-bottom:10px}
-.cardrow b{display:block;font-size:15px}
-.cardrow small{display:block;color:var(--muted);font-size:13px}
-.feedlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.railitem b{display:block;margin-top:.625rem}
+.railitem small{display:block;color:var(--muted)}
+.emptywallet{border:2px dashed var(--control);border-radius:16px;text-align:center;color:var(--muted);margin-bottom:.625rem}
+.cardrow b,.cardrow small{display:block}
+.cardrow small{color:var(--muted)}
+.feedlist{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
 .feedlist li{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-.feedlist b{font-size:15px}
-.feedlist small{display:block;color:var(--muted);font-size:13px}
-.stage-tag{float:right;font-size:11px;font-weight:700;border-radius:8px;padding:1px 7px}
+.feedlist small{display:block;color:var(--muted);font-size:.875rem}
+.stage-tag{float:right;font-size:.75rem;font-weight:700;border-radius:8px;padding:1px 7px}
 .stage-tag.Launch{background:var(--edge-soft);color:var(--edge)}
 .stage-tag.Recommended{background:var(--center-soft);color:var(--center)}
 .stage-tag.Later{background:var(--field);color:var(--muted);border:1px solid var(--line)}
 .stage-tag.Gap{background:var(--stop-soft);color:var(--stop)}
-.switch{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
-.switch span{font-size:15px}
-.switch small{display:block;color:var(--muted);font-size:13px}
-.switch input{width:22px;height:22px;accent-color:var(--edge)}
-.status{font-size:14px;margin:10px 0 0;min-height:1.3em}
+.switch{display:flex;justify-content:space-between;align-items:center;gap:.75rem;border-bottom:1px solid var(--line)}
+.switch span,.switch label{margin:0}
+.switch small{display:block;color:var(--muted)}
+.switch input{accent-color:var(--edge)}
+.group .switch label{border:0;padding:0;cursor:pointer}
+.status{margin:.625rem 0 0;min-height:1.3em}
 .status.err{color:var(--stop)}
-.seg{border:1px solid var(--line);border-radius:12px;padding:10px 12px 0;margin:0 0 10px}
-.seg legend{font-weight:700;font-size:14px;padding:0 4px;color:var(--ink)}
+.seg{border:1px solid var(--control);border-radius:12px;padding:10px 12px 0;margin:0 0 .625rem;min-width:0}
+.seg legend{font-weight:700;padding:0 4px;color:var(--ink)}
 
+/* ---------- Redesign: comfort layer ---------- */
+.screen{font-size:1.0625rem;line-height:1.5}
+.btn{min-height:48px;font-size:1rem;border-radius:14px;padding:12px 18px}
+.btn.small{min-height:44px;font-size:0.9375rem;padding:8px 16px;border-radius:12px}
+.btn.primary.big{min-height:56px;font-size:1.125rem;font-weight:700;border-radius:16px}
+select,input[type=text],input[type=time],input[type=date],input[type=number]{min-height:48px;padding:10px 12px}
+.hint{font-size:1rem}
+.tabs button{flex:1 1 0;min-width:0;min-height:56px;font-size:0.875rem}
+.tabs button[aria-current="page"]{background:var(--edge-soft)}
+.topbar .back{min-height:44px;min-width:44px;font-size:1.0625rem}
+.protochip{white-space:nowrap;flex:none;display:inline-flex;align-items:center;gap:6px;font-size:0.8125rem;font-weight:700;letter-spacing:.04em;color:var(--ink);background:var(--hold-soft);border-radius:12px;padding:4px 10px}
+.protochip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--hold)}
+.homehead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+.hello{font-size:1.75rem;margin:0 0 6px}
+.sub-hello{color:var(--muted);font-size:1.0625rem;margin:0 0 22px}
+.intro{font-size:0.9375rem;margin:0 0 22px}
+.intro .btn{margin-top:10px;white-space:nowrap}
+.intro b{font-size:1rem}
+.secthead{font-size:1rem;font-weight:700;color:var(--muted);margin:26px 0 10px}
+.feature{display:block;width:100%;text-align:left;padding:0;border:0;border-radius:22px;overflow:hidden;background:var(--surface);cursor:pointer;box-shadow:0 0 0 1px var(--line),0 18px 30px -22px rgba(18,26,38,.45)}
+.feature .strip{background:var(--tarmac);color:var(--tarmac-ink);padding:18px 18px 16px;display:flex;justify-content:space-between;align-items:baseline;font-weight:800;font-stretch:112.5%;font-size:1.625rem}
+.feature .strip span{font-weight:500;font-stretch:100%;font-size:0.875rem;color:var(--tarmac-muted)}
+.feature .body{display:block;padding:16px 18px 18px}
+.feature .body b{display:block;font-size:1.3125rem;line-height:1.2;margin-bottom:4px}
+.feature .body .blurb{display:block;margin:0 0 6px;color:var(--muted);font-size:1rem}
+.feature .body .meta{display:block;font-size:0.875rem;color:var(--muted);margin-bottom:16px}
+.feature .go{display:flex;align-items:center;justify-content:center;min-height:56px;border-radius:16px;background:var(--cta);color:var(--cta-ink);font-weight:700;font-size:1.125rem}
+.srow{display:flex;align-items:center;gap:14px;width:100%;min-height:72px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:0 0 10px;cursor:pointer}
+.srow .tx{align-self:center}
+.srow .rt{display:inline-block;font-weight:800;font-stretch:112.5%;font-size:0.8125rem;letter-spacing:.04em;background:var(--tarmac);color:var(--tarmac-ink);border-radius:8px;padding:3px 8px;margin-bottom:6px}
+.srow .tx{flex:1;min-width:0}
+.srow .tx b{display:block;font-size:1rem;line-height:1.25}
+.srow .tx small{display:block;color:var(--muted);font-size:0.875rem;margin-top:2px}
+.srow .chev{flex:none;color:var(--muted);font-size:1.375rem}
+.tag-done{display:inline-block;font-size:0.8125rem;font-weight:700;color:var(--center);background:var(--center-soft);border-radius:10px;padding:1px 8px;margin-left:6px;vertical-align:1px}
+.recap{background:var(--tarmac);color:var(--tarmac-ink);border-radius:18px;padding:16px 18px;margin:0 0 6px}
+.recap small{display:block;color:var(--tarmac-muted);font-size:0.8125rem}
+.recap .big{font-size:1.625rem;font-weight:800;font-stretch:75%;line-height:1.1;margin:2px 0 4px}
+.recap p{margin:0 0 10px;font-size:0.875rem;color:var(--tarmac-muted)}
+.recap .btn{background:transparent;color:var(--tarmac-ink);border-color:rgba(255,255,255,.3)}
+
+
+/* Step screen */
+.topbar{padding:10px 14px 10px 8px}
+.topbar .ttl{font-size:1.125rem}
+.topbar .sub{font-size:0.875rem}
+.where{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.clock{font-size:0.9375rem;padding:6px 12px;min-height:32px}
+.where .note{font-size:0.9375rem}
+.event{font-size:1rem;padding:14px 16px;border-radius:16px}
+.bhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-family:var(--body);font-size:0.875rem;font-weight:700;color:var(--tarmac-muted)}
+.simtag{font-size:0.8125rem;letter-spacing:.06em;border:1px solid rgba(255,255,255,.28);border-radius:10px;padding:2px 8px;color:var(--tarmac-ink)}
+.board{border-radius:20px;padding:18px 18px 14px}
+.board .hl{font-size:1.875rem}
+.board .cause{font-size:0.9375rem}
+.frow .fn,.frow .rt{font-size:1.125rem}
+.frow .st{font-size:0.875rem}
+.move{border-radius:20px;padding:18px;border-width:1px;border-top-width:6px}
+.move .label{display:flex;align-items:center;gap:8px;font-size:0.9375rem;margin-bottom:8px}
+.move .label::before{content:"";width:18px;height:18px;border-radius:50%;background:var(--center) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.5l2.7 2.6L13 6.5' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat}
+.move.warn .label::before{background:var(--hold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M9 4.5v5.5M9 12.8v.1' fill='none' stroke='%23121A26' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E") center/18px no-repeat}
+.move.neutral .label::before{background:var(--muted)}
+.move h3{font-size:1.625rem;line-height:1.12}
+.move .sub{font-size:1.0625rem}
+.move ol{list-style:none;counter-reset:st;padding:0;margin:14px 0 16px;display:grid;gap:12px}
+.move li{counter-increment:st;position:relative;padding-left:42px;font-size:1rem;line-height:1.5;margin:0}
+.move li::before{content:counter(st);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;background:var(--edge-soft);color:var(--edge);font-weight:800;display:grid;place-items:center;font-size:0.9375rem}
+.script{border-radius:16px;padding:14px 16px;border:1px solid var(--line)}
+.script .who{font-size:0.875rem}
+.script p{font-size:1.0625rem;line-height:1.55;margin-bottom:14px}
+.script .row{display:grid;grid-template-columns:1fr;gap:10px}
+.script .row .btn{min-height:52px;font-size:1rem}
+.script .row .btn[data-show]{background:var(--cta);border-color:var(--cta);color:var(--cta-ink);order:-1;font-weight:700}
+.thumbs{font-size:0.9375rem;margin-top:14px}
+.thumbs button{min-height:44px;min-width:56px;font-size:0.9375rem;border-radius:12px}
+.rights{gap:10px}
+.rights li{position:relative;padding:14px 14px 14px 52px;border-left-width:1px;border-radius:14px}
+.rights li::before{content:"i";position:absolute;left:14px;top:14px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:0.9375rem;background:var(--field);color:var(--muted)}
+.rights li.yes::before{content:"✓";background:var(--center-soft);color:var(--center)}
+.rights li.warn::before{content:"!";background:var(--hold-soft);color:var(--ink)}
+.rights li.no::before{content:"✕";background:var(--stop-soft);color:var(--stop)}
+.rights b{font-size:1rem;line-height:1.3;margin-bottom:2px}
+.rights span{font-size:0.9375rem}
+.choices{padding:12px 14px calc(12px);gap:10px}
+.choices .ask{font-size:0.875rem}
+.choices .btn{min-height:56px;font-size:1.0625rem;font-weight:700;border-radius:16px}
+.choices .btn.primary{min-height:60px}
+.choices .btn small{font-size:0.8125rem;font-weight:500}
+.card h2,.card b{line-height:1.25}
+.lesson{font-size:1rem;border-radius:16px;padding:14px 16px}
+.outcome{border-radius:20px}
+.opts button{min-width:44px;min-height:44px;font-size:0.9375rem;padding:8px 14px}
+.q > b{font-size:1rem}
+details.earlier summary{min-height:44px;display:flex;align-items:center}
+
+
+.thumbs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.thumbs button{width:100%}
+.thumbs button{white-space:nowrap}
+/* Show-to-agent: maximum legibility, text auto-fits the screen */
+.agent{min-height:100%;height:100%;background:#000;color:#fff;padding:18px 22px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
+.agent .who{font-size:0.9375rem;font-weight:600;color:#C2CBDA;margin:0;display:flex;align-items:center;gap:10px}
+.agent .who::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;background:#FFC23D}
+.agent .say{flex:1;min-height:0;display:flex;align-items:center}
+.agent p#agentText{font-size:2.125rem;line-height:1.28;font-weight:700;letter-spacing:-.005em;margin:0;text-wrap:pretty;color:#fff}
+.agent .btn{margin-top:0;min-height:60px;font-size:1.1875rem;font-weight:700;background:#fff;color:#000;border-color:#fff;border-radius:16px}
+
+
+/* Wallet & You */
+.pagetitle{font-weight:800;font-stretch:87.5%;font-size:1.875rem;line-height:1.1;margin:0 0 6px;letter-spacing:-.01em}
+.pad .secthead{font-family:var(--body);font-size:1rem;font-weight:700;color:var(--muted);margin:28px 0 10px;font-stretch:100%}
+.cardrow{color:var(--ink)}
+.cardrow .thumb{width:60px}
+.cardrow small.cav{font-size:0.8125rem;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)}
+.cardrow{min-height:76px;align-items:center;border-radius:16px;padding:12px 14px;gap:14px;cursor:pointer}
+.cardrow.on{border-color:var(--center);background:var(--center-soft)}
+.cardrow b{font-size:1rem;line-height:1.25}
+.cardrow small{font-size:0.875rem;margin-top:2px}
+.cardrow input[type=checkbox]{width:28px!important;height:28px!important;flex:none}
+.railitem b{font-size:1.0625rem}
+.railitem small{font-size:0.875rem}
+.emptywallet{font-size:1rem;padding:28px 18px}
+.group{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:6px 16px 4px;margin:0 0 4px}
+.group label{color:var(--ink);font-size:1rem;font-weight:600;margin:0;padding:14px 0;border-bottom:1px solid var(--line)}
+.group label:last-child,.group .switch:last-child{border-bottom:0}
+.group label select{margin-top:8px;font-weight:500}
+.group .chk{font-weight:500;padding:16px 0;min-height:56px;align-items:center}
+.group .chk input{width:26px;height:26px;margin:0}
+.switch{min-height:64px;padding:12px 0}
+.switch span{font-size:1rem;font-weight:600}
+.switch small{font-size:0.875rem;font-weight:400;margin-top:2px}
+.switch input{width:28px;height:28px}
+.group .switch:last-child{border-bottom:0}
+.switch input[type=checkbox]{margin:8px;flex:none}
+.homehead .mark{min-height:44px}
+.btn.danger{color:var(--stop);border-color:var(--stop)}
 
 /* ---------- Website layer ----------
-   Layout: sticky nav, hero with the live app in a phone, then alternating bands
-   (story, how it works, features, claims, scenarios, under the hood), tarmac CTA. */
-html,body{height:auto}
-body{background:var(--page)}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--surface)}
-.site{min-width:0}
-.s-wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.s-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--surface);border-bottom:1px solid var(--line)}
-.s-nav .s-wrap{display:flex;align-items:center;gap:22px;padding-block:10px}
-.s-nav .word{font-size:21px}
-.s-links{display:flex;gap:22px;margin-left:auto}
-.s-links a{color:var(--muted);text-decoration:none;font-weight:600;font-size:15px}
-.s-links a:hover{color:var(--ink)}
-@media (max-width:820px){.s-links{display:none}.s-nav .s-btn{margin-left:auto}}
-.s-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 18px;border-radius:12px;font:inherit;font-weight:700;font-size:15px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none}
-.s-btn.pri{background:var(--edge);border-color:var(--edge);color:var(--on-accent)}
-.s-btn.ghost{background:transparent}
-.s-btn:hover{filter:brightness(1.06)}
+   Header, yellow hero with the live app in a phone, then four short sections:
+   how it works, travel days, delay money, what it knows. */
+html{scroll-padding-top:5.5rem}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+.skip{position:absolute;left:.75rem;top:-6rem;z-index:200;background:var(--cta);color:var(--cta-ink);padding:.75rem 1rem;border-radius:8px;font-weight:700}
+.skip:focus{top:.75rem}
+.s-wrap{width:100%;max-width:1160px;margin:0 auto;padding-left:max(1.25rem,env(safe-area-inset-left,0px));padding-right:max(1.25rem,env(safe-area-inset-right,0px))}
+.s-nav{position:sticky;top:0;z-index:50;background:var(--surface);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.s-nav .s-wrap{display:flex;align-items:center;gap:1.5rem;padding-block:.625rem}
+.s-nav .word{font-size:1.3125rem}
+.s-links{display:flex;gap:1.5rem;margin-left:auto}
+.s-links a{display:inline-flex;align-items:center;min-height:44px;color:var(--ink);text-decoration:none;font-weight:700}
+.s-links a:hover{text-decoration:underline;text-underline-offset:.3em}
+.s-btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:.625rem 1.25rem;border-radius:8px;font-family:var(--body);font-size:1rem;font-weight:700;line-height:1.25;border:2px solid currentColor;background:transparent;color:var(--ink);cursor:pointer;text-decoration:none;text-align:center}
+.s-btn.pri{background:var(--cta);border-color:var(--cta);color:var(--cta-ink)}
+.s-btn.big{min-height:64px;padding:1rem 1.75rem;font-size:1.25rem}
+.s-btn:hover{text-decoration:underline;text-underline-offset:.25em}
 
-.s-eyebrow{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--edge);margin:0}
-.s-h1{font-weight:800;font-stretch:87.5%;font-size:clamp(40px,6.2vw,70px);line-height:.98;letter-spacing:-.02em;margin:14px 0 20px;text-wrap:balance}
-.s-h2{font-weight:800;font-stretch:87.5%;font-size:clamp(30px,4.2vw,46px);line-height:1.03;letter-spacing:-.015em;margin:10px 0 14px;text-wrap:balance}
-.s-h3{font-weight:700;font-stretch:100%;font-size:19px;line-height:1.25;margin:0 0 8px}
-.s-lede{font-size:clamp(17px,2vw,20px);line-height:1.5;color:var(--muted);max-width:33em;margin:0 0 28px}
-.s-sub{font-size:18px;line-height:1.55;color:var(--muted);max-width:40em;margin:0 0 40px}
-.s-p{font-size:16px;line-height:1.6;color:var(--muted);margin:0}
-.s-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.s-h1{font-family:var(--display);font-weight:800;font-stretch:80%;font-size:clamp(2.75rem,1.4rem + 5.2vw,5.5rem);line-height:.95;letter-spacing:-.015em;margin:0 0 1.25rem;text-wrap:balance}
+.s-h2{font-family:var(--display);font-weight:800;font-stretch:87.5%;font-size:clamp(2rem,1.5rem + 2vw,2.875rem);line-height:1.05;letter-spacing:-.01em;margin:0 0 .75rem;text-wrap:balance}
+.s-h3{font-size:1.25rem;font-weight:800;line-height:1.25;margin:0 0 .375rem}
+.s-sub{font-size:1.125rem;color:var(--muted);max-width:36em;margin:0 0 2.5rem}
+.s-p{color:var(--muted);margin:0;max-width:34em}
+.s-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
 
 /* Hero */
-.s-hero .s-wrap{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:64px;align-items:center;padding-block:56px 80px}
-@media (max-width:980px){.s-hero .s-wrap{grid-template-columns:minmax(0,1fr);gap:40px;padding-block:40px 56px}}
-.s-small{font-size:14px;color:var(--muted);margin:16px 0 0}
-.s-proof{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px}
-.s-proof span{font-size:13px;font-weight:600;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:5px 12px}
-.s-demo{display:flex;flex-direction:column;align-items:center;gap:10px}
-.site .device{width:min(390px,100%);height:780px;border:10px solid var(--tarmac);border-radius:46px;box-shadow:0 40px 70px -36px rgba(18,26,38,.6)}
-@media (max-width:900px){.site .device{width:min(390px,100%);height:720px;border:10px solid var(--tarmac);border-radius:42px;box-shadow:0 30px 50px -30px rgba(18,26,38,.6)}}
-.s-demo-cap{font-size:13px;color:var(--muted);text-align:center}
+.s-hero{background:var(--hero);color:var(--hero-ink);--focus:var(--hero-ink)}
+.s-hero .s-wrap{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:3.5rem;align-items:center;padding-block:2.5rem}
+.s-lede{font-size:clamp(1.1875rem,1rem + .6vw,1.4375rem);line-height:1.45;max-width:28em;margin:0 0 2rem}
+.s-hero .s-btn{color:var(--hero-ink)}
+.s-hero .s-btn.pri{color:var(--cta-ink)}
+.s-small{margin:1rem 0 0}
+.s-proto{margin:2.5rem 0 0;padding-top:1rem;border-top:2px solid currentColor;max-width:32em;font-size:.9375rem}
+.s-example,.m-only{display:none}
+.s-demo{--focus:var(--hero-ink);display:flex;flex-direction:column;align-items:center;min-width:0}
+.s-demo .device{--focus:#1D4FC4;color:var(--ink);width:100%;height:min(800px,calc(100vh - 10rem));min-height:560px;border:10px solid var(--bezel);border-radius:46px;box-shadow:0 30px 50px -30px rgba(18,26,38,.6)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .s-demo .device{--focus:#FFD21F}}
+:root[data-theme="dark"] .s-demo .device{--focus:#FFD21F}
+.s-demo .device .lock{--focus:#FFD21F}
+.demo-bar{display:none}
 
-/* Bands */
-.s-sec{padding-block:88px}
+/* Sections */
+.s-sec{padding-block:5rem}
 .s-sec.alt{background:var(--surface);border-block:1px solid var(--line)}
-@media (max-width:700px){.s-sec{padding-block:60px}}
-.s-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:center}
-@media (max-width:900px){.s-two{grid-template-columns:minmax(0,1fr);gap:32px}}
+.s-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:3.5rem;align-items:center}
 
-/* Story */
-.s-quote{font-size:clamp(19px,2.2vw,23px);line-height:1.5;color:var(--ink);margin:0 0 18px;max-width:30em}
-.s-diagram{background:var(--page);border:1px solid var(--line);border-radius:20px;padding:22px 22px 14px}
-.s-diagram .routeviz{margin:0}
-.s-diagram figcaption{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin-top:8px}
+/* How it works: a real sequence, so it is numbered */
+.s-steps{list-style:none;margin:2rem 0 3.5rem;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.5rem;counter-reset:s}
+.s-steps li{counter-increment:s}
+.s-steps li::before{content:counter(s);display:grid;place-items:center;width:3rem;height:3rem;border-radius:8px;background:var(--sign);color:var(--sign-ink);font-family:var(--display);font-weight:800;font-size:1.5rem;margin-bottom:.875rem}
+.s-diagram{background:var(--page);border:1px solid var(--line);border-radius:16px;padding:1.375rem 1.375rem .875rem;margin:0}
+.s-diagram figcaption{display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap;font-size:.9375rem;color:var(--muted);margin-top:.5rem}
 .s-diagram figcaption b{color:var(--ink)}
 
-/* Steps */
-.s-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;counter-reset:s}
-@media (max-width:980px){.s-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:560px){.s-steps{grid-template-columns:minmax(0,1fr)}}
-.s-steps li{counter-increment:s;border-top:3px solid var(--ink);padding-top:16px}
-.s-steps li::before{content:counter(s);display:block;font-weight:800;font-stretch:75%;font-size:44px;line-height:1;color:var(--edge);margin-bottom:12px}
+/* Travel days: each one reads like a line on a departures sign */
+.s-scns{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+.scncard{display:grid;grid-template-columns:7.5rem minmax(0,1fr);width:100%;height:100%;text-align:left;background:var(--surface);border:1px solid var(--control);border-radius:12px;padding:0;overflow:hidden;cursor:pointer}
+.scncard span{display:block}
+.scncard .strip{background:var(--tarmac);color:var(--tarmac-ink);padding:1rem .875rem;font-family:var(--display);font-weight:800;font-stretch:75%;font-size:1.25rem;line-height:1.2}
+.scncard .strip span{font-family:var(--body);font-stretch:100%;font-weight:400;font-size:.875rem;color:var(--tarmac-muted);margin-top:.25rem}
+.scncard .body{padding:.875rem 1rem 1rem}
+.scncard b{display:block;font-size:1.125rem;line-height:1.25}
+.scncard .blurb{color:var(--muted);margin-top:.25rem}
+.scncard .shows{font-size:.9375rem;margin-top:.5rem}
+.scncard .go{margin-top:.625rem;font-weight:700;color:var(--edge)}
+.scncard:hover{border-color:var(--ink)}
+.scncard:hover .go{text-decoration:underline}
 
-/* Features */
-.s-feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-@media (max-width:980px){.s-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:620px){.s-feats{grid-template-columns:minmax(0,1fr)}}
-.s-feat{background:var(--page);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:12px;min-width:0}
-.s-tag{align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.s-ex{font-size:14px;line-height:1.5;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0}
-.s-feat .s-link{margin-top:auto;align-self:flex-start;background:none;border:0;padding:6px 0;font:inherit;font-weight:700;font-size:15px;color:var(--edge);cursor:pointer;min-height:44px}
-.s-feat .s-link:hover{text-decoration:underline}
-
-/* Claims */
-.s-cards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;max-width:460px}
+/* Delay money */
+.s-cards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;max-width:460px}
 .s-cards > div:first-child{grid-column:1/-1}
 .s-cards .cardface{filter:drop-shadow(0 16px 18px rgba(18,26,38,.28))}
-.s-checks{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:12px}
-.s-checks li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px;font-size:16px;line-height:1.5}
-.s-checks svg{width:22px;height:22px;stroke:var(--center);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;margin-top:1px}
-.s-checks b{display:block;color:var(--ink)}
+.s-checks{margin:0 0 1.75rem;padding-left:1.25rem;display:grid;gap:.75rem}
+.s-checks b{display:block}
 .s-checks span{color:var(--muted)}
 
-/* Scenarios */
-.s-scns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-@media (max-width:980px){.s-scns{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:620px){.s-scns{grid-template-columns:minmax(0,1fr)}}
-.s-scns .scncard{margin:0;height:100%}
-.s-scns .scncard .go{display:inline-block;margin-top:10px;font-weight:700;color:var(--edge);font-size:14px}
+/* What it knows */
+.s-hood{border-top:1px solid var(--line);max-width:52rem}
+.s-hood details{border-bottom:1px solid var(--line)}
+.s-hood summary{display:flex;align-items:center;gap:1rem;min-height:64px;cursor:pointer;list-style:none}
+.s-hood summary::-webkit-details-marker{display:none}
+.s-hood summary h3{margin:0}
+.s-hood summary::after{content:"+";content:"+" / "";margin-left:auto;font-size:1.75rem;line-height:1}
+.s-hood details[open] summary::after{content:"−";content:"−" / ""}
+.s-hood ul{list-style:none;margin:0;padding:0 0 1.25rem;display:grid;gap:.75rem}
+.s-hood li b{display:block}
+.s-hood li span{color:var(--muted)}
 
-/* Under the hood */
-.s-hood{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
-@media (max-width:900px){.s-hood{grid-template-columns:minmax(0,1fr)}}
-.s-hood ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px}
-.s-hood li{font-size:15px;line-height:1.45;border-bottom:1px solid var(--line);padding-bottom:10px}
-.s-hood li b{display:block;color:var(--ink)}
-.s-hood li span{color:var(--muted);font-size:14px}
+/* Closing call to action */
+.s-cta{background:var(--tarmac);color:var(--tarmac-ink)}
+.s-cta .s-wrap{padding-block:4.5rem;display:flex;flex-wrap:wrap;gap:1.75rem;align-items:center;justify-content:space-between}
+.s-cta .s-h2{margin:0;max-width:16em}
+.s-cta p{color:var(--tarmac-muted);margin:.625rem 0 0;font-size:1.125rem}
+.s-cta .s-btn.pri{background:var(--sign);border-color:var(--sign);color:var(--sign-ink)}
+.s-foot{padding-block:2rem 3rem;font-size:.9375rem;color:var(--muted)}
+.s-foot .s-wrap{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center}
+.s-foot .mark{color:var(--ink)}
+.s-foot .word{font-size:1.125rem}
+.s-foot p{margin:0;max-width:44em}
+.s-sticky{display:none}
 
-/* CTA band */
-.s-cta{background:var(--tarmac);color:var(--tarmac-ink);position:relative;overflow:hidden}
-.s-cta::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:repeating-linear-gradient(90deg,var(--hold) 0 30px,transparent 30px 52px)}
-.s-cta .s-wrap{padding-block:80px;display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:space-between}
-.s-cta .s-h2{color:var(--tarmac-ink);margin:0;max-width:16em}
-.s-cta p{color:var(--tarmac-muted);margin:10px 0 0;font-size:17px}
-.s-foot{padding-block:32px 48px;font-size:14px;color:var(--muted)}
-.s-foot .s-wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
-.s-foot p{margin:0;max-width:52em}
-.site a:focus-visible,.site button:focus-visible{outline:2px solid var(--edge);outline-offset:3px}
+@media (max-width:68em){.s-links{display:none}.s-nav .s-btn{margin-left:auto}}
+@media (max-width:62em){.s-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.s-scns{grid-template-columns:minmax(0,1fr)}.s-hero .s-wrap{grid-template-columns:minmax(0,1fr) 360px;gap:2rem}}
+
+/* Phones: one column, and the demo opens full screen instead of a phone inside a phone */
+@media (max-width:53.75em){
+  .s-nav{position:static}
+  .s-nav .s-btn{display:none}
+  .s-hero .s-wrap{display:block;padding-block:2rem 2.5rem}
+  .s-hero .s-row{flex-direction:column;align-items:stretch}
+  .m-only{display:inline-flex}
+  .d-only{display:none}
+  .s-example{display:block;margin:2rem 0 0}
+  .s-example figcaption{font-weight:700;margin-bottom:.5rem}
+  .s-example .notif{cursor:default}
+  .s-proto{margin-top:2rem}
+  .s-demo{display:none}
+  .s-demo.open{display:flex;position:fixed;inset:0;z-index:100;align-items:stretch;background:var(--surface);color:var(--ink);--focus:#1D4FC4;padding-top:env(safe-area-inset-top,0px)}
+  .demo-bar{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.375rem .75rem .375rem 1.125rem;background:var(--sign);color:var(--sign-ink);--focus:#14181F;font-weight:700}
+  .demo-bar button{min-height:44px;min-width:44px;padding:0 1rem;border:2px solid var(--sign-ink);border-radius:8px;background:transparent;color:var(--sign-ink);font-weight:700;cursor:pointer}
+  .s-demo .device{flex:1;min-height:0;height:auto;border:0;border-radius:0;box-shadow:none}
+  body.demo-open{overflow:hidden}
+  .s-two{grid-template-columns:minmax(0,1fr);gap:2rem}
+  .s-sec{padding-block:3.5rem}
+  .s-sticky{display:block;position:fixed;left:0;right:0;bottom:0;z-index:60;padding:.625rem 1rem calc(.625rem + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);visibility:hidden;transform:translateY(100%)}
+  .s-sticky.on{visibility:visible;transform:none}
+  .s-sticky .s-btn{width:100%;min-height:56px;font-size:1.125rem}
+  html{scroll-padding:1rem 0 6rem}
+  .s-foot{padding-bottom:7rem}
+}
+@media (max-width:35em){
+  .s-steps{grid-template-columns:minmax(0,1fr)}
+  .s-steps li{display:grid;grid-template-columns:3rem minmax(0,1fr);column-gap:1rem}
+  .s-steps li::before{grid-row:span 2;margin:0}
+  .scncard{grid-template-columns:minmax(0,1fr)}
+  .scncard .strip{display:flex;justify-content:space-between;align-items:baseline;padding:.75rem 1rem}
+  .scncard .strip span{margin:0}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important;scroll-behavior:auto !important}
+}
 
 </style>
 <div class="site">
+<a class="skip" href="#main">Skip to content</a>
 <header class="s-nav">
   <div class="s-wrap">
-    <a class="mark" href="#top" aria-label="Rerouted home"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word">Rerouted</span></a>
+    <a class="mark" href="#main"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word">Rerouted</span></a>
     <nav class="s-links" aria-label="Sections">
-      <a href="#how">How it works</a><a href="#features">Features</a><a href="#claims">Claims</a><a href="#scenarios">Try a scenario</a><a href="#hood">Under the hood</a>
+      <a href="#how">How it works</a><a href="#scenarios">Travel days</a><a href="#claims">Delay money</a><a href="#hood">What it knows</a>
     </nav>
-    <button class="s-btn pri" type="button" data-play="denver">Try the demo</button>
+    <button class="s-btn pri" type="button" data-play="denver">Play a bad travel day</button>
   </div>
 </header>
 
-<main id="top">
+<main id="main" tabindex="-1">
 <section class="s-hero" aria-labelledby="heroTitle">
   <div class="s-wrap">
     <div>
-      <p class="s-eyebrow">For United, Delta, American and Southwest travelers · Early prototype</p>
-      <h1 class="s-h1" id="heroTitle">Your plan B, ready before the gate agent is.</h1>
-      <p class="s-lede">When your flight slips, Rerouted tells you what you’re owed, the best flight to move to, and exactly what to say to get it. Then it works out what your credit card will pay back.</p>
+      <h1 class="s-h1" id="heroTitle">Flight delayed? Know your next move.</h1>
+      <p class="s-lede">For United, Delta, American and Southwest travelers. Rerouted tells you what you’re owed, which flight to switch to, and what to say to get it.</p>
       <div class="s-row">
-        <button class="s-btn pri" type="button" data-play="denver">Play a bad travel day</button>
-        <a class="s-btn ghost" href="#how">How it works</a>
+        <button class="s-btn pri big" type="button" data-play="denver" id="heroPlay">Play a bad travel day</button>
+        <a class="s-btn big d-only" href="#how">How it works</a>
+        <button class="s-btn big m-only" type="button" data-open>Open the app demo</button>
       </div>
-      <p class="s-small">The phone is the real prototype. Tap the alert and make the calls you’d make. Nothing touches a real booking.</p>
-      <div class="s-proof" aria-label="What it covers">
-        <span>United · Delta · American · Southwest</span><span>Free same-day changes</span><span>Standby strategy</span><span>Agent scripts</span><span>Card delay coverage</span><span>Delayed bags</span>
-      </div>
+      <p class="s-small">A 3-minute practice run. Nothing touches a real booking.</p>
+      <figure class="s-example">
+        <figcaption>An example alert</figcaption>
+        <div class="notif" id="heroAlert"></div>
+      </figure>
+      <p class="s-proto">Early prototype for testing. Not affiliated with any airline or card issuer.</p>
     </div>
     <div class="s-demo" id="demo">
+      <div class="demo-bar"><span id="demoName">Practice demo</span><button type="button" id="demoClose">Close</button></div>
       <div class="device">
         <div id="toast" aria-live="polite"></div>
-        <div class="screen" id="screen" role="region" aria-label="Rerouted app demo"></div>
+        <div class="screen" id="screen" role="region" aria-label="Rerouted app demo" tabindex="0"></div>
         <nav class="tabs" id="tabs" aria-label="App">
           <button type="button" data-tab="home" aria-current="page"><span data-ic="trips"></span>Trips</button>
           <button type="button" data-tab="wallet"><span data-ic="wallet"></span>Wallet</button>
           <button type="button" data-tab="you"><span data-ic="you"></span>You</button>
         </nav>
+        <div class="sr" id="say" role="status"></div>
       </div>
-      <p class="s-demo-cap">Live demo. Works best on your phone, too.</p>
     </div>
-  </div>
-</section>
-
-<section class="s-sec alt" aria-labelledby="storyTitle">
-  <div class="s-wrap s-two">
-    <div>
-      <p class="s-eyebrow">Why we built it</p>
-      <h2 class="s-h2" id="storyTitle">The rules exist. Most travelers never use them.</h2>
-      <p class="s-quote">Boston to Los Angeles, connecting in Denver. The Denver flight slipped. Because the delay was United’s, and with status, the traveler could move to the Boston nonstop instead. On Delta or American that same move would only open up after a disruption.</p>
-      <p class="s-p">That option depends on the airline, fare, status, the cause of the delay, and which seats are open that morning. Rerouted puts all of it together the moment something changes, and tells you the move in plain words.</p>
-    </div>
-    <figure class="s-diagram" style="margin:0">
-      <div id="storyRoute"></div>
-      <figcaption><span><b>Booked:</b> through Denver, landing 3:10 PM</span><span><b>Better:</b> the nonstop, landing 11:40 AM</span></figcaption>
-    </figure>
   </div>
 </section>
 
 <section class="s-sec" id="how" aria-labelledby="howTitle">
   <div class="s-wrap">
-    <p class="s-eyebrow">How it works</p>
-    <h2 class="s-h2" id="howTitle">From confirmation email to a better flight</h2>
-    <p class="s-sub">Four steps, and only the first one is yours.</p>
+    <h2 class="s-h2" id="howTitle">How it works</h2>
+    <p class="s-p">Four steps, and only the first one is yours.</p>
     <ol class="s-steps">
-      <li><h3 class="s-h3">Forward your confirmation</h3><p class="s-p">Paste or forward the email from United, Delta, American, Southwest or the site you booked on. Rerouted reads your flights, fare, status and who sold the ticket, and flags risks like separate tickets.</p></li>
-      <li><h3 class="s-h3">Rerouted watches</h3><p class="s-p">Live flight status, the plane coming in, and weather at your connection. You hear about trouble the night before, while it’s still easy to fix.</p></li>
-      <li><h3 class="s-h3">You get the move</h3><p class="s-p">The flight to switch to, why you’re owed it, the fastest line to use, and a script to read or show the agent.</p></li>
-      <li><h3 class="s-h3">You get your money back</h3><p class="s-p">When your card’s coverage kicks in, Rerouted builds the claim: deadlines on real dates, a documents checklist, and details ready to paste.</p></li>
+      <li><h3 class="s-h3">Forward your confirmation</h3><p class="s-p">Send the email from your airline or the site you booked on. Rerouted reads your flights, fare, status and who sold the ticket, and flags risks like separate tickets.</p></li>
+      <li><h3 class="s-h3">Rerouted watches</h3><p class="s-p">Live flight status, the plane coming in, and weather at your connection. You can hear about trouble the night before, while it’s still easy to fix.</p></li>
+      <li><h3 class="s-h3">You get the move</h3><p class="s-p">The flight to switch to, why you’re owed it, the best way to get help, and a script to read or show the agent.</p></li>
+      <li><h3 class="s-h3">You get your money back</h3><p class="s-p">When your card’s coverage kicks in, Rerouted builds the claim for you to file.</p></li>
     </ol>
-  </div>
-</section>
-
-<section class="s-sec alt" id="features" aria-labelledby="featTitle">
-  <div class="s-wrap">
-    <p class="s-eyebrow">Features</p>
-    <h2 class="s-h2" id="featTitle">Built for the worst hour of your trip</h2>
-    <p class="s-sub">Each one opens in the live demo, so you can see it for yourself.</p>
-    <div class="s-feats">
-      <article class="s-feat"><span class="s-tag">Rebooking</span><h3 class="s-h3">A specific flight, and the words to ask for it</h3>
-        <p class="s-ex">“Could you move me to UA 1288, the 8:15 nonstop from Boston? It shows seats available.”</p>
-        <p class="s-p">Copy the script, or hold it up to the agent in large type.</p>
-        <button class="s-link" type="button" data-play="denver">See it in the demo →</button></article>
-      <article class="s-feat"><span class="s-tag">The night before</span><h3 class="s-h3">A risk check while seats are still open</h3>
-        <p class="s-ex">Snow at O’Hare during a 50-minute connection: switch to the nonstop tonight, free with your status.</p>
-        <p class="s-p">Weather, connection time, the inbound plane and your ticket, scored before you pack.</p>
-        <button class="s-link" type="button" data-play="eve">See it in the demo →</button></article>
-      <article class="s-feat"><span class="s-tag">Getting help</span><h3 class="s-h3">The fastest line, ranked</h3>
-        <p class="s-ex">Booked on Expedia and United canceled? Call Expedia and get in line at the United desk at the same time.</p>
-        <p class="s-p">App, phone, desk or gate, with a clear pick for right now, including who to call when you booked on Expedia.</p>
-        <button class="s-link" type="button" data-play="ohare">See it in the demo →</button></article>
-      <article class="s-feat"><span class="s-tag">Early warning</span><h3 class="s-h3">Know before United posts the delay</h3>
-        <p class="s-ex">Your 6:30 AM plane is stuck in Chicago. On separate tickets, move your Miami flight now.</p>
-        <p class="s-p">Rerouted watches the aircraft’s previous flight, the earliest signal there is.</p>
-        <button class="s-link" type="button" data-play="newark">See it in the demo →</button></article>
-      <article class="s-feat"><span class="s-tag">Four airlines</span><h3 class="s-h3">Advice that fits your airline’s rules</h3>
-        <p class="s-ex">On American, Gold members pay $60 to confirm, but standby is free. With seats still for sale, stand by.</p>
-        <p class="s-p">Delta keeps your routing, Southwest goes by fare, United by status. Rerouted knows which applies.</p>
-        <button class="s-link" type="button" data-play="american">See it in the demo →</button></article>
-      <article class="s-feat"><span class="s-tag">Bags</span><h3 class="s-h3">Your suitcase is late. You’re still covered.</h3>
-        <p class="s-ex">File the report before you leave the airport. Your bag fee comes back after 12 hours.</p>
-        <p class="s-p">Essentials tracked against your card’s baggage coverage, with the claim built for you.</p>
-        <button class="s-link" type="button" data-play="bag">See it in the demo →</button></article>
-    </div>
-  </div>
-</section>
-
-<section class="s-sec" id="claims" aria-labelledby="claimTitle">
-  <div class="s-wrap s-two">
-    <div class="s-cards" id="siteCards" aria-label="Example card coverage"></div>
-    <div>
-      <p class="s-eyebrow">Delay money</p>
-      <h2 class="s-h2" id="claimTitle">Your card may owe you more than the airline does</h2>
-      <p class="s-sub" style="margin-bottom:26px">United owes nothing for a snowstorm. A Sapphire Reserve can still cover your hotel and dinner. Rerouted knows the difference and builds the claim.</p>
-      <ul class="s-checks">
-        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Eligibility in plain words</b><span>Which card covers this trip, from what hour, and up to how much.</span></div></li>
-        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Deadlines on real dates</b><span>When to start the claim and when documents are due, for your card’s issuer.</span></div></li>
-        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>Receipts against the limit</b><span>Log expenses as you go and see how much of your coverage is left.</span></div></li>
-        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><div><b>A claim ready to paste</b><span>Flights, what happened, itemized expenses and the amount to request.</span></div></li>
-      </ul>
-      <button class="s-btn pri" type="button" data-play="ohare">Walk through a claim</button>
+    <div class="s-two">
+      <div>
+        <h3 class="s-h3">The rules exist. Most travelers never use them.</h3>
+        <p class="s-p">Boston to Los Angeles, connecting in Denver. The Denver flight slipped. Because the delay was United’s, and with status, the traveler could move to the Boston nonstop instead. On Delta or American that same move would only open up after a disruption.</p>
+      </div>
+      <figure class="s-diagram">
+        <div id="storyRoute"></div>
+        <figcaption><span><b>Booked:</b> through Denver, landing 3:10 PM</span><span><b>Better:</b> the nonstop, landing 11:40 AM</span></figcaption>
+      </figure>
     </div>
   </div>
 </section>
 
 <section class="s-sec alt" id="scenarios" aria-labelledby="scnTitle">
   <div class="s-wrap">
-    <p class="s-eyebrow">Try a scenario</p>
-    <h2 class="s-h2" id="scnTitle">Practice a bad travel day</h2>
-    <p class="s-sub">Five United days plus one each for Delta, American and Southwest. Each opens in the phone above and takes about three minutes. Your choices change how the day ends.</p>
-    <div class="s-scns" id="siteScns"></div>
+    <h2 class="s-h2" id="scnTitle">Pick a bad travel day</h2>
+    <p class="s-sub">Five United days plus one each for Delta, American and Southwest. Each takes about three minutes, and your choices change how it ends.</p>
+    <ul class="s-scns" id="siteScns"></ul>
   </div>
 </section>
 
-<section class="s-sec" id="hood" aria-labelledby="hoodTitle">
+<section class="s-sec" id="claims" aria-labelledby="claimTitle">
+  <div class="s-wrap s-two">
+    <div>
+      <h2 class="s-h2" id="claimTitle">Your card may owe you more than the airline does</h2>
+      <p class="s-sub">United owes nothing for a snowstorm. A Sapphire Reserve can still cover your hotel and dinner. Rerouted knows the difference and builds the claim.</p>
+      <ul class="s-checks">
+        <li><b>Whether you’re covered</b><span>Which card covers this trip, from what hour, and up to how much.</span></li>
+        <li><b>When it’s due</b><span>When to start the claim and when documents are due, on real dates for your card’s issuer.</span></li>
+        <li><b>A claim ready to paste</b><span>Flights, what happened, your receipts against the limit, and the amount to request.</span></li>
+      </ul>
+      <button class="s-btn" type="button" data-play="ohare">Walk through a claim</button>
+    </div>
+    <div class="s-cards" id="siteCards" role="group" aria-label="Example card coverage"></div>
+  </div>
+</section>
+
+<section class="s-sec alt" id="hood" aria-labelledby="hoodTitle">
   <div class="s-wrap">
-    <p class="s-eyebrow">Under the hood</p>
-    <h2 class="s-h2" id="hoodTitle">Built on the actual rules, and live data</h2>
+    <h2 class="s-h2" id="hoodTitle">What Rerouted knows</h2>
     <p class="s-sub">Rerouted only shows what it can actually know: live flight data, published rules, and what you tell it. It never guesses at seat counts, standby lists, wait times or where your bag is.</p>
     <div class="s-hood">
-      <div><h3 class="s-h3">The rules it knows</h3><ul>
+      <details><summary><h3 class="s-h3">The rules it knows</h3></summary><ul>
         <li><b>Same-day changes and standby on four airlines</b><span>By fare and status, including Delta and American’s same-routing rule and Southwest’s fare-based rules</span></li>
         <li><b>Each airline’s disruption commitments</b><span>Rebooking, meals, hotels, partner airlines and Southwest’s travel credit</span></li>
         <li><b>DOT refund rules</b><span>Cancellations and 3+ hour domestic delays</span></li>
         <li><b>DOT delay-cause categories</b><span>The Section 511(b) rule in effect since October 19, 2026</span></li>
         <li><b>DOT bag fee refunds</b><span>Bags more than 12 hours late on domestic flights</span></li>
         <li><b>Card trip and baggage delay terms</b><span>Thresholds, limits, deadlines and where to file</span></li>
-      </ul></div>
-      <div><h3 class="s-h3">The data it watches</h3><ul>
+      </ul></details>
+      <details><summary><h3 class="s-h3">The data it watches</h3></summary><ul>
         <li><b>Live flight status and alerts</b><span>Delays, cancellations, diversions and gate changes</span></li>
         <li><b>The inbound aircraft</b><span>Where your plane is coming from, and how late</span></li>
         <li><b>Gates and arrival times</b><span>Where you land, where your next flight leaves, and the clocks for refunds and coverage</span></li>
@@ -554,32 +668,33 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
         <li><b>Seats for sale</b><span>Whether a better flight can be booked for your party, so you know to ask for a confirmed seat or stand by</span></li>
         <li><b>Airport disruptions and weather</b><span>Ground stops, delay programs and forecasts at your hubs</span></li>
         <li><b>Airline travel waivers</b><span>Free changes issued before storms</span></li>
-      </ul></div>
-      <div><h3 class="s-h3">What you tell it</h3><ul>
+      </ul></details>
+      <details><summary><h3 class="s-h3">What you tell it</h3></summary><ul>
         <li><b>Why the flight is late</b><span>No public feed has the cause. You confirm what United said, and the advice adjusts.</span></li>
         <li><b>Your bag report number</b><span>Bag tracking isn’t public. The report number links your claim.</span></li>
         <li><b>Whether you cleared standby or got rebooked</b><span>Airlines don’t share this publicly. One tap keeps Rerouted tracking the right flight.</span></li>
         <li><b>Which cards you carry</b><span>Rerouted checks each card’s coverage. No bank login needed.</span></li>
-      </ul></div>
+      </ul></details>
     </div>
   </div>
 </section>
 
 <section class="s-cta" aria-labelledby="ctaTitle">
   <div class="s-wrap">
-    <div><h2 class="s-h2" id="ctaTitle">Your next delay is coming. Be ready for it.</h2>
-      <p>Play a scenario, then tell us what you thought. Five taps at the end of each one.</p></div>
-    <button class="s-btn pri" type="button" data-play="denver">Play a bad travel day</button>
+    <div><h2 class="s-h2" id="ctaTitle">Your plan B, ready before the gate agent is.</h2>
+      <p>Play a travel day, then tell us what you thought. Five taps at the end of each one.</p></div>
+    <button class="s-btn pri big" type="button" data-play="denver">Play a bad travel day</button>
   </div>
 </section>
 </main>
 
 <footer class="s-foot">
   <div class="s-wrap">
-    <a class="mark" href="#top" aria-label="Back to top"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word" style="font-size:18px">Rerouted</span></a>
+    <a class="mark" href="#main"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word">Rerouted</span><span class="sr">, back to top</span></a>
     <p>Rerouted is an early prototype for testing. It is not affiliated with United Airlines, Delta Air Lines, American Airlines, Southwest Airlines or any card issuer. Rules and card terms were checked November 11, 2026; always confirm against official sources.</p>
   </div>
 </footer>
+<div class="s-sticky" id="sticky"><button class="s-btn pri" type="button" data-play="denver">Play a bad travel day</button></div>
 </div>
 
 <script>
@@ -1583,11 +1698,21 @@ const icon={trips:'<svg viewBox="0 0 24 24"><path d="M3 17c4 0 4-10 9-10s5 10 9 
   wallet:'<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18M15 15h3"/></svg>',
   you:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>'};
 const appIcon='<span class="appicon" aria-hidden="true"><svg viewBox="0 0 46 30"><path d="M5 22 L41 22" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/><path d="M5 22 C14 22 14 6 23 6 S32 22 41 22" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/><circle cx="5" cy="22" r="3.4" fill="#fff"/><circle cx="41" cy="22" r="3.4" fill="#fff"/></svg></span>';
-const notifBody=(t,b,time)=>`${appIcon}<span><div class="app"><span>REROUTED</span><span>${esc(time||'now')}</span></div><b>${esc(t)}</b><p>${esc(b)}</p></span>`;
+const notifBody=(t,b,time)=>`${appIcon}<span><span class="app"><span>Rerouted</span><span>${esc(time||'now')}</span></span><b>${esc(t)}</b><span class="msg">${esc(b)}</span></span>`;
 const markSvg='<svg viewBox="0 0 46 30" aria-hidden="true"><path d="M5 22 C14 22 14 6 23 6 S32 22 41 22" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>';
 
 /* ---------- Navigation ---------- */
+/* Keyboard and screen reader focus: follow the view when it changes, stay put when it only redraws */
+function focusHead(){const h=$s().querySelector('h2');if(h){h.tabIndex=-1;h.focus({preventScroll:true})}}
+function keep(render){
+  const sc=$s(),a=document.activeElement,y=sc.scrollTop;let sel='';
+  if(a&&sc.contains(a))sel=a.id?'#'+a.id:[...a.attributes].filter(x=>x.name.startsWith('data-')).map(x=>`[${x.name}="${CSS.escape(x.value)}"]`).join('')||'h2';
+  render();sc.scrollTop=y;
+  if(sel){const el=sc.querySelector(sel);if(el&&sel!=='h2')el.focus({preventScroll:true});else focusHead()}
+}
+function say(msg){const el=$('say');el.textContent='';setTimeout(()=>{el.textContent=msg},50)}
 function go(view,o={}){
+  const follow=$s().contains(document.activeElement)||$('toast').contains(document.activeElement);
   if(UI.view==='step'&&UI.stepAt)logTime();
   Object.assign(UI,{view},o);
   const tabs=document.getElementById('tabs');
@@ -1596,34 +1721,40 @@ function go(view,o={}){
   const sc=$s();sc.className='screen'+(view==='lock'||view==='agent'?' dark':'');
   ({home:viewHome,lock:viewLock,step:viewStep,agent:viewAgent,wallet:viewWallet,you:viewYou,feeds:viewFeeds,add:viewAdd,check:viewCheck,own:viewOwn})[view]();
   sc.scrollTop=0;
+  if(follow)focusHead();
 }
 function logTime(){UI.timings.push([UI.step,Math.round((Date.now()-UI.stepAt)/1000)]);UI.stepAt=0}
 function toast(n,time){
   const t=document.getElementById('toast');
-  t.innerHTML=`<button class="notif" type="button">${notifBody(n.t,n.b,time)}</button>`;
-  const hide=()=>{t.innerHTML=''};t.querySelector('button').onclick=hide;clearTimeout(UI.toastT);UI.toastT=setTimeout(hide,5000);
+  t.innerHTML=`<button class="notif" type="button">${notifBody(n.t,n.b,time)}<span class="dismiss">Dismiss</span></button>`;
+  const b=t.querySelector('button'),hide=()=>{const had=t.contains(document.activeElement);t.innerHTML='';if(had)focusHead()};
+  // Stays while pointed at or focused; the same alert is also kept under "Alerts so far today"
+  const wait=()=>{clearTimeout(UI.toastT);UI.toastT=setTimeout(()=>{if(b.matches(':hover,:focus'))wait();else hide()},10000)};
+  b.onclick=hide;b.onkeydown=e=>{if(e.key==='Escape'){e.stopPropagation();hide()}};wait();
 }
 
 /* ---------- Home ---------- */
 function viewHome(){
-  const own=S.trip&&S.booked;
+  const own=S.trip&&S.booked,keys=Object.keys(SCN),first=keys.find(k=>!UI.played[k])||keys[0],rest=keys.filter(k=>k!==first);
+  const num=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'][keys.length]||keys.length;
+  const r=recapStats();
+  const f=SCN[first];
   $s().innerHTML=`<div class="pad">
-    <a class="mark" href="#" aria-label="Rerouted" style="margin-bottom:14px"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word">Rerouted</span></a>
-    <p class="hello">Your plan B, ready before the gate agent is.</p>
-    ${UI.introSeen?'':`<div class="intro"><b>Thanks for testing Rerouted</b>This is a prototype. Nothing here touches a real booking. Play a bad travel day below, make the calls you’d really make, and tell us what you thought at the end. <div style="margin-top:8px"><button class="btn small" id="gotIt" type="button">Got it</button></div></div>`}
-    ${(()=>{const r=recapStats();return r.n?`<section class="outcome" style="margin:18px 0 0"><div style="color:var(--tarmac-muted);font-size:13px">Your Rerouted recap</div><div class="big" style="font-size:26px;margin-bottom:6px">${recapLine(r)}</div><div style="font-size:14px;color:var(--tarmac-muted)">Across ${r.n} practice trip${r.n>1?'s':''}, counting time saved and money recovered or avoided.</div><button class="btn small" type="button" id="shareRecap" style="margin-top:10px;background:transparent;color:var(--tarmac-ink);border-color:rgba(255,255,255,.25)">Copy to share</button></section>`:''})()}
-    <h2 style="margin-top:22px">Practice a bad travel day</h2>
-    <p class="hint">${['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'][Object.keys(SCN).length]||Object.keys(SCN).length} situations travelers really face. Each takes about 3 minutes.</p>
-    ${Object.entries(SCN).map(([k,s])=>`<button class="scncard${UI.played[k]?' done':''}" type="button" data-scn="${k}">
-      <div class="strip">${esc(s.route)}<span>${esc(s.date.split(',')[0])}</span></div>
-      <div class="body"><b>${esc(s.title)}</b><p>${esc(s.blurb)}</p><div class="meta">${esc(s.persona.split(':')[0])}</div></div></button>`).join('')}
-    <h2>Your own trip</h2>
-    ${own?`<button class="scncard" type="button" id="openOwn"><div class="strip">${esc(S.booked[0].from)} → ${esc(S.booked[S.booked.length-1].to)}<span>${esc(niceDate(S.trip.date)||'Date not set')}</span></div>
-      <div class="body"><b>${S.booked.map(f=>fl(f)).join(' + ')}</b><p>See what Rerouted would tell you if this trip went wrong.</p></div></button>`
-    :`<p class="hint">Add a United, Delta, American or Southwest booking you have coming up and see what Rerouted would do with it.</p><button class="btn block" type="button" id="addOwn">Add a booking</button>`}
+    <div class="homehead"><span class="mark"><svg viewBox="0 0 46 30" aria-hidden="true"><path class="ghost" d="M5 22 L41 22"/><path class="path" d="M5 22 C14 22 14 6 23 6 S32 22 41 22"/><circle class="dot" cx="5" cy="22" r="3.2"/><circle class="dot" cx="41" cy="22" r="3.2"/></svg><span class="word" style="font-size:1.375rem">Rerouted</span></span><span class="protochip">Prototype</span></div>
+    <h2 class="hello">${UI.played[first]?'Play a day again':'Start with this day'}</h2>
+    <p class="sub-hello">You’re the traveler. Make the calls you’d really make.</p>
+    <button class="feature" type="button" data-scn="${first}"><span class="strip">${esc(f.route)}<span>${esc(f.date.split(',')[0])}</span></span>
+      <span class="body"><b>${esc(f.title)}</b><span class="blurb">${esc(f.blurb)}</span><span class="meta">${esc(f.persona.split(':')[0])}</span><span class="go">Play this day</span></span></button>
+    ${UI.introSeen?'':`<div class="intro" style="margin:1.125rem 0 0"><b>Thanks for testing Rerouted</b>Nothing here touches a real booking. Tell us what you thought at the end.<br><button class="btn small" id="gotIt" type="button">Got it</button></div>`}
+    <h3 class="secthead">More travel days (${num.toString().toLowerCase()} in all)</h3>
+    ${rest.map(k=>{const s=SCN[k];return `<button class="srow${UI.played[k]?' done':''}" type="button" data-scn="${k}"><span class="tx"><span class="rt">${esc(s.route)}</span><b>${esc(s.title)}${UI.played[k]?'<span class="tag-done">Played</span>':''}</b><small>${esc(s.blurb)}</small></span><span class="chev" aria-hidden="true">›</span></button>`}).join('')}
+    ${r.n?`<h3 class="secthead">Your recap</h3><section class="recap"><div class="big">${recapLine(r)}</div><p>Across ${r.n} practice trip${r.n>1?'s':''}, counting time saved and money recovered or avoided.</p><button class="btn small" type="button" id="shareRecap">Copy to share</button></section>`:''}
+    <h3 class="secthead">Your own trip</h3>
+    ${own?`<button class="srow" type="button" id="openOwn"><span class="tx"><span class="rt">${esc(S.booked[0].from)} → ${esc(S.booked[S.booked.length-1].to)}</span><b>${S.booked.map(f=>fl(f)).join(' + ')}</b><small>${esc(niceDate(S.trip.date)||'Date not set')}. See what Rerouted would tell you if this trip went wrong.</small></span><span class="chev" aria-hidden="true">›</span></button>`
+    :`<p class="hint" style="margin-top:0">Add a United, Delta, American or Southwest booking you have coming up and see what Rerouted would do with it.</p><button class="btn block" type="button" id="addOwn">Add a booking</button>`}
   </div>`;
-  if($('shareRecap'))$('shareRecap').onclick=async e=>{const r=recapStats();try{await navigator.clipboard.writeText(`My Rerouted recap: ${recapLine(r).replace(', ',' and ')} across ${r.n} practice trip${r.n>1?'s':''}.`);e.target.textContent='Copied'}catch(x){e.target.textContent='Copy didn’t work here'}};
-  if($('gotIt'))$('gotIt').onclick=()=>{UI.introSeen=true;store('rr4-intro',true);viewHome()};
+  if($('shareRecap'))$('shareRecap').onclick=async e=>{const r=recapStats();try{await navigator.clipboard.writeText(`My Rerouted recap: ${recapLine(r).replace(', ',' and ')} across ${r.n} practice trip${r.n>1?'s':''}.`);e.target.textContent='Copied';say('Copied')}catch(x){e.target.textContent='Copy didn’t work here';say('Copy didn’t work here')}};
+  if($('gotIt'))$('gotIt').onclick=()=>{UI.introSeen=true;store('rr4-intro',true);keep(viewHome)};
   $s().querySelectorAll('[data-scn]').forEach(b=>b.onclick=()=>startScn(b.dataset.scn));
   if($('openOwn'))$('openOwn').onclick=()=>go('own');
   if($('addOwn'))$('addOwn').onclick=()=>go('add');
@@ -1634,12 +1765,13 @@ function startScn(k){UI.scn=k;UI.path=[];UI.timings=[];UI.answers={};go('lock')}
 function viewLock(){
   const s=SCN[UI.scn],st=s.steps[s.start];
   $s().innerHTML=`<div class="lock">
-    <div class="date">${esc(s.date)}</div><div class="time">${esc(st.clock.replace(/ [AP]M/,''))}</div><div class="where">${esc(st.where)}</div>
-    <button class="notif" type="button" id="lockN">${notifBody(st.notif.t,st.notif.b,'now')}</button>
+    <h2>${esc(s.title)}</h2>
+    <p class="when">${esc(s.date)}<span class="time">${esc(st.clock.replace(/ [AP]M/,''))}<span class="sr"> ${esc(st.clock.slice(-2))}</span></span>${esc(st.where)}</p>
     <div class="persona">${esc(s.persona)}${feedChips(['push'])}</div>
-    <div class="open">Tap the alert to open Rerouted</div>
-    <button class="btn small" type="button" id="lockBack" style="margin-top:14px;background:transparent;color:var(--tarmac-muted);border-color:rgba(255,255,255,.2)">Back to trips</button></div>`;
-  $('lockN').onclick=()=>enterStep(s.start,false);
+    <button class="notif" type="button" id="lockN">${notifBody(st.notif.t,st.notif.b,'now')}</button>
+    <button class="btn primary big" type="button" id="lockGo">Open this alert</button>
+    <button class="btn small quiet" type="button" id="lockBack">Back to trips</button></div>`;
+  $('lockN').onclick=$('lockGo').onclick=()=>enterStep(s.start,false);
   $('lockBack').onclick=()=>go('home');
 }
 function enterStep(id,withToast=true){
@@ -1654,7 +1786,9 @@ function enterStep(id,withToast=true){
 /* Board rows: [flight, route, sched dep, expected dep, status, tone, sched arr, expected arr].
    Times are local to each airport, so a connection is the next departure minus this arrival. */
 const clockMin=t=>{const m=String(t).match(/(\d{1,2}):(\d{2})\s*([AP])M/i);return m?(+m[1]%12+(m[3].toUpperCase()==='P'?12:0))*60+ +m[2]:null};
-const timeCell=(s,e)=>e==='—'?'—':s&&e&&s!==e?`<s>${esc(s)}</s>${esc(e)}`:esc(e||s);
+const noTime='<span aria-hidden="true">—</span><span class="sr">none</span>';
+const wasNow=(s,e)=>`<span class="sr">was </span><s>${esc(s)}</s><span class="sr">, now </span>${esc(e)}`;
+const timeCell=(s,e)=>e==='—'?noTime:s&&e&&s!==e?wasNow(s,e):esc(e||s);
 function connHtml(a,b){
   const [ra,rb]=[a[1],b[1]].map(x=>String(x).split(' → '));
   if(ra.length<2||rb.length<2||ra[1]!==rb[0]||a[7]==null)return '';
@@ -1665,12 +1799,12 @@ function connHtml(a,b){
   return `<div class="conn ${cls}"><span>Connection in ${esc(ra[1])}</span><b>${txt}</b></div>`;
 }
 function boardHtml(b,feeds){
-  return `<section class="board" aria-label="Flight status"><p class="hl">${esc(b.hl)}</p>${b.cause?`<p class="cause">${esc(b.cause)}</p>`:''}
+  return `<section class="board" aria-label="Flight status"><div class="bhead"><span>Flight status</span><span class="simtag">Simulated</span></div><p class="hl">${esc(b.hl)}</p>${b.cause?`<p class="cause">${esc(b.cause)}</p>`:''}
     ${b.rows.map((row,i)=>{const [f,r,s,e,st,t,sa,ea]=row;
       const body=sa!=null?`<div class="frow f2"><span class="fn">${esc(f)}</span><span class="rt">${esc(r)}</span>
         <div class="tms"><div><small>Departs</small><span>${timeCell(s,e)}</span></div><div><small>Arrives</small><span>${timeCell(sa,ea)}</span></div></div>
         <span class="st ${t}">${esc(st)}</span></div>`
-      :`<div class="frow"><span class="fn">${esc(f)}</span><span class="rt">${esc(r)}</span><span class="tm">${s!==e&&e!=='—'&&!/ARR|DEPARTED/.test(e)?`<s>${esc(s)}</s>${esc(e)}`:esc(e==='—'?s:e)}</span><span class="st ${t}">${esc(st)}</span></div>`;
+      :`<div class="frow"><span class="fn">${esc(f)}</span><span class="rt">${esc(r)}</span><span class="tm">${s!==e&&e!=='—'&&!/ARR|DEPARTED/.test(e)?wasNow(s,e):esc(e==='—'?s:e)}</span><span class="st ${t}">${esc(st)}</span></div>`;
       return (i&&sa!=null?connHtml(b.rows[i-1],row):'')+body}).join('')}
     ${UI.founder?`<div style="margin-top:6px">${feedChips(feeds||['status','alerts'])}</div>`:''}</section>`;
 }
@@ -1693,38 +1827,38 @@ function routeSvg(rt){
   }
   const oldCodes=Object.keys(P);
   g+=oldCodes.map(c=>N(P[c],c,-22)).join('')+extra+(P[last]?'':N(end,last,46,'var(--center)'));
-  return `<div class="routeviz"><svg viewBox="0 0 600 236" role="img" aria-label="Booked route compared with the suggested route">${g}</svg><div class="legend"><span class="old">Booked</span><span>Suggested</span></div></div>`;
+  return `<div class="routeviz"><svg viewBox="0 0 600 236" role="img" aria-label="Booked route ${esc([o[0][0],...o.map(x=>x[1])].join(' to '))}. Suggested route ${esc(n.join(' to '))}.">${g}</svg><div class="legend"><span class="old">Booked</span><span>Suggested</span></div></div>`;
 }
 function moveHtml(m,key){
   if(!m)return '';
   const th=UI.thumbs[key];
   return `<section class="move ${m.tone==='warn'?'warn':m.tone==='neutral'?'neutral':''}" aria-label="Your move">
-    <div class="label">${esc(m.label)}</div><h3>${esc(m.title)}</h3><p class="sub">${esc(m.sub)}</p>
+    <p class="label">${esc(m.label)}</p><h3>${esc(m.title)}</h3><p class="sub">${esc(m.sub)}</p>
     ${routeSvg(m.route)}
     ${m.steps?.length?`<ol>${m.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`:''}
     ${(m.scripts||[]).map((sc,i)=>`<div class="script"><div class="who"><span>What to say to ${esc(sc.who)}</span></div><p>${esc(sc.text)}</p>
       <div class="row"><button class="btn small" type="button" data-copy="${i}">Copy</button><button class="btn small" type="button" data-show="${i}">Show to the agent</button></div></div>`).join('')}
     ${m.note?`<p class="note">${esc(m.note)}</p>`:''}
     ${feedChips(m.feeds)}
-    <div class="thumbs">Was this advice useful? <button type="button" data-th="up" aria-pressed="${th==='up'}">Yes</button><button type="button" data-th="down" aria-pressed="${th==='down'}">Not really</button></div>
+    <div class="thumbs" role="group" aria-label="Was this advice useful?"><span style="grid-column:1/-1">Was this advice useful?</span><button type="button" data-th="up" aria-pressed="${th==='up'}">Yes</button><button type="button" data-th="down" aria-pressed="${th==='down'}">Not really</button></div>
   </section>`;
 }
 function bindMove(root,m,key){
-  root.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(m.scripts[+b.dataset.copy].text);b.textContent='Copied'}catch(e){b.textContent='Copy failed'}});
-  root.querySelectorAll('[data-show]').forEach(b=>b.onclick=()=>{UI.agentScript=m.scripts[+b.dataset.show];UI.back=UI.view;go('agent')});
+  root.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(m.scripts[+b.dataset.copy].text);b.textContent='Copied';say('Script copied')}catch(e){b.textContent='Copy failed';say('Copy failed')}});
+  root.querySelectorAll('[data-show]').forEach(b=>b.onclick=()=>{UI.agentScript=m.scripts[+b.dataset.show];UI.back=UI.view;UI.backY=$s().scrollTop;UI.backI=b.dataset.show;go('agent')});
   root.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>{UI.thumbs[key]=b.dataset.th;store('rr4-thumbs',UI.thumbs);root.querySelectorAll('[data-th]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
 }
 function riskHtml(rk){
   if(!rk)return '';
   const hi=rk.items.filter(x=>x[1]==='high').length,lv={high:['High','bad'],med:['Watch','warn'],low:['Low','ok']};
-  return `<section class="card" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><b style="font-size:17px">${esc(rk.title||'Risk check')}</b><span class="pill ${hi?'bad':'ok'}">${hi?`${hi} high risk${hi>1?'s':''}`:'Looking good'}</span></div>
+  return `<section class="card" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h3 style="margin:0;font-size:1.125rem">${esc(rk.title||'Risk check')}</h3><span class="pill ${hi?'bad':'ok'}">${hi?`${hi} high risk${hi>1?'s':''}`:'Looking good'}</span></div>
     <ul class="rights" style="margin-top:10px">${rk.items.map(([t,l,b,f])=>`<li class="${l==='high'?'no':l==='med'?'warn':'yes'}"><b>${esc(t)} <span class="pill ${lv[l][1]}" style="margin-left:4px">${lv[l][0]}</span></b><span>${esc(b)}</span>${feedChips(f?[f]:[])}</li>`).join('')}</ul></section>`;
 }
 function linesHtml(ln){
   if(!ln)return '';
-  return `<section class="card" style="margin:8px 0 4px"><b style="font-size:16px">Best way to get help right now</b>
-    <ul class="explist" style="margin:8px 0 6px">${ln.rows.map(([c,w,n,best])=>`<li style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:15px">${esc(c)}${best?' <span class="pill ok">Do this</span>':''}</b>${w?`<span style="white-space:nowrap;font-weight:600">${esc(w)}</span>`:''}</div><small style="display:block">${esc(n)}</small></li>`).join('')}</ul>
-    ${ln.tip?`<p class="note" style="margin:0">${esc(ln.tip)}</p>`:''}<p class="note" style="margin:6px 0 0;font-size:12px">Ranked from your airline’s rules and how you booked. No live feed has wait times, so Rerouted doesn’t guess them.</p>${feedChips(['waits'])}</section>`;
+  return `<section class="card" style="margin:8px 0 4px"><h3 style="margin:0;font-size:1.125rem">Best way to get help right now</h3>
+    <ul class="explist" style="margin:8px 0 6px">${ln.rows.map(([c,w,n,best])=>`<li style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><b>${esc(c)}${best?' <span class="pill ok">Do this</span>':''}</b>${w?`<span style="white-space:nowrap;font-weight:600">${esc(w)}</span>`:''}</div><small style="display:block">${esc(n)}</small></li>`).join('')}</ul>
+    ${ln.tip?`<p class="note" style="margin:0">${esc(ln.tip)}</p>`:''}<p class="note" style="margin:6px 0 0;font-size:.875rem">Ranked from your airline’s rules and how you booked. No live feed has wait times, so Rerouted doesn’t guess them.</p>${feedChips(['waits'])}</section>`;
 }
 function recapLine(r){const parts=[];if(r.saved)parts.push(`${dur(r.saved)} saved`);if(r.back)parts.push(`${money2(r.back)} back`);return parts.join(', ')||'Every option, mapped'}
 function recapStats(){
@@ -1732,7 +1866,8 @@ function recapStats(){
   for(const [k,id] of Object.entries(UI.played)){const e=SCN[k]?.steps[id]?.end;if(!e)continue;n++;saved+=e.saved||0;back+=e.back||0}
   return {n,saved,back};
 }
-const rightsHtml=r=>r?.length?`<h2>What you’re entitled to</h2><ul class="rights">${r.map(([c,t,b,f])=>`<li class="${c}"><b>${esc(t)}</b><span>${esc(b)}</span>${feedChips(f?[f]:[])}</li>`).join('')}</ul>`:'';
+const RIGHT_WORD={yes:'Yes: ',no:'No: ',warn:'Caution: '};
+const rightsHtml=r=>r?.length?`<h3>What you’re entitled to</h3><ul class="rights">${r.map(([c,t,b,f])=>`<li class="${c}"><b><span class="sr">${RIGHT_WORD[c]||''}</span>${esc(t)}</b><span>${esc(b)}</span>${feedChips(f?[f]:[])}</li>`).join('')}</ul>`:'';
 
 /* Claim kit: who pays, expenses against the card's cap, documents, and how to file */
 // How each issuer's trip delay claims are filed. Checked Nov 11, 2026; "check" marks conflicting or unofficial sources.
@@ -1756,14 +1891,14 @@ function moneyHtml(m,key){
   if(!m)return '';
   const kit=m.kit?Object.assign(newKit(m),load(key)||{}):null;
   const total=kit?kit.items.reduce((s,x)=>s+x.a,0):0;
-  return `<h2>Your delay money</h2><div class="payers">${m.payers.map(([w,a,on,p])=>`<div class="payer${on?' on':''}"><b>${esc(w)}</b><span class="amt">${esc(a)}</span><p>${esc(p)}</p></div>`).join('')}</div>
+  return `<h3>Your delay money</h3><div class="payers">${m.payers.map(([w,a,on,p])=>`<div class="payer${on?' on':''}"><b>${esc(w)}</b><span class="amt">${esc(a)}</span><p>${esc(p)}</p></div>`).join('')}</div>
     ${feedChips(['cards','rules'])}
-    ${kit?`<h2>Claim kit</h2><p class="hint">Log what you spend as you go. Rerouted turns it into a claim you can submit.</p>
-      <ul class="explist">${kit.items.map((x,i)=>`<li><span>${esc(x.d)} <small>${esc(x.c)}</small></span><span>${money2(x.a)} <button type="button" data-rm="${i}">Remove</button></span></li>`).join('')||'<li><small>No expenses yet.</small></li>'}</ul>
+    ${kit?`<h3>Claim kit</h3><p class="hint">Log what you spend as you go. Rerouted turns it into a claim you can submit.</p>
+      <ul class="explist">${kit.items.map((x,i)=>`<li><span>${esc(x.d)} <small>${esc(x.c)}</small></span><span>${money2(x.a)} <button type="button" data-rm="${i}" aria-label="Remove ${esc(x.d)}">Remove</button></span></li>`).join('')||'<li><small>No expenses yet.</small></li>'}</ul>
       <div class="meter" role="img" aria-label="${money(Math.round(total))} of ${money(m.kit.cap)} covered"><i style="width:${Math.min(100,total/m.kit.cap*100)}%"></i></div>
       <p class="note" style="margin:0 0 12px">${money2(total)} of ${money(m.kit.cap)} covered${total>m.kit.cap?`. ${money2(total-m.kit.cap)} is over the limit.`:'.'}</p>
       <div class="exp"><label>What it was<input type="text" id="xd" placeholder="e.g. Breakfast"></label><label>Amount ($)<input type="number" id="xa" min="0" step="0.01" inputmode="decimal"></label></div>
-      <div class="row" style="margin:-4px 0 14px"><select id="xc" style="width:auto;margin:0"><option>Meals</option><option>Hotel</option><option>Transportation</option><option>Essentials</option></select><button class="btn small" type="button" id="xadd">Add expense</button></div>
+      <div class="row" style="margin:-4px 0 14px"><select id="xc" aria-label="Expense type" style="width:auto;margin:0"><option>Meals</option><option>Hotel</option><option>Transportation</option><option>Essentials</option></select><button class="btn small" type="button" id="xadd">Add expense</button></div>
       ${m.claim?claimHtml(m,kit,total):''}`:''}`;
 }
 
@@ -1784,19 +1919,19 @@ function claimHtml(m,kit,total){
     `Choose how you want to be paid, then save your claim number here so Rerouted can track it.`];
   const status={ready:['Ready to file',''],filed:['Filed, waiting for a decision','warn'],paid:['Paid','ok']}[kit.status]||['Ready to file',''];
   return `<section class="card" style="margin-top:4px;border-color:var(--center)">
-    <div class="row" style="justify-content:space-between"><b style="font-size:17px">File your claim</b><span class="pill ${status[1]||'warn'}">${status[0]}</span></div>
+    <div class="row" style="justify-content:space-between"><h4>File your claim</h4><span class="pill ${status[1]||'warn'}">${status[0]}</span></div>
     <p class="hint" style="margin:6px 0 12px">You’re eligible with your ${esc(card.name)}: ${esc(c.why)}. It covers up to ${money(m.kit.cap)}${c.extra?`, ${esc(c.extra)}`:''}.</p>
     <div class="payers">
-      ${bag?`<div class="payer on"><b>Start the claim</b><span class="amt" style="font-size:19px;text-align:right">As soon as you can</span><p>Rerouted is still confirming this card’s baggage-delay deadlines. Filing early is always safe.</p></div>`:''}
-      ${how.notify&&!bag?`<div class="payer on"><b>Start the claim by</b><span class="amt" style="font-size:19px;text-align:right;white-space:nowrap">${addDays(c.date,how.notify)}</span><p>${how.notify} days from the delay. Starting sooner is better.</p></div>`:''}
-      ${how.docs&&!bag?`<div class="payer"><b>Send all documents by</b><span class="amt" style="font-size:19px;text-align:right;white-space:nowrap">${addDays(c.date,how.docs)}</span><p>${how.docs} days from the delay.</p></div>`:''}
+      ${bag?`<div class="payer on"><b>Start the claim</b><span class="amt">As soon as you can</span><p>Rerouted is still confirming this card’s baggage-delay deadlines. Filing early is always safe.</p></div>`:''}
+      ${how.notify&&!bag?`<div class="payer on"><b>Start the claim by</b><span class="amt" style="white-space:nowrap">${addDays(c.date,how.notify)}</span><p>${how.notify} days from the delay. Starting sooner is better.</p></div>`:''}
+      ${how.docs&&!bag?`<div class="payer"><b>Send all documents by</b><span class="amt" style="white-space:nowrap">${addDays(c.date,how.docs)}</span><p>${how.docs} days from the delay.</p></div>`:''}
     </div>
     <p class="note" style="margin:-4px 0 12px">${esc(how.note)}</p>
-    <b style="font-size:15px">How to file with ${esc(how.admin)}</b>
-    <ol style="margin:8px 0 14px;padding-left:20px;font-size:15px">${steps.map(s=>`<li style="margin-bottom:6px">${esc(s)}</li>`).join('')}</ol>
-    <b style="font-size:15px">Documents (${done} of ${docs.length} ready)</b>
+    <h4>How to file with ${esc(how.admin)}</h4>
+    <ol style="margin:8px 0 14px;padding-left:20px">${steps.map(s=>`<li style="margin-bottom:6px">${esc(s)}</li>`).join('')}</ol>
+    <h4>Documents (${done} of ${docs.length} ready)</h4>
     <ul class="docs" style="margin-top:8px">${docs.map(([k,t])=>`<li><label class="chk"><input type="checkbox" data-doc="${k}"${kit.docs[k]?' checked':''}> ${t}</label></li>`).join('')}</ul>
-    <div class="script"><div class="who"><span>Your claim details, ready to paste</span></div><p style="white-space:pre-line;font-size:14px">${esc(claimText(m,kit,total))}</p>
+    <div class="script"><div class="who"><span>Your claim details, ready to paste</span></div><p style="white-space:pre-line;overflow-wrap:anywhere">${esc(claimText(m,kit,total))}</p>
       <div class="row"><button class="btn small" type="button" id="claimCopy">Copy details</button>${how.url?`<a class="btn small" href="${how.url}" target="_blank" rel="noopener">Open ${esc(how.site)}</a>`:''}</div></div>
     ${kit.status==='ready'?`<button class="btn primary block" type="button" id="claimFiled">I filed my claim</button>`
       :kit.status==='filed'?`<label>Claim number<input type="text" id="claimNo" value="${esc(kit.claimNo)}" placeholder="From your confirmation email"></label>
@@ -1833,10 +1968,10 @@ function bindMoney(root,m,key,rerender){
 /* ---------- Scenario step ---------- */
 function viewStep(){
   const s=SCN[UI.scn],st=s.steps[UI.step],key=`${UI.scn}:${UI.step}`,kitKey=`rr4-kit-${UI.scn}-${st.money?.kitId||UI.step}`;
-  const earlier=UI.path.slice(0,-1).map(id=>s.steps[id]).filter(x=>x.notif);
-  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk">‹ Trips</button><div><div class="ttl">${esc(s.route)}</div><div class="sub">${esc(s.title)}</div></div></div>
+  const earlier=UI.path.map(id=>s.steps[id]).filter(x=>x.notif);
+  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk"><span aria-hidden="true">‹ </span>Trips</button><div><h2 class="ttl">${esc(s.route)}</h2><div class="sub">${esc(s.title)}</div></div></div>
     <div class="pad" style="padding-bottom:${st.choices?'8px':'28px'}">
-      <div class="row" style="margin-bottom:12px"><span class="clock"><i></i>${esc(st.clock)}</span><span class="note" style="margin:0">${esc(st.where)}</span></div>
+      <div class="where"><span class="clock"><i></i>${esc(st.clock)}</span><span class="note" style="margin:0">${esc(st.where)}</span></div>
       ${st.event?`<div class="event"><b class="evlab">In this scenario</b>${esc(st.event)}</div>`:''}
       ${riskHtml(st.risk)}
       ${boardHtml(st.board,st.feeds)}
@@ -1846,18 +1981,18 @@ function viewStep(){
       ${rightsHtml(st.rights)}
       ${moneyHtml(st.money,kitKey)}
       ${st.end?feedbackHtml():''}
-      ${earlier.length?`<details class="earlier"><summary>Earlier today</summary><ul class="tl">${earlier.map(x=>`<li><small>${esc(x.clock)}</small><b>${esc(x.notif.t)}</b>${esc(x.notif.b)}</li>`).join('')}</ul></details>`:''}
+      ${earlier.length?`<details class="earlier"><summary>Alerts so far today</summary><ul class="tl">${earlier.map(x=>`<li><small>${esc(x.clock)}</small><b>${esc(x.notif.t)}</b>${esc(x.notif.b)}</li>`).join('')}</ul></details>`:''}
     </div>
-    ${st.choices?`<div class="choices${st.choices.length===2?' two':''}"><span class="ask">What do you do?</span>${st.choices.map((c,i)=>`<button class="btn ${i===0?'primary':''}" type="button" data-next="${c.next}">${esc(c.label)}${c.sub?`<small>${esc(c.sub)}</small>`:''}</button>`).join('')}</div>`:''}`;
+    ${st.choices?`<div class="choices${st.choices.length===2?' two':''}" role="group" aria-labelledby="ask"><p class="ask" id="ask">What do you do?</p>${st.choices.map((c,i)=>`<button class="btn ${i===0?'primary':''}" type="button" data-next="${c.next}">${esc(c.label)}${c.sub?`<small>${esc(c.sub)}</small>`:''}</button>`).join('')}</div>`:''}`;
   $('bk').onclick=()=>go('home');
   bindMove($s(),st.move,key);
-  bindMoney($s(),st.money,kitKey,()=>{const y=$s().scrollTop;viewStep();$s().scrollTop=y});
+  bindMoney($s(),st.money,kitKey,()=>keep(viewStep));
   $s().querySelectorAll('[data-next]').forEach(b=>b.onclick=()=>enterStep(b.dataset.next));
   if(st.end)bindFeedback();
 }
 function endHtml(s,st){
   const e=st.end;
-  return `<section class="outcome"><div class="cause" style="color:var(--tarmac-muted);font-size:13px">How it turned out</div><div class="big">${esc(e.big)}</div>
+  return `<section class="outcome"><p class="kicker">How it turned out</p><h3>${esc(e.big)}</h3>
     <dl>${e.rows.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl></section>
     <div class="lesson"><b>The takeaway</b>${esc(e.lesson)}</div>`;
 }
@@ -1871,10 +2006,10 @@ const QS=[
   {k:'pay',q:'What would you pay for this?',o:['Only if free','About $3 a month','About $8 a month','$50+ a year']}
 ];
 function feedbackHtml(){
-  if(UI.answers.saved)return `<section class="card" style="margin-top:20px"><h2>Thank you</h2><p class="hint">Your answers are saved on this device.</p>
+  if(UI.answers.saved)return `<section class="card" style="margin-top:20px"><h3 id="fbDone" tabindex="-1">Thank you</h3><p class="hint">Your answers are saved on this device.</p>
     <div class="row"><button class="btn" type="button" id="fbCopy">Copy my answers</button>${FEEDBACK_EMAIL?`<a class="btn" id="fbMail" href="#">Email them to us</a>`:''}<button class="btn primary" type="button" id="fbNext">Try another scenario</button></div><p class="status" id="fbStatus"></p></section>`;
-  return `<section class="card" style="margin-top:20px"><h2>Quick questions</h2><p class="hint">Five taps and one optional note. It shapes what we build.</p>
-    ${QS.map(x=>`<div class="q"><b>${esc(x.q)}</b><div class="opts" data-q="${x.k}">${x.o.map(v=>`<button type="button" aria-pressed="${UI.answers[x.k]===v}">${esc(v)}</button>`).join('')}</div></div>`).join('')}
+  return `<section class="card" style="margin-top:20px"><h3>Quick questions</h3><p class="hint">Five taps and one optional note. It shapes what we build.</p>
+    ${QS.map(x=>`<div class="q"><b id="q-${x.k}">${esc(x.q)}</b><div class="opts" role="group" aria-labelledby="q-${x.k}" data-q="${x.k}">${x.o.map(v=>`<button type="button" aria-pressed="${UI.answers[x.k]===v}">${esc(v)}</button>`).join('')}</div></div>`).join('')}
     <label>What was confusing, missing, or surprising?<textarea id="fbText" placeholder="Anything at all">${esc(UI.answers.note||'')}</textarea></label>
     <button class="btn primary block" type="button" id="fbSave">Save my answers</button><p class="status" id="fbStatus"></p></section>`;
 }
@@ -1893,7 +2028,7 @@ function bindFeedback(){
     const thumbs=Object.fromEntries(Object.entries(UI.thumbs).filter(([k])=>k.startsWith(UI.scn+':')).map(([k,v])=>[k.split(':')[1],v]));
     const entry={scn:UI.scn,at:new Date().toISOString(),path:[...UI.path],endTitle:SCN[UI.scn].steps[UI.step].end.big,answers:{...UI.answers},thumbs,timings:[...UI.timings]};
     UI.fb.push(entry);store('rr4-feedback',UI.fb);
-    UI.answers.saved=true;UI.lastFb=entry;const y=$s().scrollTop;viewStep();$s().scrollTop=y;
+    UI.answers.saved=true;UI.lastFb=entry;const y=$s().scrollTop;viewStep();$s().scrollTop=y;$('fbDone').focus({preventScroll:true});
   };
   if($('fbCopy'))$('fbCopy').onclick=async()=>{try{await navigator.clipboard.writeText(fbSummary(UI.lastFb));$('fbStatus').textContent='Copied. Paste it into a message to the Rerouted team.'}catch(e){$('fbStatus').textContent='Copy didn’t work here. Your answers are still saved.'}};
   if($('fbMail'))$('fbMail').href=`mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent('Rerouted test: '+SCN[UI.scn].title)}&body=${encodeURIComponent(fbSummary(UI.lastFb))}`;
@@ -1903,8 +2038,12 @@ function bindFeedback(){
 /* ---------- Show the agent ---------- */
 function viewAgent(){
   const sc=UI.agentScript;
-  $s().innerHTML=`<div class="agent"><div class="who">Show this to ${esc(sc.who)}, or read it out</div><p>${esc(sc.text)}</p><button class="btn block" type="button" id="done">Done</button></div>`;
-  $('done').onclick=()=>{const v=UI.back||'home';UI.back=null;if(v==='step'){go('step');}else go(v)};
+  $s().innerHTML=`<div class="agent"><h2 class="who">Show this to ${esc(sc.who)}, or read it out</h2><div class="say" id="agentBox"><p id="agentText">${esc(sc.text)}</p></div><button class="btn block" type="button" id="done">Done</button></div>`;
+  const fit=()=>{const box=$('agentBox'),t=$('agentText');if(!box||!t)return;let f=44;t.style.fontSize=f+'px';while(f>20&&t.scrollHeight>box.clientHeight){f-=1;t.style.fontSize=f+'px'}};
+  fit();requestAnimationFrame(fit);
+  const y=UI.backY||0,i=UI.backI;
+  $('done').onclick=()=>{const v=UI.back||'home';UI.back=null;go(v);$s().scrollTop=y;$s().querySelector(`[data-show="${i}"]`)?.focus({preventScroll:true})};
+  $s().querySelector('.agent').onkeydown=e=>{if(e.key==='Escape'){e.stopPropagation();$('done').click()}};
 }
 
 /* ---------- Wallet ---------- */
@@ -1930,28 +2069,27 @@ function cardFace(k,c,big){
 function viewWallet(){
   const kits=Object.keys(localStorage).filter(k=>k.startsWith('rr4-kit-')).map(k=>[k,load(k)]).filter(([,v])=>v?.items?.length);
   const mine=Object.keys(CARDS).filter(k=>S.profile.cards.includes(k));
-  $s().innerHTML=`<div class="pad"><h2>Your wallet</h2><p class="hint">Each card shows when its trip delay coverage starts and how much it pays. Terms checked ${CHECKED}.</p>
-    ${mine.length?`<div class="cardrail" aria-label="Cards in your wallet">${mine.map(k=>`<div class="railitem">${cardFace(k,CARDS[k],true)}<b>${esc(CARDS[k].name)}</b><small>${esc(cardTerms(CARDS[k]))}</small></div>`).join('')}</div>`:`<div class="emptywallet">Turn on the cards you carry below and they’ll appear here.</div>`}
-    <h2>All cards</h2>
-    ${Object.entries(CARDS).map(([k,c])=>`<label class="cardrow${S.profile.cards.includes(k)?' on':''}"><span class="thumb" aria-hidden="true">${cardFace(k,c,false)}</span><span style="flex:1"><b>${esc(c.name)}</b><small>${esc(cardTerms(c))}</small>${c.conf!=='ok'?'<small>From a published comparison; we confirm against the official terms before launch.</small>':''}</span><input type="checkbox" data-card="${k}"${S.profile.cards.includes(k)?' checked':''} aria-label="I have ${esc(c.name)}" style="width:22px;height:22px;accent-color:var(--edge)"></label>`).join('')}
+  $s().innerHTML=`<div class="pad"><h2 class="pagetitle">Your wallet</h2><p class="hint">Each card shows when its trip delay coverage starts and how much it pays. Terms checked ${CHECKED}.</p>
+    ${mine.length?`<div class="cardrail" role="region" aria-label="Cards in your wallet" tabindex="0">${mine.map(k=>`<div class="railitem"><div aria-hidden="true">${cardFace(k,CARDS[k],true)}</div><b>${esc(CARDS[k].name)}</b><small>${esc(cardTerms(CARDS[k]))}</small></div>`).join('')}</div>`:`<div class="emptywallet">Turn on the cards you carry below and they’ll appear here.</div>`}
+    <h3 class="secthead">Select the cards you carry</h3>
+    ${Object.entries(CARDS).map(([k,c])=>`<label class="cardrow${S.profile.cards.includes(k)?' on':''}"><span class="thumb" aria-hidden="true">${cardFace(k,c,false)}</span><span style="flex:1"><b>${esc(c.name)}</b><small id="t-${k}">${esc(cardTerms(c))}</small>${c.conf!=='ok'?'<small class="cav">From a published comparison; we confirm against the official terms before launch.</small>':''}</span><input type="checkbox" data-card="${k}"${S.profile.cards.includes(k)?' checked':''} aria-label="I have ${esc(c.name)}" aria-describedby="t-${k}" style="accent-color:var(--edge)"></label>`).join('')}
     ${feedChips(['cards'])}
-    <h2>Claim kits</h2>${kits.length?`<ul class="explist">${kits.map(([k,v])=>`<li><span>${esc(k.replace('rr4-kit-','').replace(/-/g,' '))}</span><span>${money2(v.items.reduce((s,x)=>s+x.a,0))}</span></li>`).join('')}</ul>`:'<p class="hint">Claim kits appear here when a delay makes you eligible for reimbursement.</p>'}</div>`;
-  $s().querySelectorAll('[data-card]').forEach(c=>c.onchange=()=>{const k=c.dataset.card;S.profile.cards=c.checked?[...new Set([...S.profile.cards,k])]:S.profile.cards.filter(x=>x!==k);store('rr4-profile',S.profile);viewWallet()});
+    <h3 class="secthead">Claim kits</h3>${kits.length?`<ul class="explist">${kits.map(([k,v])=>`<li><span>${esc(k.replace('rr4-kit-','').replace(/-/g,' '))}</span><span>${money2(v.items.reduce((s,x)=>s+x.a,0))}</span></li>`).join('')}</ul>`:'<p class="hint">Claim kits appear here when a delay makes you eligible for reimbursement.</p>'}</div>`;
+  $s().querySelectorAll('[data-card]').forEach(c=>c.onchange=()=>{const k=c.dataset.card;S.profile.cards=c.checked?[...new Set([...S.profile.cards,k])]:S.profile.cards.filter(x=>x!==k);store('rr4-profile',S.profile);keep(viewWallet)});
 }
 
 /* ---------- You ---------- */
 function viewYou(){
   const o=(arr,v)=>arr.map(([k,t])=>`<option value="${esc(k)}"${String(k)===String(v)?' selected':''}>${esc(t)}</option>`).join('');
-  $s().innerHTML=`<div class="pad"><h2>You</h2>
-    ${Object.entries(AL).map(([k,A])=>`<label>${esc(A.name)} status<select class="pStatusSel" data-al="${k}">${o(A.tiers.map((t,i)=>[i,t]),S.profile.status[k]||0)}</select></label>`).join('')}
-    <label>Alert me when a delay reaches<select id="pAlert">${o([[15,'15 minutes'],[30,'30 minutes'],[60,'1 hour'],[120,'2 hours']],S.profile.alertMin)}</select></label>
-    <label class="chk"><input type="checkbox" id="pAlt"${S.profile.alt?' checked':''}> Show flights to nearby airports during disruptions</label>
-    <h2>Your test answers</h2><p class="hint">${UI.fb.length?`${UI.fb.length} saved on this device.`:'None yet. Play a scenario to the end.'}</p>
+  $s().innerHTML=`<div class="pad"><h2 class="pagetitle">You</h2><p class="hint">Your airline status and alert settings shape every recommendation.</p>
+    <h3 class="secthead" style="margin-top:1.25rem">Airline status</h3><div class="group">${Object.entries(AL).map(([k,A])=>`<label>${esc(A.name)} status<select class="pStatusSel" data-al="${k}">${o(A.tiers.map((t,i)=>[i,t]),S.profile.status[k]||0)}</select></label>`).join('')}</div>
+    <h3 class="secthead">Alerts and options</h3><div class="group"><label>Alert me when a delay reaches<select id="pAlert">${o([[15,'15 minutes'],[30,'30 minutes'],[60,'1 hour'],[120,'2 hours']],S.profile.alertMin)}</select></label>
+    <label class="chk"><input type="checkbox" id="pAlt"${S.profile.alt?' checked':''}> Show flights to nearby airports during disruptions</label></div>
+    <h3 class="secthead">Your test answers</h3><p class="hint">${UI.fb.length?`${UI.fb.length} saved on this device.`:'None yet. Play a scenario to the end.'}</p>
     ${UI.fb.length?`<button class="btn" type="button" id="copyAll">Copy all answers</button><p class="status" id="yStatus"></p>`:''}
-    <h2>Prototype settings</h2>
-    <div class="switch"><span>Founder view<small>Shows which real data feed would power each part of the app.</small></span><input type="checkbox" id="pFounder"${UI.founder?' checked':''}></div>
-    <div class="switch"><span>Launch feeds<small>Every feed this mock stands in for, and when you need it.</small></span><button class="btn small" type="button" id="openFeeds">Open</button></div>
-    <div class="switch"><span>Start over<small>Clears trips, answers, and claim kits on this device.</small></span><button class="btn small" type="button" id="reset">Reset</button></div></div>`;
+    <h3 class="secthead">Prototype settings</h3><div class="group">    <div class="switch"><label for="pFounder">Founder view<small>Shows which real data feed would power each part of the app.</small></label><input type="checkbox" id="pFounder"${UI.founder?' checked':''}></div>
+    <div class="switch"><span>Launch feeds<small id="feedsHelp">Every feed this mock stands in for, and when you need it.</small></span><button class="btn small" type="button" id="openFeeds" aria-label="Open launch feeds" aria-describedby="feedsHelp">Open</button></div>
+    <div class="switch"><span>Start over<small id="resetHelp">Clears trips, answers, and claim kits on this device.</small></span><button class="btn small danger" type="button" id="reset" aria-describedby="resetHelp">Reset</button></div></div></div>`;
   $s().querySelectorAll('.pStatusSel').forEach(el=>el.onchange=()=>{S.profile.status[el.dataset.al]=+el.value;store('rr4-profile',S.profile)});
   $('pAlert').onchange=e=>{S.profile.alertMin=+e.target.value;store('rr4-profile',S.profile)};
   $('pAlt').onchange=e=>{S.profile.alt=e.target.checked;store('rr4-profile',S.profile)};
@@ -1962,21 +2100,21 @@ function viewYou(){
 }
 function viewFeeds(){
   const order=['Launch','Recommended','Later','Gap'],label={Launch:'Needed at launch',Recommended:'Strongly recommended at launch',Later:'After launch',Gap:'No feed exists'};
-  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk">‹ You</button><div class="ttl">Launch feeds</div></div><div class="pad">
+  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk"><span aria-hidden="true">‹ </span>You</button><h2 class="ttl">Launch feeds</h2></div><div class="pad">
     <p class="hint">Every simulated part of this prototype stands in for one of these. Turn on Founder view to see them tagged on each screen.</p>
-    ${order.map(stg=>`<h2>${label[stg]}</h2><ul class="feedlist">${Object.values(FEEDS).filter(f=>f.stage===stg).map(f=>`<li><span class="stage-tag ${stg}">${stg}</span><b>${esc(f.name)}</b><small>Source: ${esc(f.src)}</small><small>Powers: ${esc(f.used)}</small></li>`).join('')}</ul>`).join('')}</div>`;
+    ${order.map(stg=>`<h3>${label[stg]}</h3><ul class="feedlist">${Object.values(FEEDS).filter(f=>f.stage===stg).map(f=>`<li><span class="stage-tag ${stg}">${stg}</span><b>${esc(f.name)}</b><small>Source: ${esc(f.src)}</small><small>Powers: ${esc(f.used)}</small></li>`).join('')}</ul>`).join('')}</div>`;
   $('bk').onclick=()=>go('you');
 }
 
 /* ---------- Your own trip: intake ---------- */
 function viewAdd(){
-  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk">‹ Trips</button><div class="ttl">Add a booking</div></div><div class="pad">
+  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk"><span aria-hidden="true">‹ </span>Trips</button><h2 class="ttl">Add a booking</h2></div><div class="pad">
     <p class="hint">Paste your confirmation email from United, Delta, American or Southwest, or the one from the site you booked on. Rerouted picks out the flights, confirmation numbers, and who sold the ticket.</p>
     <textarea id="emailText" aria-label="Confirmation email" placeholder="Paste your confirmation email here" style="min-height:200px"></textarea>
     <div class="row" style="margin-top:10px"><button class="btn primary" type="button" id="readBtn">Read my booking</button></div>
     <p class="status" id="readStatus" role="status"></p>
     ${feedChips(['intake'])}
-    <h2>No email handy?</h2><p class="hint">Try a sample.</p>
+    <h3>No email handy?</h3><p class="hint">Try a sample.</p>
     <div class="row"><button class="btn small" type="button" data-sample="direct">United</button><button class="btn small" type="button" data-sample="delta">Delta</button><button class="btn small" type="button" data-sample="american">American</button><button class="btn small" type="button" data-sample="southwest">Southwest</button><button class="btn small" type="button" data-sample="expedia">Booked on Expedia</button><button class="btn small" type="button" data-sample="split">Two separate tickets</button></div></div>`;
   $('bk').onclick=()=>go('home');
   $('readBtn').onclick=()=>readOwn($('emailText').value.trim());
@@ -2007,7 +2145,7 @@ function viewCheck(){
   if(confs.length>1)notes.push(['no','These flights are on separate tickets',`If the first is late and you miss the second, ${AN} doesn’t have to rebook you for free.`]);
   if(d.via==='ota'||d.via==='agency')notes.push(['warn',`Booked through ${d.viaName||'a third party'}`,`${AN} agents may send you back to them for changes. Rerouted will tell you who to call.`]);
   if(d.fare===0&&d.airline!=='WN')notes.push(['warn','Basic fare','No same-day changes, but free rebooking still applies if the airline delays or cancels.']);
-  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk">‹ Back</button><div class="ttl">Check your booking</div></div><div class="pad">
+  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk"><span aria-hidden="true">‹ </span>Back</button><h2 class="ttl">Check your booking</h2></div><div class="pad">
     ${notes.length?`<ul class="rights" style="margin-bottom:16px">${notes.map(([c,t,b])=>`<li class="${c}"><b>${esc(t)}</b><span>${esc(b)}</span></li>`).join('')}</ul>`:''}
     <div class="grid2"><label>Airline<select id="cAl">${o(Object.entries(AL).map(([k,A])=>[k,A.name]),d.airline)}</select></label><label>Travel date<input type="date" id="cDate" value="${esc(d.date)}"></label></div>
     <label>Fare<select id="cFare">${o((FARE_NAMES[d.airline]||FARES).map((f,i)=>[i,f]),d.fare)}</select></label>
@@ -2023,9 +2161,9 @@ function viewCheck(){
     <label>Your ${esc(AN)} status<select id="cStatus">${o((AL[d.airline]||AL.UA).tiers.map((t,i)=>[i,t]),S.profile.status[d.airline]||0)}</select></label>
     <button class="btn primary block" type="button" id="cGo">Watch this trip</button><p class="status err" id="cErr" role="alert"></p></div>`;
   $('bk').onclick=()=>go('add');
-  $('cVia').onchange=()=>{collectOwn();viewCheck()};
-  $('cAl').onchange=()=>{collectOwn();S.draft.otherAirline=false;viewCheck()};
-  $('cFare').onchange=()=>{collectOwn();viewCheck()};
+  $('cVia').onchange=()=>{collectOwn();keep(viewCheck)};
+  $('cAl').onchange=()=>{collectOwn();S.draft.otherAirline=false;keep(viewCheck)};
+  $('cFare').onchange=()=>{collectOwn();keep(viewCheck)};
   $('cGo').onclick=()=>{
     collectOwn();
     const e=[];const d=S.draft;
@@ -2050,10 +2188,10 @@ const OWN_KINDS=[['none','On time'],['small','20 min late'],['conn','Connection 
 function viewOwn(){
   const st=engineStep(UI.own),key=`own:${UI.own}`,kitKey=`rr4-kit-own-${UI.own}`;
   const kinds=OWN_KINDS.filter(([k])=>!(k==='miss'&&S.booked.length<2));
-  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk">‹ Trips</button><div><div class="ttl">${esc(S.booked[0].from)} → ${esc(S.booked[S.booked.length-1].to)}</div><div class="sub">${esc(niceDate(S.trip.date)||'Your trip')}</div></div></div>
+  $s().innerHTML=`<div class="topbar"><button class="back" type="button" id="bk"><span aria-hidden="true">‹ </span>Trips</button><div><h2 class="ttl">${esc(S.booked[0].from)} → ${esc(S.booked[S.booked.length-1].to)}</h2><div class="sub">${esc(niceDate(S.trip.date)||'Your trip')}</div></div></div>
     <div class="pad">
-      <p class="hint" style="margin:0 0 8px">What if this happened on your trip?</p>
-      <div class="opts" style="margin-bottom:16px">${kinds.map(([k,l])=>`<button type="button" data-kind="${k}" aria-pressed="${UI.own===k}">${l}</button>`).join('')}</div>
+      <p class="hint" style="margin:0 0 8px" id="whatIf">What if this happened on your trip?</p>
+      <div class="opts" role="group" aria-labelledby="whatIf" style="margin-bottom:1rem">${kinds.map(([k,l])=>`<button type="button" data-kind="${k}" aria-pressed="${UI.own===k}">${l}</button>`).join('')}</div>
       ${UI.own==='none'?riskHtml(ownRisk()):''}
       ${boardHtml(st.board)}
       ${moveHtml(st.move,key)}
@@ -2064,9 +2202,9 @@ function viewOwn(){
       <div class="row" style="margin-top:16px"><button class="btn small" type="button" id="editOwn">Edit details</button><button class="btn small" type="button" id="rmOwn">Remove trip</button></div>
     </div>`;
   $('bk').onclick=()=>go('home');
-  $s().querySelectorAll('[data-kind]').forEach(b=>b.onclick=()=>{UI.own=b.dataset.kind;const y=$s().scrollTop;viewOwn();$s().scrollTop=y;const n=engineStep(UI.own).notif;if(n)toast(n)});
+  $s().querySelectorAll('[data-kind]').forEach(b=>b.onclick=()=>{UI.own=b.dataset.kind;keep(viewOwn);const n=engineStep(UI.own).notif;if(n)toast(n)});
   bindMove($s(),st.move,key);
-  bindMoney($s(),st.money,kitKey,()=>{const y=$s().scrollTop;viewOwn();$s().scrollTop=y});
+  bindMoney($s(),st.money,kitKey,()=>keep(viewOwn));
   $('editOwn').onclick=()=>{S.draft=JSON.parse(JSON.stringify(S.trip));go('check')};
   $('rmOwn').onclick=()=>{S.trip=null;S.booked=null;store('rr4-trip',null);go('home')};
 }
@@ -2181,22 +2319,46 @@ function engineStep(kind){
 
 /* ---------- Website: launch scenarios from the page ---------- */
 (function site(){
-  const demo=document.getElementById('demo');
-  const play=k=>{
-    startScn(k);
-    const r=demo.getBoundingClientRect();
-    if(r.top<60||r.bottom>innerHeight){
-      const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-      demo.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});
-    }
+  const demo=$('demo'),sticky=$('sticky'),phone=matchMedia('(max-width: 53.75em)');
+  let opener=null,frozen=[];
+  /* Phones: the demo is a full-screen dialog, so everything behind it is made inert */
+  const openFull=()=>{
+    if(demo.classList.contains('open'))return;
+    demo.classList.add('open');document.body.classList.add('demo-open');
+    demo.setAttribute('role','dialog');demo.setAttribute('aria-modal','true');demo.setAttribute('aria-labelledby','demoName');
+    for(let el=demo;el!==document.body;el=el.parentElement)
+      for(const sib of el.parentElement.children)if(sib!==el&&!sib.inert&&sib.tagName!=='SCRIPT'){sib.inert=true;frozen.push(sib)}
   };
-  const tiles=document.getElementById('siteScns');
-  tiles.innerHTML=Object.entries(SCN).map(([k,s])=>`<button class="scncard" type="button" data-play="${k}">
-    <div class="strip">${esc(s.route)}<span>${esc(s.date.split(',')[0])}</span></div>
-    <div class="body"><b>${esc(s.title)}</b><p>${esc(s.blurb)}</p><div class="meta">${esc(s.persona.split(':')[0])}</div><span class="go">Play in the phone →</span></div></button>`).join('');
-  document.querySelectorAll('.site [data-play]').forEach(b=>b.addEventListener('click',()=>play(b.dataset.play)));
-  document.getElementById('storyRoute').innerHTML=routeSvg({old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','LAX']});
-  document.getElementById('siteCards').innerHTML=['csr','uacard','amexp'].map(k=>`<div>${cardFace(k,CARDS[k],true)}</div>`).join('');
+  const closeFull=refocus=>{
+    if(!demo.classList.contains('open'))return;
+    demo.classList.remove('open');document.body.classList.remove('demo-open');
+    ['role','aria-modal','aria-labelledby'].forEach(a=>demo.removeAttribute(a));
+    frozen.forEach(el=>el.inert=false);frozen=[];
+    if(refocus&&opener)opener.focus();
+  };
+  const show=from=>{
+    opener=from;
+    if(phone.matches)openFull();
+    else{const r=demo.getBoundingClientRect();if(r.top<60||r.bottom>innerHeight)demo.scrollIntoView({block:'center'})}
+  };
+  $('demoClose').onclick=()=>closeFull(true);
+  demo.addEventListener('keydown',e=>{if(e.key==='Escape')closeFull(true)});
+  phone.addEventListener('change',()=>{if(!phone.matches)closeFull(false)});
+
+  /* What each travel day teaches, shown on the page only */
+  const SHOWS={denver:'Shows the flight to ask for and the words to use',ohare:'Shows who to call, and a card claim',newark:'Shows a warning before the delay is posted',
+    eve:'Shows a risk check the night before',bag:'Shows what to do for a late suitcase',delta:'Shows Delta’s same-routing rule',
+    american:'Shows free standby against a paid change',southwest:'Shows arriving sooner against a travel credit'};
+  $('siteScns').innerHTML=Object.entries(SCN).map(([k,s])=>`<li><button class="scncard" type="button" data-play="${k}">
+    <span class="strip">${esc(s.route)}<span>${esc(s.date.split(',')[0])}</span></span>
+    <span class="body"><b>${esc(s.title)}</b><span class="blurb">${esc(s.blurb)}</span><span class="shows">${esc(SHOWS[k]||'')}</span><span class="go">Play this day</span></span></button></li>`).join('');
+  document.querySelectorAll('.site [data-play]').forEach(b=>b.addEventListener('click',()=>{show(b);startScn(b.dataset.play);focusHead()}));
+  document.querySelectorAll('.site [data-open]').forEach(b=>b.addEventListener('click',()=>{show(b);go('home');focusHead()}));
+  $('storyRoute').innerHTML=routeSvg({old:[['BOS','DEN','ok'],['DEN','LAX','late']],neu:['BOS','LAX']});
+  $('siteCards').innerHTML=['csr','uacard','amexp'].map(k=>`<div>${cardFace(k,CARDS[k],true)}</div>`).join('');
+  const ex=SCN.denver.steps.d1.notif;$('heroAlert').innerHTML=notifBody(ex.t,ex.b,SCN.denver.steps.d1.clock);
+  /* The bottom button appears once the hero button has scrolled away */
+  new IntersectionObserver(([e])=>sticky.classList.toggle('on',!e.isIntersecting&&e.boundingClientRect.top<0)).observe($('heroPlay'));
 })();
 
 </script>
